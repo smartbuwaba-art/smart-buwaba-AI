@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d0c">
+<title>Smart Buwaba AI</title>
+
+<style>
+:root {
+  --bg: #080d0c;
+  --panel: #0e1513;
+  --green: #49f5a0;
+  --muted: #899891;
+  --line: #202c27;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #f1f8f4;
+  font-family: Inter, "Segoe UI", sans-serif;
+}
+button, textarea { font: inherit; }
+button { cursor: pointer; }
+.app {
+  min-height: 100dvh;
+  display: flex;
+}
+.sidebar {
+  width: 250px;
+  padding: 25px 18px;
+  border-right: 1px solid var(--line);
+  background: #0a100e;
+  display: flex;
+  flex-direction: column;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 38px;
+}
+.logo {
+  width: 43px;
+  height: 43px;
+  border-radius: 15px;
+  background: linear-gradient(140deg,#7bffc0,#15965b);
+  display: grid;
+  place-items: center;
+  color: #062616;
+  font-size: 22px;
+  font-weight: 900;
+  box-shadow: 0 0 28px #36e98b25;
+}
+.brand strong { display: block; font-size: 14px; }
+.brand small { color: var(--muted); font-size: 11px; }
+.new-chat {
+  border: 1px solid #294b3a;
+  background: #12241a;
+  color: var(--green);
+  padding: 13px;
+  border-radius: 12px;
+  text-align: left;
+}
+.side-label {
+  color: #718077;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin: 30px 8px 12px;
+}
+.side-link {
+  padding: 12px 10px;
+  color: #b3c0b8;
+  font-size: 13px;
+  border-radius: 9px;
+}
+.side-link.active { background: #14231b; color: var(--green); }
+.profile {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.avatar {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #203c2c;
+  color: var(--green);
+}
+.profile small { color: var(--muted); }
+.main {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+.topbar {
+  height: 70px;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.topbar strong { font-size: 13px; }
+.status { color: var(--green); font-size: 11px; }
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  margin-right: 8px;
+}
+.content {
+  width: min(850px,100%);
+  margin: 0 auto;
+  padding: 35px 25px 20px;
+  flex: 1;
+}
+.hero { text-align: center; padding: 38px 0 27px; }
+.orb {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin: 0 auto 26px;
+  display: grid;
+  place-items: center;
+  font-size: 37px;
+  color: var(--green);
+  border: 1px solid #3d9d6a70;
+  background: radial-gradient(circle at 35% 30%,#286746,#10261a 60%,#0b110e);
+  box-shadow: 0 0 50px #24db7920, inset 0 0 22px #4aff9a15;
+}
+.eyebrow {
+  color: var(--green);
+  font-size: 10px;
+  letter-spacing: 4px;
+  font-weight: 700;
+}
+h1 {
+  font-size: clamp(30px,5vw,47px);
+  letter-spacing: -2px;
+  margin: 15px 0 12px;
+}
+h1 span {
+  color: var(--green);
+}
+.subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+  margin: 27px 0;
+}
+.card {
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 18px;
+  background: linear-gradient(145deg,#111a16,#0b110f);
+  text-align: left;
+  color: white;
+  transition: .2s;
+}
+.card:hover {
+  border-color: #398b5b;
+  transform: translateY(-2px);
+}
+.card .symbol { font-size: 21px; margin-bottom: 15px; }
+.card strong { display: block; font-size: 13px; }
+.card small {
+  display: block;
+  color: var(--muted);
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.messages { display: flex; flex-direction: column; gap: 18px; }
+.message {
+  max-width: 85%;
+  padding: 15px 17px;
+  border-radius: 15px;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.message.user {
+  align-self: flex-end;
+  background: #173b29;
+  border: 1px solid #285c40;
+}
+.message.ai {
+  align-self: flex-start;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.message-label {
+  color: var(--green);
+  font-size: 10px;
+  margin-bottom: 7px;
+  letter-spacing: 1px;
+}
+.composer-wrap {
+  padding: 15px 25px 25px;
+  background: linear-gradient(transparent,var(--bg) 25%);
+}
+.composer {
+  width: min(800px,100%);
+  margin: auto;
+  border: 1px solid #2a3a31;
+  background: #101713;
+  border-radius: 17px;
+  padding: 13px;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  box-shadow: 0 15px 60px #0005;
+}
+.composer:focus-within { border-color: #39885b; }
+textarea {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  max-height: 130px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  padding: 10px 3px;
+  font-size: 13px;
+}
+textarea::placeholder { color: #75847b; }
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #17211b;
+  color: #d9e6dd;
+}
+.send {
+  background: var(--green);
+  color: #07160d;
+  border: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+.mic.listening {
+  color: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 15px #49f5a025;
+}
+.footnote {
+  text-align: center;
+  color: #647168;
+  font-size: 10px;
+  margin-top: 13px;
+}
+.hidden { display: none !important; }
+
+@media(max-width:650px) {
+  .sidebar { display: none; }
+  .topbar { height: 58px; padding: 0 17px; }
+  .content { padding: 15px 17px; }
+  .hero { padding: 35px 0 15px; }
+  .orb { width: 75px; height: 75px; }
+  .cards { gap: 9px; }
+  .card { padding: 13px; }
+  .composer-wrap { padding: 12px 13px 18px; }
+  .message { max-width: 94%; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">B</div>
+      <div>
+        <strong>SMART BUWABA</strong>
+        <small>Personal Intelligence</small>
+      </div>
+    </div>
+
+    <button class="new-chat" onclick="newChat()">＋ &nbsp; New conversation</button>
+
+    <div class="side-label">WORKSPACE</div>
+    <div class="side-link active">◈ &nbsp; AI Assistant</div>
+    <div class="side-link">◎ &nbsp; Voice Studio</div>
+    <div class="side-link">⌘ &nbsp; Device Control</div>
+
+    <div class="profile">
+      <div class="avatar">B</div>
+      <div>Smart Buwaba<br><small>Personal AI</small></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <strong>Smart Buwaba AI</strong>
+      <span class="status">INTERFACE READY</span>
+    </header>
+
+    <section class="content">
+      <div class="hero" id="hero">
+        <div class="orb">✳</div>
+        <div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div>
+        <h1>Think beyond.<br><span>Speak naturally.</span></h1>
+        <p class="subtitle">
+          Your personal assistant, designed around you.<br>
+          What shall we make possible today?
+        </p>
+      </div>
+
+      <div class="cards" id="cards">
+        <button class="card" onclick="suggest('Help me write something creative')">
+          <div class="symbol">✧</div>
+          <strong>Creative Studio</strong>
+          <small>Ideas, writing, music concepts and inspiration.</small>
+        </button>
+        <button class="card" onclick="suggest('Help me with technology and coding')">
+          <div class="symbol">⌘</div>
+          <strong>Smart Solutions</strong>
+          <small>Explore technology, code and new possibilities.</small>
+        </button>
+        <button class="card" onclick="suggest('Help me plan my day')">
+          <div class="symbol">◷</div>
+          <strong>Daily Companion</strong>
+          <small>Organize tasks and plan your next move.</small>
+        </button>
+        <button class="card" onclick="startVoice()">
+          <div class="symbol">〰</div>
+          <strong>Voice Experience</strong>
+          <small>Try speaking to your assistant.</small>
+        </button>
+      </div>
+
+      <div class="messages" id="messages"></div>
+    </section>
+
+    <footer class="composer-wrap">
+      <form class="composer" id="chatForm">
+        <button class="icon-btn mic" id="mic" type="button"
+          onclick="startVoice()" aria-label="Use microphone">♩</button>
+        <textarea id="prompt" rows="1"
+          placeholder="Message Smart Buwaba..."></textarea>
+        <button class="icon-btn send" type="submit"
+          aria-label="Send message">↑</button>
+      </form>
+      <div class="footnote">
+        SMART BUWABA AI · BUILT FOR YOUR WORLD
+      </div>
+    </footer>
+  </main>
+</div>
+
+<script>
+const promptBox = document.getElementById('prompt');
+const messages = document.getElementById('messages');
+const hero = document.getElementById('hero');
+const cards = document.getElementById('cards');
+
+function suggest(text) {
+  promptBox.value = text;
+  promptBox.focus();
+}
+
+function newChat() {
+  messages.innerHTML = '';
+  hero.classList.remove('hidden');
+  cards.classList.remove('hidden');
+  promptBox.value = '';
+}
+
+function addMessage(text, who) {
+  const item = document.createElement('div');
+  item.className = 'message ' + who;
+
+  if (who === 'ai') {
+    const label = document.createElement('div');
+    label.className = 'message-label';
+    label.textContent = '✳ SMART BUWABA';
+    item.appendChild(label);
+  }
+
+  const content = document.createElement('div');
+  content.textContent = text;
+  item.appendChild(content);
+  messages.appendChild(item);
+  item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.getElementById('chatForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const text = promptBox.value.trim();
+  if (!text) return;
+
+  hero.classList.add('hidden');
+  cards.classList.add('hidden');
+  addMessage(text, 'user');
+  promptBox.value = '';
+
+  addMessage(
+    'Your interface is working! Connect a secure AI backend to enable intelligent answers. This demo does not send your messages to an AI service yet.',
+    'ai'
+  );
+});
+
+promptBox.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('chatForm').requestSubmit();
+  }
+});
+
+function startVoice() {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    addMessage(
+      'Voice recognition is not supported in this browser. Try an updated version of Chrome.',
+      'ai'
+    );
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+
+  const mic = document.getElementById('mic');
+  recognition.onstart = () => mic.classList.add('listening');
+  recognition.onend = () => mic.classList.remove('listening');
+  recognition.onerror = () => mic.classList.remove('listening');
+
+  recognition.onresult = event => {
+    promptBox.value = event.results[0][0].transcript;
+    promptBox.focus();
+  };
+
+  recognition.start();
+}
+</script>
+</body>
+</html>
