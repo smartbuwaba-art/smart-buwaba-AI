@@ -1,0 +1,13 @@
+
+{
+  "name": "smart-buwaba-ai",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@google/genai": "^1.30.0"
+  }
+}
