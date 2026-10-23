@@ -402,8 +402,10 @@ function addMessage(text, who) {
   item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-document.getElementById('chatForm').addEventListener('submit', e => {
+  
+document.getElementById('chatForm').addEventListener('submit', async e => {
   e.preventDefault();
+
   const text = promptBox.value.trim();
   if (!text) return;
 
@@ -412,11 +414,37 @@ document.getElementById('chatForm').addEventListener('submit', e => {
   addMessage(text, 'user');
   promptBox.value = '';
 
-  addMessage(
-    'Your interface is working! Connect a secure AI backend to enable intelligent answers. This demo does not send your messages to an AI service yet.',
-    'ai'
-  );
+  const sendButton = document.querySelector('.send');
+  sendButton.disabled = true;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'AI request failed.');
+    }
+
+    addMessage(data.reply || 'AI sinabweze yankho.', 'ai');
+
+  } catch (error) {
+    addMessage(
+      'Pepani bro, AI yalephera kuyankha. Yesaninso.',
+      'ai'
+    );
+    console.error(error);
+  } finally {
+    sendButton.disabled = false;
+  }
 });
+
 
 promptBox.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {
