@@ -333,12 +333,14 @@ $('newChat').addEventListener('click',newChat);
 function addMessage(text,who,options={}){if(!options.restore&&(who==='user'||who==='ai')){const conv=ensureConversation(who==='user'?text:'New conversation');if(who==='user'&&(!conv.messages||conv.messages.length===0))conv.title=text.trim().slice(0,42);conv.messages=conv.messages||[];conv.messages.push({text,who,speakable:!!options.speakable});conv.updatedAt=Date.now();persistConversations()}const item=document.createElement('div');item.className='message '+who;if(who==='ai'){const label=document.createElement('div');label.className='message-label';label.textContent='✳ SMART BUWABA';item.appendChild(label)}const content=document.createElement('div');content.textContent=text;item.appendChild(content);if(who==='ai'&&options.speakable){const tools=document.createElement('div');tools.className='message-tools';const speak=document.createElement('button');speak.type='button';speak.className='tiny-btn';speak.textContent='🔊 Speak';speak.addEventListener('click',()=>speakText(text));tools.appendChild(speak);const copy=document.createElement('button');copy.type='button';copy.className='tiny-btn';copy.textContent='Copy';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text);showToast('Answer copied.')}catch(e){showToast('Copy is not available in this browser.','error')}});tools.appendChild(copy);item.appendChild(tools)}messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
 function addTyping(){const item=document.createElement('div');item.className='message ai';item.id='typingMessage';const label=document.createElement('div');label.className='message-label';label.textContent='✳ SMART BUWABA';item.appendChild(label);const dots=document.createElement('div');dots.className='typing';dots.innerHTML='<i></i><i></i><i></i><span class="muted" style="margin-left:6px;font-size:11px">Thinking…</span>';item.appendChild(dots);messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
 async function requestSmartBuwabaAI(message){
+  const activeConversation=savedConversations.find(c=>c.id===currentConversationId);
+  const history=(activeConversation?.messages||[]).slice(0,-1).slice(-10).map(m=>({role:m.who==='ai'?'assistant':'user',content:m.text}));
   let lastError;
   for(let attempt=0;attempt<2;attempt++){
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),20000);
     try{
-      const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message}),signal:controller.signal,cache:'no-store'});
+      const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,history}),signal:controller.signal,cache:'no-store'});
       let data={};try{data=await response.json()}catch(e){}
       if(response.ok&&data.reply)return data.reply;
       const error=new Error(data.error||'AI request failed.');
@@ -355,8 +357,81 @@ async function requestSmartBuwabaAI(message){
   throw lastError||new Error('Request failed.');
 }
 window.isSmartBuwabaVoiceEnabled=()=>voiceEnabled;
-function speakText(text){if(!('speechSynthesis'in window)){showToast('Text-to-speech is not supported in this browser.','error');return}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const lang=$('voiceLanguage').value;u.lang=(!lang||lang==='auto'||lang==='ny-MW')?'en-US':lang;u.rate=.92;u.pitch=1;u.volume=1;const voices=window.speechSynthesis.getVoices();const matching=voices.filter(v=>v.lang.toLowerCase()===u.lang.toLowerCase()||v.lang.toLowerCase().startsWith(u.lang.split('-')[0].toLowerCase()));const female=matching.find(v=>/female|woman|samantha|zira|aria|jenny|susan|karen|victoria|eva|sonia|google.*female|microsoft.*(zira|jenny|aria)/i.test(v.name));const chosen=female||matching.find(v=>/female|woman|samantha|zira|aria|jenny|susan|karen|victoria|eva|sonia/i.test(v.name))||matching[0];if(chosen)u.voice=chosen;u.pitch=1.08;u.rate=.78;u.onerror=()=>showToast('Mawu sakusewera. Yang’anani sound ya kompyuta yanu.','error');window.speechSynthesis.speak(u)}
-$('voiceToggle').addEventListener('click',()=>{voiceEnabled=!voiceEnabled;$('voiceToggle').textContent=voiceEnabled?'🔊 Voice on':'🔇 Voice off';$('voiceToggle').setAttribute('aria-pressed',String(voiceEnabled));if(!voiceEnabled&&'speechSynthesis'in window)window.speechSynthesis.cancel();tone('light')});
+let activeSmartBuwabaAudio=null,activeSmartBuwabaAudioUrl=null;
+function stopSmartBuwabaAudio(){
+  if(activeSmartBuwabaAudio){try{activeSmartBuwabaAudio.pause();activeSmartBuwabaAudio.currentTime=0;}catch(e){}activeSmartBuwabaAudio=null;}
+  if(activeSmartBuwabaAudioUrl){try{URL.revokeObjectURL(activeSmartBuwabaAudioUrl);}catch(e){}activeSmartBuwabaAudioUrl=null;}
+}
+function cleanSmartBuwabaSpeech(text){
+  return String(text||'')
+    .replace(/https?:\/\/\S+/g,'')
+    .replace(/[*_#>]/g,'')
+    .replace(/[✳🔊✅🎵🎙️✨🌟💡]/gu,'')
+    .replace(/[—–]/g,', ')
+    .replace(/\n{2,}/g,'. ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function isNaturalChichewa(text){
+  const matches=String(text||'').toLowerCase().match(/\b(ndikufuna|ndikuthandiz|bwanji|zikomo|chonde|chifukwa|zili|zomwe|kodi|lero|mawa|pano|ndili|ndamva|ndiye|ndapanga|tikonze|tithandize|mwachita|mungathe|ndikukonda|chichewa|chiyawo|zabwino|komanso|bwino|yanga|wanga|zanu|anthu|ndipo|ife|iwe|inu|ayi|inde|mtima|usiku|muli|uli|ukufuna|ndithandizeni|ndakumvetsa|ndifuna|ndilembele|nyimbo|kuti)\b/g)||[];
+  return matches.length>=2 || /\b(uli bwanji|muli bwanji|ndikuthandizeni bwanji|zikomo kwambiri)\b/i.test(text||'');
+}
+async function playNyanjaSpeech(text){
+  const response=await fetch('/api/speech',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text}),cache:'no-store'});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.audio)throw new Error(data.error||'Chichewa speech service unavailable');
+  const raw=atob(data.audio),bytes=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+  const blob=new Blob([bytes],{type:data.mimeType||'audio/wav'}),url=URL.createObjectURL(blob);
+  const audio=new Audio(url);audio.playbackRate=.94;activeSmartBuwabaAudio=audio;activeSmartBuwabaAudioUrl=url;
+  return new Promise((resolve,reject)=>{
+    let done=false;
+    const finish=(error)=>{
+      if(done)return;done=true;
+      if(activeSmartBuwabaAudio===audio)activeSmartBuwabaAudio=null;
+      if(activeSmartBuwabaAudioUrl===url)activeSmartBuwabaAudioUrl=null;
+      try{URL.revokeObjectURL(url)}catch(e){}
+      if(error)reject(error);else resolve(true);
+    };
+    audio.addEventListener('ended',()=>finish(),{once:true});
+    audio.addEventListener('error',()=>finish(new Error('Audio playback failed')),{once:true});
+    audio.play().catch(finish);
+  });
+}
+function speakWithBrowser(text,studio,language){
+  if(!('speechSynthesis'in window))return Promise.resolve();
+  const target=(!language||language==='auto')?(isNaturalChichewa(text)?'ny-MW':'en-US'):language;
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.lang=target;utterance.rate=.88;utterance.pitch=1.04;utterance.volume=1;
+  const voices=window.speechSynthesis.getVoices();
+  const matching=voices.filter(v=>v.lang.toLowerCase()===target.toLowerCase()||v.lang.toLowerCase().startsWith(target.split('-')[0].toLowerCase()));
+  const female=matching.find(v=>/female|woman|samantha|zira|aria|jenny|susan|karen|victoria|eva|sonia|google.*female|microsoft.*(zira|jenny|aria)/i.test(v.name));
+  const chosen=female||matching[0];if(chosen)utterance.voice=chosen;
+  return new Promise(resolve=>{
+    utterance.onstart=()=>{if(studio){studio.classList.remove('listening');studio.classList.add('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Smart Buwaba is speaking';}};
+    utterance.onend=()=>{if(studio)studio.classList.remove('speaking');resolve();};
+    utterance.onerror=()=>{if(studio)studio.classList.remove('speaking');resolve();};
+    window.speechSynthesis.speak(utterance);
+  });
+}
+async function speakNaturalSmartBuwaba(text,studio=null){
+  const spoken=cleanSmartBuwabaSpeech(text);if(!spoken)return;
+  stopSmartBuwabaAudio();
+  if('speechSynthesis'in window)window.speechSynthesis.cancel();
+  const language=$('voiceLanguage').value;
+  const needsNyanja=language==='ny-MW'||(language==='auto'&&isNaturalChichewa(spoken));
+  if(needsNyanja){
+    try{
+      if(studio){studio.classList.remove('listening');studio.classList.add('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Preparing clear Chichewa voice…';}
+      await playNyanjaSpeech(spoken);
+      if(studio){studio.classList.remove('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Smart Buwaba finished speaking';}
+      return;
+    }catch(error){console.warn('Gemini Chichewa speech unavailable; using browser voice fallback.',error);if(studio)studio.classList.remove('speaking');}
+  }
+  return speakWithBrowser(spoken,studio,language);
+}
+function speakText(text){void speakNaturalSmartBuwaba(text);}
+$('voiceToggle').addEventListener('click',()=>{voiceEnabled=!voiceEnabled;$('voiceToggle').textContent=voiceEnabled?'🔊 Voice on':'🔇 Voice off';$('voiceToggle').setAttribute('aria-pressed',String(voiceEnabled));if(!voiceEnabled){stopSmartBuwabaAudio();if('speechSynthesis'in window)window.speechSynthesis.cancel();}tone('light')});
 $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=promptBox.value.trim();if(!text){tone('error');showToast('Lembani uthenga kaye, bro.','error');promptBox.focus();return}hero.classList.add('hidden');cards.classList.add('hidden');addMessage(text,'user');promptBox.value='';promptBox.style.height='auto';const send=$('sendButton'),mic=$('mic');send.disabled=true;mic.disabled=true;$('connectionStatus').textContent='THINKING';const typing=addTyping();tone('send');try{const reply=await requestSmartBuwabaAI(text);typing.remove();addMessage(reply,'ai',{speakable:true});if(voiceEnabled)speakText(reply);$('connectionStatus').textContent='READY'}catch(error){
   typing.remove();
   const failureMessages={
@@ -449,27 +524,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     status('Voice assistant closed');
   });
   function speakAnswer(text) {
-    if (!('speechSynthesis' in window)) {
-      transcript(text); status('Answer ready · speech not supported'); return Promise.resolve();
-    }
-    return new Promise(resolve => {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      const lang = byId('voiceLanguage').value;
-      utterance.lang = (!lang || lang === 'auto' || lang === 'ny-MW') ? 'en-US' : lang;
-      utterance.rate = .92; utterance.pitch = 1; utterance.volume = 1;
-      const availableVoices = window.speechSynthesis.getVoices();
-      const matchingVoices = availableVoices.filter(v => v.lang.toLowerCase() === utterance.lang.toLowerCase() || v.lang.toLowerCase().startsWith(utterance.lang.split('-')[0].toLowerCase()));
-      const femaleVoice = matchingVoices.find(v => /female|woman|samantha|zira|aria|jenny|susan|karen|victoria|eva|sonia|google.*female|microsoft.*(zira|jenny|aria)/i.test(v.name));
-      const selectedVoice = femaleVoice || matchingVoices.find(v => /female|woman|samantha|zira|aria|jenny|susan|karen|victoria|eva|sonia/i.test(v.name)) || matchingVoices[0];
-      if (selectedVoice) utterance.voice = selectedVoice;
-      utterance.pitch = 1.08;
-      utterance.rate = .78;
-      utterance.onstart = () => { studio.classList.remove('listening'); studio.classList.add('speaking'); status('Smart Buwaba is speaking'); };
-      utterance.onend = () => { studio.classList.remove('speaking'); resolve(); };
-      utterance.onerror = () => { studio.classList.remove('speaking'); resolve(); };
-      window.speechSynthesis.speak(utterance);
-    });
+    return speakNaturalSmartBuwaba(text, studio);
   }
   async function askAI(text) {
     processingVoice = true; wakeArmed = false;
