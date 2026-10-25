@@ -506,17 +506,362 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 
   const studio = byId('voiceStudio');
   let voiceSession = false, wakeArmed = false, voiceRecognition = null, processingVoice = false, restartTimer = null;
+  let liveSocket = null, liveStream = null, liveAudioContext = null, liveProcessor = null;
+  let liveSource = null, liveMuteGain = null, liveReady = false, livePlayTime = 0;
+  let liveTurnComplete = false, liveFallbackTriggered = false;
+  const liveAudioSources = new Set();
+  let liveTranscriptHistory = [], liveInputText = '', liveOutputText = '';
   const status = text => { byId('voiceStatus').textContent = text; };
   const transcript = text => { byId('voiceTranscript').textContent = text; };
+
+  function renderLiveTranscript() {
+    const parts = liveTranscriptHistory.slice();
+    if (liveInputText.trim()) parts.push('Inu: ' + liveInputText.trim());
+    if (liveOutputText.trim()) parts.push('Smart Buwaba: ' + liveOutputText.trim());
+    transcript(parts.join('\n\n') || 'Lankhulani mwachibadwa. Smart Buwaba akumvetsera.');
+  }
+
+  function stopLivePlayback() {
+    for (const source of liveAudioSources) {
+      try { source.stop(); } catch (e) {}
+      try { source.disconnect(); } catch (e) {}
+    }
+    liveAudioSources.clear();
+    livePlayTime = liveAudioContext ? liveAudioContext.currentTime : 0;
+  }
+
+  function stopLiveVoice() {
+    liveReady = false;
+    liveTurnComplete = false;
+    clearTimeout(restartTimer);
+    if (liveProcessor) {
+      liveProcessor.onaudioprocess = null;
+      try { liveProcessor.disconnect(); } catch (e) {}
+    }
+    try { liveSource?.disconnect(); } catch (e) {}
+    try { liveMuteGain?.disconnect(); } catch (e) {}
+    liveProcessor = null; liveSource = null; liveMuteGain = null;
+    if (liveStream) {
+      liveStream.getTracks().forEach(track => { try { track.stop(); } catch (e) {} });
+      liveStream = null;
+    }
+    stopLivePlayback();
+    const socket = liveSocket;
+    liveSocket = null;
+    if (socket) {
+      socket.onopen = null; socket.onmessage = null;
+      socket.onerror = null; socket.onclose = null;
+      try { socket.close(); } catch (e) {}
+    }
+    if (liveAudioContext) {
+      const ctx = liveAudioContext;
+      liveAudioContext = null;
+      try { void ctx.close(); } catch (e) {}
+    }
+  }
+
+  function fallbackToLegacy(message) {
+    if (liveFallbackTriggered) return;
+    liveFallbackTriggered = true;
+    stopLiveVoice();
+    if (!voiceSession || studio.classList.contains('hidden')) return;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      voiceSession = false;
+      studio.classList.remove('listening', 'speaking');
+      status('Real-time voice unavailable');
+      transcript(message + '\n\nBrowser iyi ilibe njira ina yodziwira mawu. Yang’anani microphone ndi intaneti.');
+      return;
+    }
+    studio.classList.remove('speaking');
+    status('Trying compatible voice mode…');
+    transcript(message + '\n\nNdikuyesa njira ina ya voice. Ingatenge nthawi yaitali kuposa real-time mode.');
+    restartListening(180);
+  }
+
+  function downsampleToPcm16(input, inputRate) {
+    const ratio = inputRate / 16000;
+    const length = Math.floor(input.length / ratio);
+    const output = new Int16Array(length);
+    for (let i = 0; i < length; i++) {
+      const start = Math.floor(i * ratio);
+      const end = Math.min(input.length, Math.max(start + 1, Math.floor((i + 1) * ratio)));
+      let sum = 0;
+      for (let j = start; j < end; j++) sum += input[j];
+      const sample = Math.max(-1, Math.min(1, sum / Math.max(1, end - start)));
+      output[i] = sample < 0 ? Math.round(sample * 32768) : Math.round(sample * 32767);
+    }
+    return output;
+  }
+
+  function pcm16ToBase64(samples) {
+    const bytes = new Uint8Array(samples.length * 2);
+    const view = new DataView(bytes.buffer);
+    for (let i = 0; i < samples.length; i++) view.setInt16(i * 2, samples[i], true);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  async function beginLiveMicrophone() {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+    });
+    if (!voiceSession || !liveReady || !liveSocket) {
+      stream.getTracks().forEach(track => track.stop());
+      return;
+    }
+    liveStream = stream;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!liveAudioContext) liveAudioContext = new AudioContextClass();
+    await liveAudioContext.resume();
+    livePlayTime = liveAudioContext.currentTime;
+    liveSource = liveAudioContext.createMediaStreamSource(stream);
+    liveProcessor = liveAudioContext.createScriptProcessor(2048, 1, 1);
+    liveMuteGain = liveAudioContext.createGain();
+    liveMuteGain.gain.value = 0;
+
+    liveProcessor.onaudioprocess = event => {
+      const socket = liveSocket;
+      if (!voiceSession || !liveReady || !socket || socket.readyState !== WebSocket.OPEN) return;
+      const input = event.inputBuffer.getChannelData(0);
+      const pcm = downsampleToPcm16(input, liveAudioContext.sampleRate);
+      if (!pcm.length) return;
+      try {
+        socket.send(JSON.stringify({
+          realtimeInput: {
+            audio: { data: pcm16ToBase64(pcm), mimeType: 'audio/pcm;rate=16000' }
+          }
+        }));
+      } catch (error) {
+        console.warn('Live microphone chunk could not be sent.', error);
+      }
+    };
+    liveSource.connect(liveProcessor);
+    liveProcessor.connect(liveMuteGain);
+    liveMuteGain.connect(liveAudioContext.destination);
+    studio.classList.add('listening');
+    status('Ndikumvetsera… lankhulani mwachibadwa.');
+    transcript('Ndayamba kumvetsera. Lankhulani funso lanu; simukufunika kunena “Hey Smart Buwaba.”');
+  }
+
+  function playLiveAudioChunk(encoded, mimeType) {
+    if (!liveAudioContext || !encoded || !voiceSession) return;
+    const binary = atob(encoded);
+    const count = Math.floor(binary.length / 2);
+    if (!count) return;
+    const rateMatch = String(mimeType || '').match(/rate=(\d+)/i);
+    const sampleRate = rateMatch ? Number(rateMatch[1]) : 24000;
+    const audioBuffer = liveAudioContext.createBuffer(1, count, sampleRate);
+    const channel = audioBuffer.getChannelData(0);
+    for (let i = 0; i < count; i++) {
+      const sample = binary.charCodeAt(i * 2) | (binary.charCodeAt(i * 2 + 1) << 8);
+      channel[i] = (sample > 32767 ? sample - 65536 : sample) / 32768;
+    }
+    const source = liveAudioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(liveAudioContext.destination);
+    liveAudioSources.add(source);
+    source.onended = () => {
+      liveAudioSources.delete(source);
+      try { source.disconnect(); } catch (e) {}
+      if (!liveAudioSources.size && liveTurnComplete && liveReady && voiceSession) {
+        studio.classList.remove('speaking');
+        studio.classList.add('listening');
+        status('Ndikumvetsera… funsani funso lina.');
+      }
+    };
+    const startAt = Math.max(livePlayTime, liveAudioContext.currentTime + 0.025);
+    livePlayTime = startAt + audioBuffer.duration;
+    source.start(startAt);
+    liveTurnComplete = false;
+    studio.classList.remove('listening');
+    studio.classList.add('speaking');
+    status('Smart Buwaba akuyankha ndi mawu…');
+  }
+
+  async function startLiveVoice() {
+    liveFallbackTriggered = false;
+    if (!navigator.mediaDevices?.getUserMedia || !(window.AudioContext || window.webkitAudioContext)) {
+      fallbackToLegacy('Real-time audio siyikupezeka pa browser imeneyi.');
+      return;
+    }
+    status('Ndikulumikiza real-time voice…');
+    transcript('Ndikulumikiza mawu kuti tizilankhulana mwachindunji.');
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      liveAudioContext = new AudioContextClass();
+      try { await liveAudioContext.resume(); } catch (e) {}
+
+      const tokenResponse = await fetch('/api/live-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+        cache: 'no-store'
+      });
+      const tokenData = await tokenResponse.json().catch(() => ({}));
+      if (!tokenResponse.ok || !tokenData.token) {
+        const code = tokenData.error || 'GEMINI_LIVE_TOKEN_FAILED';
+        throw Object.assign(new Error(code), { code });
+      }
+      if (!voiceSession || studio.classList.contains('hidden')) return;
+
+      const socketUrl = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=' + encodeURIComponent(tokenData.token);
+      const socket = new WebSocket(socketUrl);
+      liveSocket = socket;
+
+      socket.onopen = () => {
+        if (!voiceSession || liveSocket !== socket) return;
+        const selectedLanguage = byId('voiceLanguage').value;
+        let languageInstruction = 'Respond in the same language the user speaks, naturally and fluently.';
+        if (selectedLanguage === 'ny-MW') {
+          languageInstruction = 'Understand spoken Chichewa (Nyanja) with a natural Malawian accent. Respond in fluent, natural Malawian Chichewa with smooth phrasing and pronunciation. Do not switch to English unless the user does.';
+        } else if (selectedLanguage === 'en-US') {
+          languageInstruction = 'Understand and respond naturally in English unless the user clearly speaks another language.';
+        } else if (selectedLanguage === 'sw-KE') {
+          languageInstruction = 'Understand and respond naturally in Kiswahili unless the user clearly speaks another language.';
+        }
+        socket.send(JSON.stringify({
+          setup: {
+            model: 'models/gemini-3.8-live',
+            generationConfig: {
+              responseModalities: ['AUDIO'],
+              speechConfig: {
+                voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } }
+              }
+            },
+            systemInstruction: {
+              parts: [{
+                text: 'You are Smart Buwaba AI, a helpful assistant for Malawi and the world. ' +
+                  languageInstruction +
+                  ' Speak directly to the user in a warm, clear conversational voice. ' +
+                  'For ordinary questions, answer quickly and naturally in a few sentences. ' +
+                  'If asked for a complete song, detailed explanation, or creative work, provide the complete requested work. ' +
+                  'Understand follow-up questions using the conversation context. Avoid unnecessary introductions.'
+              }]
+            },
+            inputAudioTranscription: {},
+            outputAudioTranscription: {},
+            realtimeInputConfig: {
+              automaticActivityDetection: {
+                disabled: false,
+                prefixPaddingMs: 80,
+                silenceDurationMs: 350
+              }
+            }
+          }
+        }));
+        status('Kukonzekera mawu a real-time…');
+      };
+
+      socket.onmessage = event => {
+        let message;
+        try { message = JSON.parse(event.data); } catch (e) { return; }
+        if (message.error) {
+          fallbackToLegacy('Real-time voice sinathe kuyamba.');
+          return;
+        }
+        if (message.setupComplete) {
+          liveReady = true;
+          status('Microphone ikuyamba…');
+          beginLiveMicrophone().catch(error => {
+            if (error?.name === 'NotAllowedError' || error?.name === 'PermissionDeniedError') {
+              voiceSession = false;
+              stopLiveVoice();
+              studio.classList.remove('listening', 'speaking');
+              status('Microphone permission needed');
+              transcript('Lolani microphone mu Chrome: dinani chizindikiro cha kumanzere kwa adiresi ya webusaiti, kenako Microphone → Allow, ndipo yambaninso.');
+            } else {
+              fallbackToLegacy('Sitinathe kuyatsa microphone ya real-time.');
+            }
+          });
+          return;
+        }
+
+        const server = message.serverContent;
+        if (!server) return;
+
+        if (server.interrupted) {
+          stopLivePlayback();
+          liveOutputText = '';
+          liveTurnComplete = false;
+          studio.classList.remove('speaking');
+          studio.classList.add('listening');
+          status('Ndikumvetsera kwa iwe…');
+          renderLiveTranscript();
+        }
+
+        const interim = server.interimInputTranscription?.text;
+        if (typeof interim === 'string' && interim.trim()) {
+          liveInputText = interim.trim();
+          liveTurnComplete = false;
+          renderLiveTranscript();
+        }
+        const finalInput = server.inputTranscription?.text;
+        if (typeof finalInput === 'string' && finalInput.trim()) {
+          liveInputText = finalInput.trim();
+          renderLiveTranscript();
+        }
+        const output = server.outputTranscription?.text;
+        if (typeof output === 'string' && output) {
+          liveOutputText += output;
+          renderLiveTranscript();
+        }
+        const parts = server.modelTurn?.parts || [];
+        for (const part of parts) {
+          const inline = part.inlineData || part.inline_data;
+          if (inline?.data) playLiveAudioChunk(inline.data, inline.mimeType || inline.mime_type);
+        }
+
+        if (server.turnComplete) {
+          const userLine = liveInputText.trim();
+          const assistantLine = liveOutputText.trim();
+          if (userLine || assistantLine) {
+            liveTranscriptHistory.push(
+              'Inu: ' + (userLine || '(mawu sanalembedwe)') +
+              '\nSmart Buwaba: ' + (assistantLine || '(yankho la mawu)')
+            );
+            if (liveTranscriptHistory.length > 6) liveTranscriptHistory.splice(0, liveTranscriptHistory.length - 6);
+          }
+          liveInputText = '';
+          liveOutputText = '';
+          liveTurnComplete = true;
+          renderLiveTranscript();
+          if (!liveAudioSources.size) {
+            studio.classList.remove('speaking');
+            studio.classList.add('listening');
+            status('Ndikumvetsera… funsani funso lina.');
+          }
+        }
+      };
+
+      socket.onerror = () => {
+        if (voiceSession && liveSocket === socket) fallbackToLegacy('Real-time voice yakumana ndi vuto la network kapena API.');
+      };
+      socket.onclose = () => {
+        if (voiceSession && liveSocket === socket) fallbackToLegacy('Real-time voice yalumikizidwa.');
+      };
+    } catch (error) {
+      console.error('Smart Buwaba Live Voice startup failed:', error?.code || error?.message || error);
+      const msg = error?.code === 'GEMINI_API_KEY_MISSING'
+        ? 'Smart Buwaba ikusowa GEMINI_API_KEY pa server.'
+        : error?.code === 'GEMINI_LIVE_TOKEN_FAILED'
+          ? 'Gemini Live sinapereke token. Yang’anani quota ndi mwayi wa Live API mu Google AI Studio.'
+          : 'Sitinathe kulumikiza real-time voice.';
+      fallbackToLegacy(msg);
+    }
+  }
+
   function openVoiceStudio() {
     studio.classList.remove('hidden');
     status('Ready when you are');
-    transcript('Tap “Start talking”, then say “Hey Smart Buwaba” and ask your question.');
+    transcript('Dinani “Start talking” ndipo lankhulani mwachibadwa. Smart Buwaba ayankha ndi mawu, ndipo ungamudule polankhulanso.');
   }
   window.openVoiceStudio = openVoiceStudio;
   byId('voiceStudioButton').addEventListener('click', openVoiceStudio);
   byId('closeVoiceStudio').addEventListener('click', () => {
     voiceSession = false; wakeArmed = false;
+    stopLiveVoice();
     clearTimeout(restartTimer);
     try { voiceRecognition?.stop(); } catch(e) {}
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -750,23 +1095,28 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     }, delay);
   }
   byId('startVoiceStudio').addEventListener('click', () => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      status('Voice recognition unavailable');
-      transcript('Gwiritsani ntchito Google Chrome yaposachedwa. Browser imeneyi siyithandiza kuzindikira mawu.');
-      return;
-    }
+    voiceSession = false;
+    stopLiveVoice();
+    try { voiceRecognition?.stop(); } catch(e) {}
+    voiceRecognition = null;
+    clearTimeout(restartTimer);
     voiceConversationHistory.length = 0;
-    voiceSession = true; wakeArmed = true;
-    status('Listening for your question…');
-    transcript('Lankhulani funso lanu mwachindunji, mwachitsanzo: “Hey Smart Buwaba, uli bwanji?” kapena “Ndiuze za mapulaneti.”');
-    restartListening(100);
+    liveTranscriptHistory = [];
+    liveInputText = '';
+    liveOutputText = '';
+    wakeArmed = true;
+    processingVoice = false;
+    voiceSession = true;
+    void startLiveVoice();
   });
   byId('stopVoiceStudio').addEventListener('click', () => {
     voiceSession = false; wakeArmed = false; clearTimeout(restartTimer);
+    stopLiveVoice();
     try { voiceRecognition?.stop(); } catch(e) {}
+    voiceRecognition = null;
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    studio.classList.remove('listening','speaking'); status('Microphone paused');
+    studio.classList.remove('listening','speaking');
+    status('Microphone paused');
     transcript('Voice mode yayimitsidwa. Dinani Start talking kuti muyambenso.');
   });
 })();
