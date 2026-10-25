@@ -1,0 +1,43 @@
+name: Build Smart Buwaba Windows Companion
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "desktop/**"
+      - "index.html"
+      - "service-worker.js"
+      - "api/chat.js"
+      - "api/speech.js"
+      - "api/live-token.js"
+      - ".github/workflows/build-desktop.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/package.json
+
+      - name: Install desktop dependencies
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: Package Windows portable app
+        working-directory: desktop
+        run: npm run dist:win
+
+      - name: Upload Smart Buwaba Windows app
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-buwaba-windows-portable
+          path: desktop/dist/*.exe
+          if-no-files-found: error
