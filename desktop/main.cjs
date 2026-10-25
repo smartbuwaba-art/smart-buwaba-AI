@@ -40,6 +40,19 @@ function isAllowedInternalUrl(rawUrl) {
   }
 }
 
+function isAllowedExternalUrl(rawUrl) {
+  try {
+    const url = new URL(rawUrl);
+    if (url.protocol !== "https:") return false;
+    return Object.values(EXTERNAL_URLS).some(approved => {
+      const host = new URL(approved).hostname;
+      return url.hostname === host || url.hostname.endsWith("." + host);
+    });
+  } catch {
+    return false;
+  }
+}
+
 function isTrustedAppSender(frameUrl) {
   try {
     return new URL(frameUrl).origin === APP_ORIGIN;
@@ -133,7 +146,7 @@ function createWindow() {
 
   window.webContents.setWindowOpenHandler(({ url }) => {
     if (isAllowedInternalUrl(url)) return { action: "allow" };
-    // Do not send arbitrary links to the operating system.
+    if (isAllowedExternalUrl(url)) void shell.openExternal(url).catch(() => {});
     return { action: "deny" };
   });
 
@@ -142,8 +155,7 @@ function createWindow() {
       const target = new URL(targetUrl);
       if (target.origin === APP_ORIGIN || isAllowedInternalUrl(targetUrl)) return;
       event.preventDefault();
-      // External browser navigation is restricted to HTTPS.
-      if (target.protocol === "https:") void shell.openExternal(targetUrl).catch(() => {});
+      if (isAllowedExternalUrl(targetUrl)) void shell.openExternal(targetUrl).catch(() => {});
     } catch {
       event.preventDefault();
     }
