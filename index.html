@@ -509,6 +509,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   let liveSocket = null, liveStream = null, liveAudioContext = null, liveProcessor = null;
   let liveSource = null, liveMuteGain = null, liveReady = false, livePlayTime = 0;
   let liveTurnComplete = false, liveFallbackTriggered = false;
+  let liveUserSpeaking = false, liveSilenceFrames = 0, livePreRoll = [];
   const liveAudioSources = new Set();
   let liveTranscriptHistory = [], liveInputText = '', liveOutputText = '';
   const status = text => { byId('voiceStatus').textContent = text; };
@@ -533,6 +534,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   function stopLiveVoice() {
     liveReady = false;
     liveTurnComplete = false;
+    liveUserSpeaking = false; liveSilenceFrames = 0; livePreRoll = [];
     clearTimeout(restartTimer);
     if (liveProcessor) {
       liveProcessor.onaudioprocess = null;
@@ -616,10 +618,22 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     if (!liveAudioContext) liveAudioContext = new AudioContextClass();
     await liveAudioContext.resume();
     livePlayTime = liveAudioContext.currentTime;
+    liveUserSpeaking = false; liveSilenceFrames = 0; livePreRoll = [];
     liveSource = liveAudioContext.createMediaStreamSource(stream);
-    liveProcessor = liveAudioContext.createScriptProcessor(2048, 1, 1);
+    // 1024 samples is about 21 ms at 48 kHz, keeping audio chunks responsive.
+    liveProcessor = liveAudioContext.createScriptProcessor(1024, 1, 1);
     liveMuteGain = liveAudioContext.createGain();
     liveMuteGain.gain.value = 0;
+
+    function sendLiveInput(payload) {
+      const socket = liveSocket;
+      if (!socket || socket.readyState !== WebSocket.OPEN) return;
+      socket.send(JSON.stringify({ realtimeInput: payload }));
+    }
+
+    function sendLiveAudio(pcm) {
+      sendLiveInput({ audio: { data: pcm16ToBase64(pcm), mimeType: 'audio/pcm;rate=16000' } });
+    }
 
     liveProcessor.onaudioprocess = event => {
       const socket = liveSocket;
@@ -627,12 +641,42 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       const input = event.inputBuffer.getChannelData(0);
       const pcm = downsampleToPcm16(input, liveAudioContext.sampleRate);
       if (!pcm.length) return;
+
+      let sumSquares = 0;
+      for (let i = 0; i < input.length; i++) sumSquares += input[i] * input[i];
+      const rms = Math.sqrt(sumSquares / Math.max(1, input.length));
+      // Client-side voice activity detection makes each user turn explicit.
+      const speechDetected = rms > 0.018;
       try {
-        socket.send(JSON.stringify({
-          realtimeInput: {
-            audio: { data: pcm16ToBase64(pcm), mimeType: 'audio/pcm;rate=16000' }
+        if (!liveUserSpeaking) {
+          if (speechDetected) {
+            sendLiveInput({ activityStart: {} });
+            liveUserSpeaking = true;
+            liveSilenceFrames = 0;
+            for (const oldChunk of livePreRoll) sendLiveAudio(oldChunk);
+            livePreRoll = [];
+            sendLiveAudio(pcm);
+          } else {
+            livePreRoll.push(pcm);
+            if (livePreRoll.length > 3) livePreRoll.shift();
           }
-        }));
+          return;
+        }
+
+        // Keep forwarding the trailing silence so the model hears a complete utterance.
+        sendLiveAudio(pcm);
+        if (speechDetected) {
+          liveSilenceFrames = 0;
+        } else {
+          liveSilenceFrames++;
+          // 28 blocks x ~21 ms ~= 600 ms of silence, then explicitly end the turn.
+          if (liveSilenceFrames >= 28) {
+            sendLiveInput({ activityEnd: {} });
+            liveUserSpeaking = false;
+            liveSilenceFrames = 0;
+            livePreRoll = [];
+          }
+        }
       } catch (error) {
         console.warn('Live microphone chunk could not be sent.', error);
       }
@@ -744,10 +788,9 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
             outputAudioTranscription: {},
             realtimeInputConfig: {
               automaticActivityDetection: {
-                disabled: false,
-                prefixPaddingMs: 80,
-                silenceDurationMs: 350
-              }
+                disabled: true
+              },
+              activityHandling: 'START_OF_ACTIVITY_INTERRUPTS'
             }
           }
         }));
