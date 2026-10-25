@@ -139,7 +139,7 @@
   <main class="main">
     <header class="topbar"><strong>Smart Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="auto">Auto voice</option><option value="ny-MW">Chichewa</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
-      <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Smart Buwaba"><button class="app-action" id="installAppButton" type="button">⬇ Install app</button><button class="app-action" id="shareAppButton" type="button">↗ Share app</button></div></div>
+      <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Smart Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div></div>
       <div class="cards" id="cards">
         <button class="card" data-prompt="Help me write something creative"><div class="symbol">✧</div><strong>Creative Studio</strong><small>Ideas, writing, music concepts and inspiration.</small></button>
         <button class="card" data-prompt="Help me with technology and coding"><div class="symbol">⌘</div><strong>Smart Solutions</strong><small>Explore technology, code and new possibilities.</small></button>
@@ -148,7 +148,7 @@
       </div>
       <div class="messages" id="messages" aria-live="polite"></div>
     </section>
-    <footer class="composer-wrap"><form class="composer" id="chatForm"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><textarea id="prompt" rows="1" placeholder="Message Smart Buwaba..." aria-label="Message Smart Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">SMART BUWABA AI · BUILT FOR YOUR WORLD</div></footer>
+    <footer class="composer-wrap"><form class="composer" id="chatForm"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><textarea id="prompt" rows="1" placeholder="Message Smart Buwaba..." aria-label="Message Smart Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">SMART BUWABA AI · BUILT FOR YOUR WORLD<div class="app-actions" aria-label="Install or share Smart Buwaba"><button class="app-action" id="installAppButton" type="button">⬇ Install app</button><button class="app-action" id="shareAppButton" type="button">↗ Share app</button></div></div></footer>
   </main>
 </div>
 
@@ -198,13 +198,13 @@ onAuthStateChanged(auth, user => {
 const $ = id => document.getElementById(id);
 const promptBox=$('prompt'),messages=$('messages'),hero=$('hero'),cards=$('cards');
 let deferredInstallPrompt=null;
-const installAppButton=$('installAppButton');
-const shareAppButton=$('shareAppButton');
+const installAppButtons=[$('installAppButton'),$('installAppButtonTop')].filter(Boolean);
+const shareAppButtons=[$('shareAppButton'),$('shareAppButtonTop')].filter(Boolean);
 window.addEventListener('beforeinstallprompt',event=>{
   event.preventDefault();
   deferredInstallPrompt=event;
 });
-installAppButton?.addEventListener('click',async()=>{
+installAppButtons.forEach(button=>button.addEventListener('click',async()=>{
   if(deferredInstallPrompt){
     deferredInstallPrompt.prompt();
     const choice=await deferredInstallPrompt.userChoice;
@@ -213,12 +213,12 @@ installAppButton?.addEventListener('click',async()=>{
     return;
   }
   showToast('Pa Chrome, dinani menyu ⋮ kenako sankhani Install Smart Buwaba kapena Add to Home screen.');
-});
+}));
 window.addEventListener('appinstalled',()=>{
   deferredInstallPrompt=null;
   showToast('Smart Buwaba yaikidwa pa chipangizo chanu.');
 });
-shareAppButton?.addEventListener('click',async()=>{
+shareAppButtons.forEach(button=>button.addEventListener('click',async()=>{
   const data={title:'Smart Buwaba AI',text:'Yesani Smart Buwaba AI.',url:window.location.origin};
   try{
     if(navigator.share){await navigator.share(data);return;}
