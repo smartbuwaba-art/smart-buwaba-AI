@@ -404,49 +404,78 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
       status('Voice recognition unavailable');
-      transcript('Voice input is not supported by this browser. Try the latest Google Chrome on desktop or Android.');
+      transcript('Voice input is not supported by this browser. Try the latest Google Chrome.');
       return null;
     }
     const r = new SR();
-    r.continuous = true; r.interimResults = false;
+    r.continuous = false;
+    r.interimResults = true;
     const lang = byId('voiceLanguage').value;
+    // Browser speech recognition often does not support Chichewa locale codes.
     r.lang = (!lang || lang === 'auto' || lang === 'ny-MW') ? 'en-US' : lang;
-    r.onstart = () => { if (voiceSession && !processingVoice) { studio.classList.add('listening'); status(wakeArmed ? 'Listening to your question…' : 'Listening for “Hey Smart Buwaba”'); } };
+    let finalTranscript = '';
+    let handledThisSession = false;
+    r.onstart = () => {
+      if (voiceSession && !processingVoice) {
+        studio.classList.add('listening');
+        status(wakeArmed ? 'Listening to your question…' : 'Listening for “Hey Smart Buwaba”');
+      }
+    };
     r.onresult = event => {
+      let interim = '';
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (!event.results[i].isFinal) continue;
-        const raw = event.results[i][0].transcript.trim();
-        const phrase = normalize(raw);
-        if (!phrase) continue;
-        if (wakeArmed) {
-          askAI(raw); return;
-        }
-        const wake = phrase.match(/(?:hey|hi|hello)?\s*smart\s*b[u]?waba\b/);
-        if (wake) {
-          const question = phrase.slice(wake.index + wake[0].length).trim();
-          if (question) askAI(question);
-          else {
-            wakeArmed = true; status('I’m listening to you'); transcript('I heard you. Now ask your question.');
-            try { r.stop(); } catch(e) {}
-            setTimeout(() => { if (voiceSession && !processingVoice) restartListening(250); }, 300);
-          }
+        const result = event.results[i];
+        const spoken = (result[0]?.transcript || '').trim();
+        if (result.isFinal) finalTranscript += ' ' + spoken;
+        else interim += ' ' + spoken;
+      }
+      const heard = (finalTranscript || interim).trim();
+      if (heard) transcript('Ndikumva: ' + heard);
+      if (!finalTranscript.trim() || handledThisSession) return;
+      const raw = finalTranscript.trim();
+      const phrase = normalize(raw);
+      if (!phrase) return;
+      // While waiting for the wake phrase, ignore unrelated background speech.
+      if (!wakeArmed) {
+        const wake = phrase.match(/(?:hey|hi|hello)?\s*smart\s*b[u]?waba\b/i);
+        if (!wake) {
+          finalTranscript = '';
           return;
         }
+        const question = raw.slice((wake.index || 0) + wake[0].length).replace(/^[\s,.:!?-]+/, '').trim();
+        if (question) {
+          handledThisSession = true;
+          askAI(question);
+        } else {
+          wakeArmed = true;
+          handledThisSession = true;
+          status('I’m listening to you');
+          transcript('Ndamva mawu oitana. Funsani funso lanu tsopano.');
+        }
+        return;
       }
+      handledThisSession = true;
+      askAI(raw);
     };
     r.onerror = event => {
       studio.classList.remove('listening');
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        voiceSession = false; status('Microphone permission needed');
-        transcript('Allow microphone access in your browser, then tap Start talking again.');
+        voiceSession = false;
+        status('Microphone permission needed');
+        transcript('Lolani microphone mu Chrome: dinani chizindikiro cha kumanzere kwa adiresi ya webusaiti, kenako Microphone → Allow.');
+      } else if (event.error === 'network') {
+        status('Speech service unavailable');
+        transcript('Voice recognition ikufuna internet. Yang’anani internet ndipo yesaninso.');
       } else if (event.error === 'no-speech') {
         status('Still here · say “Hey Smart Buwaba”');
+      } else {
+        status('Voice input interrupted');
       }
     };
     r.onend = () => {
       studio.classList.remove('listening');
       if (voiceRecognition === r) voiceRecognition = null;
-      if (voiceSession && !processingVoice && !studio.classList.contains('hidden')) restartListening(550);
+      if (voiceSession && !processingVoice && !studio.classList.contains('hidden')) restartListening(handledThisSession ? 450 : 250);
     };
     return r;
   }
@@ -457,19 +486,22 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       try {
         if (!voiceRecognition) voiceRecognition = makeRecognition();
         if (voiceRecognition) voiceRecognition.start();
-      } catch(e) { /* Browser may still be closing the previous recognition session. */ }
+      } catch(e) {
+        voiceRecognition = null;
+        if (voiceSession && !studio.classList.contains('hidden')) restartListening(700);
+      }
     }, delay);
   }
   byId('startVoiceStudio').addEventListener('click', () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
       status('Voice recognition unavailable');
-      transcript('Try the latest Google Chrome. Some browsers do not support speech recognition.');
+      transcript('Gwiritsani ntchito Google Chrome yaposachedwa. Browser imeneyi siyithandiza kuzindikira mawu.');
       return;
     }
-    voiceSession = true; wakeArmed = false;
-    status('Starting microphone…');
-    transcript('Say “Hey Smart Buwaba, uli bwanji?” or “Hey Smart Buwaba” followed by your question.');
+    voiceSession = true; wakeArmed = true;
+    status('Listening for your question…');
+    transcript('Lankhulani funso lanu mwachindunji, mwachitsanzo: “Hey Smart Buwaba, uli bwanji?” kapena “Ndiuze za mapulaneti.”');
     restartListening(100);
   });
   byId('stopVoiceStudio').addEventListener('click', () => {
@@ -477,7 +509,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     try { voiceRecognition?.stop(); } catch(e) {}
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     studio.classList.remove('listening','speaking'); status('Microphone paused');
-    transcript('Voice mode paused. Tap Start talking when you are ready.');
+    transcript('Voice mode yayimitsidwa. Dinani Start talking kuti muyambenso.');
   });
 })();
 </script>
