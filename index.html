@@ -144,6 +144,13 @@
   <h2 class="voiceTitle" id="voiceTitle">Talk to Buwaba</h2>
   <p class="voiceTranscript" id="voiceTranscript">Tap “Start talking”, then say “Hey Smart Buwaba” and ask your question. I'll answer out loud.</p>
   <div class="voiceActions"><button class="primary voiceStart" id="startVoiceStudio" type="button">🎙 Start talking</button><button class="secondary" id="stopVoiceStudio" type="button">Stop listening</button></div>
+  <div class="voiceActions hidden" id="nativeAppActions" aria-label="Open apps on this device" style="margin-top:12px">
+    <button class="secondary" type="button" data-native-command="open calculator">Calculator</button>
+    <button class="secondary" type="button" data-native-command="open notepad">Notepad</button>
+    <button class="secondary" type="button" data-native-command="open file explorer">Files</button>
+    <button class="secondary" type="button" data-native-command="open paint">Paint</button>
+    <button class="secondary" type="button" data-native-command="open task manager">Task Manager</button>
+  </div>
   <p class="voiceHint">Keep this screen open while talking. Microphone permission is required. Wake-word listening depends on your browser and may stop when the browser interrupts it.</p>
 </section>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -731,7 +738,11 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 
   function findSpokenAppCommand(value) {
     let phrase = normalizeVoiceCommandText(value);
-    const command = phrase.match(/^(?:please\s+)?(?:tsegula|tsegulani|tsegulireni|segula|nditsegulire|open|launch|go to|pita ku|pitani ku|pita pa|pitani pa|nditengere ku|nditengere pa|ndipite ku|switch to|play|sewera|sewerani|yamba kusewera)\s+(.+)$/);
+    phrase = phrase
+      .replace(/^(?:(?:please\s+)?(?:can|could|would)\s+you\s+|please\s+)/, '')
+      .replace(/\s+(?:for me|please|now)$/, '')
+      .trim();
+    const command = phrase.match(/^(?:tsegula|tsegulira|tsegulani|tsegulireni|segula|nditsegulire|open|launch|go to|pita ku|pitani ku|pita pa|pitani pa|nditengere ku|nditengere pa|ndipite ku|switch to|play|sewera|sewerani|yamba kusewera)\s+(.+)$/);
     if (!command) return null;
     let target = command[1].trim()
       .replace(/^(?:the\s+)?app\s+(?:(?:ya|la|wa)\s+)?/, '')
@@ -808,6 +819,23 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   }
 
   window.executeSmartBuwabaVoiceCommand = runSpokenAppCommand;
+
+  // Show safe, explicit local-app shortcuts only inside the native Android/Windows wrapper.
+  const nativeAppActions = byId('nativeAppActions');
+  const nativeAppBridge = window.SmartBuwabaNative || window.SmartBuwabaDesktop;
+  if (nativeAppActions && nativeAppBridge && typeof nativeAppBridge.openApp === 'function') {
+    nativeAppActions.classList.remove('hidden');
+    nativeAppActions.querySelectorAll('[data-native-command]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const command = button.getAttribute('data-native-command') || '';
+        const opened = await runSpokenAppCommand(command);
+        if (!opened) {
+          status('App launch unavailable');
+          transcript('Sindinathe kutsegula pulogalamuyi. Yesani kachiwiri kapena onani zilolezo za pulogalamuyi.');
+        }
+      });
+    });
+  }
 
   async function startLiveVoice() {
     liveFallbackTriggered = false;
