@@ -270,7 +270,7 @@ $('accountForm').addEventListener('submit', async e => {
       'auth/user-not-found': 'Palibe account ya email imeneyi. Pangani account kaye.',
       'auth/wrong-password': 'Password si yolondola.',
       'auth/too-many-requests': 'Mwayesa kangapo. Dikirani pang’ono musanayesenso.',
-      'auth/network-request-failed': 'Internet yalephera. Yang’anani kulumikizana kwanu.'
+      'auth/network-request-failed': 'Kulumikizana kwalephera. Yesaninso pang’ono.'
     };
     showToast(messages[error.code] || ('Firebase error: ' + (error.message || 'Yesaninso.')), 'error');
   } finally {
@@ -289,7 +289,7 @@ $('resetPassword').addEventListener('click', async () => {
     await window.smartBuwabaAuthAction('reset', email);
     showToast('Tumizani: yang’anani email yanu kuti mukonzenso password.');
   } catch (error) {
-    showToast(error.code === 'auth/user-not-found' ? 'Palibe account ya email imeneyi.' : 'Sitinathe kutumiza link. Yang’anani email ndi internet.', 'error');
+    showToast(error.code === 'auth/user-not-found' ? 'Palibe account ya email imeneyi.' : 'Sitinathe kutumiza link. Yang’anani email yanu, kenako yesaninso.', 'error');
   }
 });
 $('signOutButton').addEventListener('click', async () => {
@@ -441,8 +441,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       if (window.isSmartBuwabaVoiceEnabled ? window.isSmartBuwabaVoiceEnabled() : true) await speakAnswer(reply);
       else status('Answer ready');
     } catch (error) {
-      const msg = 'Pepani, sindinathe kuyankha. Yang’anani internet kapena yesaninso.';
-      transcript(msg); status('Connection issue');
+      const msg = 'Pepani, sindinathe kuyankha pano. Yesaninso pang’ono.';
+      transcript(msg); status('TRY AGAIN');
       await speakAnswer(msg);
     } finally {
       processingVoice = false;
@@ -518,7 +518,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         transcript('Lolani microphone mu Chrome: dinani chizindikiro cha kumanzere kwa adiresi ya webusaiti, kenako Microphone → Allow.');
       } else if (event.error === 'network') {
         status('Reconnecting voice…');
-        transcript('Kulumikizana kwa mawu kwaduka. Ndikuyesanso; ngati zikupitiriza, yang’anani internet ya foni kapena kompyuta.');
+        transcript('Kulumikizana kwa mawu kwaduka. Ndikuyesanso; yesaninso pang’ono ngati zikupitiriza.');
         if (voiceSession && !processingVoice) restartListening(1800);
       } else if (event.error === 'no-speech') {
         status('Still here · say “Hey Smart Buwaba”');
