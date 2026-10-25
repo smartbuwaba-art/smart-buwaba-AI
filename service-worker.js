@@ -1,4 +1,4 @@
-const CACHE_NAME = "smart-buwaba-shell-v2";
+const CACHE_NAME = "smart-buwaba-shell-v3";
 const APP_SHELL = ["/", "/index.html", "/manifest.json", "/icons/smart-buwaba-192.svg", "/icons/smart-buwaba-512.svg"];
 
 self.addEventListener("install", event => {
