@@ -509,7 +509,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   let liveSocket = null, liveStream = null, liveAudioContext = null, liveProcessor = null;
   let liveSource = null, liveMuteGain = null, liveReady = false, livePlayTime = 0;
   let liveTurnComplete = false, liveFallbackTriggered = false;
-  let liveUserSpeaking = false, liveSilenceFrames = 0, livePreRoll = [];
+  let liveAssistantSpeaking = false, liveUserSpeechDetected = false, liveMicSilenceFrames = 0;
+  let liveCommandTimer = null, liveCommandHandled = false;
   const liveAudioSources = new Set();
   let liveTranscriptHistory = [], liveInputText = '', liveOutputText = '';
   const status = text => { byId('voiceStatus').textContent = text; };
@@ -534,8 +535,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   function stopLiveVoice() {
     liveReady = false;
     liveTurnComplete = false;
-    liveUserSpeaking = false; liveSilenceFrames = 0; livePreRoll = [];
-    clearTimeout(restartTimer);
+    liveAssistantSpeaking = false; liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
+    clearTimeout(restartTimer); clearTimeout(liveCommandTimer);
     if (liveProcessor) {
       liveProcessor.onaudioprocess = null;
       try { liveProcessor.disconnect(); } catch (e) {}
@@ -618,21 +619,19 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     if (!liveAudioContext) liveAudioContext = new AudioContextClass();
     await liveAudioContext.resume();
     livePlayTime = liveAudioContext.currentTime;
-    liveUserSpeaking = false; liveSilenceFrames = 0; livePreRoll = [];
+    liveAssistantSpeaking = false; liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
     liveSource = liveAudioContext.createMediaStreamSource(stream);
-    // 1024 samples is about 21 ms at 48 kHz, keeping audio chunks responsive.
+    // Short chunks keep the Live API microphone stream responsive.
     liveProcessor = liveAudioContext.createScriptProcessor(1024, 1, 1);
     liveMuteGain = liveAudioContext.createGain();
     liveMuteGain.gain.value = 0;
 
-    function sendLiveInput(payload) {
+    function sendLiveAudio(pcm) {
       const socket = liveSocket;
       if (!socket || socket.readyState !== WebSocket.OPEN) return;
-      socket.send(JSON.stringify({ realtimeInput: payload }));
-    }
-
-    function sendLiveAudio(pcm) {
-      sendLiveInput({ audio: { data: pcm16ToBase64(pcm), mimeType: 'audio/pcm;rate=16000' } });
+      socket.send(JSON.stringify({
+        realtimeInput: { audio: { data: pcm16ToBase64(pcm), mimeType: 'audio/pcm;rate=16000' } }
+      }));
     }
 
     liveProcessor.onaudioprocess = event => {
@@ -645,38 +644,32 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       let sumSquares = 0;
       for (let i = 0; i < input.length; i++) sumSquares += input[i] * input[i];
       const rms = Math.sqrt(sumSquares / Math.max(1, input.length));
-      // Client-side voice activity detection makes each user turn explicit.
-      const speechDetected = rms > 0.018;
-      try {
-        if (!liveUserSpeaking) {
-          if (speechDetected) {
-            sendLiveInput({ activityStart: {} });
-            liveUserSpeaking = true;
-            liveSilenceFrames = 0;
-            for (const oldChunk of livePreRoll) sendLiveAudio(oldChunk);
-            livePreRoll = [];
-            sendLiveAudio(pcm);
-          } else {
-            livePreRoll.push(pcm);
-            if (livePreRoll.length > 3) livePreRoll.shift();
-          }
-          return;
-        }
 
-        // Keep forwarding the trailing silence so the model hears a complete utterance.
+      // Do not feed the assistant's own speaker audio back into the microphone stream.
+      // Silence chunks keep the Live API stream open while its reply is being played.
+      if (liveAssistantSpeaking) {
+        pcm.fill(0);
         sendLiveAudio(pcm);
-        if (speechDetected) {
-          liveSilenceFrames = 0;
-        } else {
-          liveSilenceFrames++;
-          // 28 blocks x ~21 ms ~= 600 ms of silence, then explicitly end the turn.
-          if (liveSilenceFrames >= 28) {
-            sendLiveInput({ activityEnd: {} });
-            liveUserSpeaking = false;
-            liveSilenceFrames = 0;
-            livePreRoll = [];
-          }
+        return;
+      }
+
+      // Google Live performs VAD on the continuous audio stream; this local meter
+      // only resets the playback-complete flag when the next human turn starts.
+      if (rms > 0.012) {
+        if (!liveUserSpeechDetected) liveTurnComplete = false;
+        liveUserSpeechDetected = true;
+        liveMicSilenceFrames = 0;
+        if (liveReady) status('Ndikumvetsera… lankhulani mwachibadwa.');
+      } else if (liveUserSpeechDetected) {
+        liveMicSilenceFrames++;
+        if (liveMicSilenceFrames >= 18) {
+          liveUserSpeechDetected = false;
+          liveMicSilenceFrames = 0;
         }
+      }
+
+      try {
+        sendLiveAudio(pcm);
       } catch (error) {
         console.warn('Live microphone chunk could not be sent.', error);
       }
@@ -710,6 +703,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       liveAudioSources.delete(source);
       try { source.disconnect(); } catch (e) {}
       if (!liveAudioSources.size && liveTurnComplete && liveReady && voiceSession) {
+        liveAssistantSpeaking = false;
+        liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
         studio.classList.remove('speaking');
         studio.classList.add('listening');
         status('Ndikumvetsera… funsani funso lina.');
@@ -718,14 +713,65 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     const startAt = Math.max(livePlayTime, liveAudioContext.currentTime + 0.025);
     livePlayTime = startAt + audioBuffer.duration;
     source.start(startAt);
-    liveTurnComplete = false;
+    liveAssistantSpeaking = true;
     studio.classList.remove('listening');
     studio.classList.add('speaking');
     status('Smart Buwaba akuyankha ndi mawu…');
   }
 
+  function normalizeVoiceCommandText(value) {
+    return String(value || '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[’‘]/g, "'")
+      .replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim()
+      .replace(/^(?:(?:hey|hi|hello)\s+)?(?:smart\s+)?buwaba\s+/, '');
+  }
+
+  function findSpokenAppCommand(value) {
+    let phrase = normalizeVoiceCommandText(value);
+    const command = phrase.match(/^(?:please\s+)?(?:tsegula|tsegulani|nditsegulire|open|launch|go to|pita ku|nditengere ku|ndipite ku|switch to|play|sewera|sewerani|yamba kusewera)\s+(.+)$/);
+    if (!command) return null;
+    let target = command[1].trim()
+      .replace(/^(?:the\s+)?app\s+(?:(?:ya|la|wa)\s+)?/, '')
+      .replace(/^(?:ya|la|wa)\s+/, '')
+      .replace(/\s+(?:app|application)$/, '')
+      .trim();
+
+    const destinations = [
+      { names: /^(?:youtube music|music|nyimbo|nyimbo zanga|music player|player wa nyimbo)$/, label: 'YouTube Music', url: 'https://music.youtube.com/' },
+      { names: /^(?:youtube|you tube)$/, label: 'YouTube', url: 'https://www.youtube.com/' },
+      { names: /^(?:spotify|spotify music)$/, label: 'Spotify', url: 'https://open.spotify.com/' },
+      { names: /^(?:whatsapp|whats app)$/, label: 'WhatsApp', url: 'https://wa.me/' },
+      { names: /^(?:facebook|face book)$/, label: 'Facebook', url: 'https://www.facebook.com/' },
+      { names: /^(?:instagram|insta)$/, label: 'Instagram', url: 'https://www.instagram.com/' },
+      { names: /^(?:google maps|maps|mapu)$/, label: 'Google Maps', url: 'https://maps.google.com/' },
+      { names: /^(?:gmail|email|e mail)$/, label: 'Gmail', url: 'https://mail.google.com/' },
+      { names: /^(?:google|search|browser|internet|chrome)$/, label: 'Google', url: 'https://www.google.com/' },
+      { names: /^(?:play store|google play store)$/, label: 'Google Play Store', url: 'https://play.google.com/store' },
+      { names: /^(?:chatgpt|chat gpt)$/, label: 'ChatGPT', url: 'https://chatgpt.com/' }
+    ];
+    return destinations.find(destination => destination.names.test(target)) || null;
+  }
+
+  function runSpokenAppCommand(value) {
+    const destination = findSpokenAppCommand(value);
+    if (!destination || liveCommandHandled) return false;
+    liveCommandHandled = true;
+    voiceSession = false;
+    stopLiveVoice();
+    try { voiceRecognition?.stop(); } catch (e) {}
+    voiceRecognition = null;
+    studio.classList.remove('listening', 'speaking');
+    status('Opening ' + destination.label + '…');
+    transcript('Smart Buwaba: Ndikutsegulira ' + destination.label + '.');
+    // App Links may open the installed Android app; otherwise the website opens.
+    window.location.assign(destination.url);
+    return true;
+  }
+
   async function startLiveVoice() {
     liveFallbackTriggered = false;
+    liveCommandHandled = false;
     if (!navigator.mediaDevices?.getUserMedia || !(window.AudioContext || window.webkitAudioContext)) {
       fallbackToLegacy('Real-time audio siyikupezeka pa browser imeneyi.');
       return;
@@ -788,7 +834,9 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
             outputAudioTranscription: {},
             realtimeInputConfig: {
               automaticActivityDetection: {
-                disabled: true
+                disabled: false,
+                prefixPaddingMs: 100,
+                silenceDurationMs: 500
               },
               activityHandling: 'START_OF_ACTIVITY_INTERRUPTS'
             }
@@ -828,6 +876,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
           stopLivePlayback();
           liveOutputText = '';
           liveTurnComplete = false;
+          liveAssistantSpeaking = false; liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
           studio.classList.remove('speaking');
           studio.classList.add('listening');
           status('Ndikumvetsera kwa iwe…');
@@ -844,6 +893,10 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         if (typeof finalInput === 'string' && finalInput.trim()) {
           liveInputText = finalInput.trim();
           renderLiveTranscript();
+          clearTimeout(liveCommandTimer);
+          liveCommandTimer = setTimeout(() => {
+            if (voiceSession && !liveCommandHandled) runSpokenAppCommand(liveInputText);
+          }, 300);
         }
         const output = server.outputTranscription?.text;
         if (typeof output === 'string' && output) {
@@ -871,6 +924,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
           liveTurnComplete = true;
           renderLiveTranscript();
           if (!liveAudioSources.size) {
+            liveAssistantSpeaking = false;
+            liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
             studio.classList.remove('speaking');
             studio.classList.add('listening');
             status('Ndikumvetsera… funsani funso lina.');
@@ -1085,7 +1140,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         const question = raw.slice((wake.index || 0) + wake[0].length).replace(/^[\s,.:!?-]+/, '').trim();
         if (question) {
           handledThisSession = true;
-          askAI(question);
+          if (!runSpokenAppCommand(question)) askAI(question);
         } else {
           wakeArmed = true;
           handledThisSession = true;
@@ -1095,7 +1150,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         return;
       }
       handledThisSession = true;
-      askAI(raw);
+      if (!runSpokenAppCommand(raw)) askAI(raw);
     };
     r.onerror = event => {
       studio.classList.remove('listening');
