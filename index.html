@@ -738,17 +738,21 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       .trim();
 
     const destinations = [
-      { names: /^(?:youtube music|music|nyimbo|nyimbo zanga|music player|player wa nyimbo)$/, label: 'YouTube Music', url: 'https://music.youtube.com/' },
-      { names: /^(?:youtube|you tube)$/, label: 'YouTube', url: 'https://www.youtube.com/' },
-      { names: /^(?:spotify|spotify music)$/, label: 'Spotify', url: 'https://open.spotify.com/' },
-      { names: /^(?:whatsapp|whats app)$/, label: 'WhatsApp', url: 'https://wa.me/' },
-      { names: /^(?:facebook|face book)$/, label: 'Facebook', url: 'https://www.facebook.com/' },
-      { names: /^(?:instagram|insta)$/, label: 'Instagram', url: 'https://www.instagram.com/' },
-      { names: /^(?:google maps|maps|mapu)$/, label: 'Google Maps', url: 'https://maps.google.com/' },
-      { names: /^(?:gmail|email|e mail)$/, label: 'Gmail', url: 'https://mail.google.com/' },
-      { names: /^(?:google|search|browser|internet|chrome)$/, label: 'Google', url: 'https://www.google.com/' },
-      { names: /^(?:play store|google play store)$/, label: 'Google Play Store', url: 'https://play.google.com/store' },
-      { names: /^(?:chatgpt|chat gpt)$/, label: 'ChatGPT', url: 'https://chatgpt.com/' }
+      { names: /^(?:youtube music|music|nyimbo|nyimbo zanga|music player|player wa nyimbo)$/, label: 'YouTube Music', url: 'https://music.youtube.com/', nativeApp: 'youtube_music' },
+      { names: /^(?:youtube|you tube)$/, label: 'YouTube', url: 'https://www.youtube.com/', nativeApp: 'youtube' },
+      { names: /^(?:spotify|spotify music)$/, label: 'Spotify', url: 'https://open.spotify.com/', nativeApp: 'spotify' },
+      { names: /^(?:whatsapp|whats app)$/, label: 'WhatsApp', url: 'https://wa.me/', nativeApp: 'whatsapp' },
+      { names: /^(?:facebook|face book)$/, label: 'Facebook', url: 'https://www.facebook.com/', nativeApp: 'facebook' },
+      { names: /^(?:instagram|insta)$/, label: 'Instagram', url: 'https://www.instagram.com/', nativeApp: 'instagram' },
+      { names: /^(?:google maps|maps|mapu)$/, label: 'Google Maps', url: 'https://maps.google.com/', nativeApp: 'google_maps' },
+      { names: /^(?:gmail|email|e mail)$/, label: 'Gmail', url: 'https://mail.google.com/', nativeApp: 'gmail' },
+      { names: /^(?:chrome)$/, label: 'Chrome', url: 'https://www.google.com/', nativeApp: 'chrome' },
+      { names: /^(?:google|search|browser|internet)$/, label: 'Google', url: 'https://www.google.com/' },
+      { names: /^(?:play store|google play store)$/, label: 'Google Play Store', url: 'https://play.google.com/store', nativeApp: 'play_store' },
+      { names: /^(?:chatgpt|chat gpt)$/, label: 'ChatGPT', url: 'https://chatgpt.com/' },
+      { names: /^(?:camera|kamera)$/, label: 'Camera', nativeApp: 'camera', nativeOnly: true },
+      { names: /^(?:settings|setting|ma settings|zokonda)$/, label: 'Settings', nativeApp: 'settings', nativeOnly: true },
+      { names: /^(?:calculator|kalkuleta|calculator app)$/, label: 'Calculator', nativeApp: 'calculator', nativeOnly: true }
     ];
     return destinations.find(destination => destination.names.test(target)) || null;
   }
@@ -756,6 +760,19 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   function runSpokenAppCommand(value) {
     const destination = findSpokenAppCommand(value);
     if (!destination || liveCommandHandled) return false;
+
+    let nativeLaunched = false;
+    if (destination.nativeApp && window.SmartBuwabaNative &&
+        typeof window.SmartBuwabaNative.openApp === 'function') {
+      try {
+        nativeLaunched = window.SmartBuwabaNative.openApp(destination.nativeApp) === true;
+      } catch (error) {
+        console.warn('Native app launch was unavailable:', error);
+      }
+    }
+    // Actions that require Android's native layer must not pretend to work in a browser.
+    if (destination.nativeOnly && !nativeLaunched) return false;
+
     liveCommandHandled = true;
     voiceSession = false;
     stopLiveVoice();
@@ -764,8 +781,10 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     studio.classList.remove('listening', 'speaking');
     status('Opening ' + destination.label + '…');
     transcript('Smart Buwaba: Ndikutsegulira ' + destination.label + '.');
-    // App Links may open the installed Android app; otherwise the website opens.
-    window.location.assign(destination.url);
+
+    if (nativeLaunched || destination.nativeOnly) return true;
+    // On Android, this fallback is handed to the host app/browser; on PC it opens the website.
+    if (destination.url) window.location.assign(destination.url);
     return true;
   }
 
