@@ -873,7 +873,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       if (!voiceSession || studio.classList.contains('hidden')) return;
 
       // Ephemeral Live API tokens currently require the v1alpha constrained WebSocket endpoint.
-      const socketUrl = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained?access_token=' + encodeURIComponent(tokenData.token);
+      const socketUrl = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=' + encodeURIComponent(tokenData.token);
       const socket = new WebSocket(socketUrl);
       liveSocket = socket;
       // Never leave the voice panel stuck on Connecting if Live setup does not complete.
@@ -1200,6 +1200,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     r.lang = (!lang || lang === 'auto') ? 'ny-MW' : lang;
     let finalTranscript = '';
     let handledThisSession = false;
+    let nextRestartDelay = 300;
     r.onstart = () => {
       if (voiceSession && !processingVoice) {
         studio.classList.add('listening');
@@ -1250,22 +1251,32 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         transcript('Lolani microphone mu Chrome: dinani chizindikiro cha kumanzere kwa adiresi ya webusaiti, kenako Microphone → Allow.');
       } else if (event.error === 'language-not-supported') {
         voiceSession = false;
-        status('Chichewa speech recognition unavailable');
-        transcript('Browser iyi sinalandire ny-MW pa speech recognition. Yesani Chrome yaposachedwa ndipo onani kuti voice language ndi Chichewa.');
+        status('Language not supported');
+        transcript('Browser iyi siyigwirizana ndi chinenero chomwe mwasankha. Pa Voice Language, yesani English (US), kenako yesaninso.');
       } else if (event.error === 'network') {
+        nextRestartDelay = 1600;
         status('Reconnecting voice…');
-        transcript('Kulumikizana kwa mawu kwaduka. Ndikuyesanso; yesaninso pang’ono ngati zikupitiriza.');
-        if (voiceSession && !processingVoice) restartListening(1800);
+        transcript('Intaneti yasokoneza voice. Ndikuyesanso kulumikiza.');
       } else if (event.error === 'no-speech') {
-        status('Still here · say “Hey Smart Buwaba”');
+        nextRestartDelay = 350;
+        status('Still listening…');
+        transcript('Sindinamve mawu. Lankhulaninso pamene microphone ikumvetsera.');
+      } else if (event.error === 'audio-capture') {
+        nextRestartDelay = 1200;
+        status('Checking microphone…');
+        transcript('Microphone siikupezeka pakali pano. Onani kuti yalumikizidwa ndipo palibe pulogalamu ina yomwe ikuigwiritsa ntchito.');
       } else {
-        status('Voice input interrupted');
+        nextRestartDelay = 800;
+        status('Restarting voice…');
+        transcript('Voice input idasokonekera' + (event.error ? ' (' + event.error + ')' : '') + '. Ndikuyambiranso kumvetsera.');
       }
     };
     r.onend = () => {
       studio.classList.remove('listening');
       if (voiceRecognition === r) voiceRecognition = null;
-      if (voiceSession && !processingVoice && !studio.classList.contains('hidden')) restartListening(handledThisSession ? 450 : 250);
+      if (voiceSession && !processingVoice && !studio.classList.contains('hidden')) {
+        restartListening(handledThisSession ? 450 : nextRestartDelay);
+      }
     };
     return r;
   }
