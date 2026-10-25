@@ -43,9 +43,9 @@
         <label class="field"><span>Password</span><input id="accountPassword" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required></label>
         <div class="form-actions"><button class="primary" id="accountSubmit" type="submit">Sign in</button><button class="secondary" id="guestButton" type="button">Continue as guest</button></div>
       </form>
-      <p class="form-switch"><span id="switchText">New here?</span> <button class="text-button" id="switchMode" type="button">Create account</button></p>
+      <p class="form-switch"><span id="switchText">New here?</span> <button class="text-button" id="switchMode" type="button">Create account</button></p><p class="form-switch"><button class="text-button" id="resetPassword" type="button">Forgot password?</button></p>
     </div>
-    <p class="entry-foot">A little light. A lot of possibility.<br>Account sign-in requires authentication to be configured.</p>
+    <p class="entry-foot">A little light. A lot of possibility.<br>Secure account access powered by Firebase.</p>
   </div>
 </section>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -54,7 +54,7 @@
     <div class="brand"><div class="logo">B</div><div><strong>SMART BUWABA</strong><small>Personal Intelligence</small></div></div>
     <button class="new-chat" id="newChat">＋ &nbsp; New conversation</button>
     <div class="side-label">WORKSPACE</div><div class="side-link active">◈ &nbsp; AI Assistant</div><div class="side-link">◎ &nbsp; Voice Studio</div><div class="side-link">⌘ &nbsp; Smart tools</div>
-    <div class="profile"><div class="avatar">B</div><div>Smart Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div></div>
+    <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Smart Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
   </aside>
   <main class="main">
     <header class="topbar"><strong>Smart Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="auto">Auto voice</option><option value="ny-MW">Chichewa</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
@@ -71,6 +71,49 @@
     <footer class="composer-wrap"><form class="composer" id="chatForm"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><textarea id="prompt" rows="1" placeholder="Message Smart Buwaba..." aria-label="Message Smart Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">SMART BUWABA AI · BUILT FOR YOUR WORLD</div></footer>
   </main>
 </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUSILXRlSgk5d6-ugcl7EhJXIAnIgmn8w",
+  authDomain: "smart-buwaba-ai.firebaseapp.com",
+  projectId: "smart-buwaba-ai",
+  storageBucket: "smart-buwaba-ai.firebasestorage.app",
+  messagingSenderId: "69683824463",
+  appId: "1:69683824463:web:df0e93f8b55dee7efee73a",
+  measurementId: "G-BE440NFCL1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+window.smartBuwabaAuthAction = async (mode, email, password) => {
+  if (mode === "create") return createUserWithEmailAndPassword(auth, email, password);
+  if (mode === "signin") return signInWithEmailAndPassword(auth, email, password);
+  if (mode === "reset") return sendPasswordResetEmail(auth, email);
+  if (mode === "signout") return signOut(auth);
+};
+window.smartBuwabaAuthReady = true;
+window.dispatchEvent(new Event("smart-buwaba-auth-ready"));
+
+onAuthStateChanged(auth, user => {
+  const lamp = document.getElementById("lampScreen");
+  const label = document.getElementById("profileLabel");
+  const signout = document.getElementById("signOutButton");
+  if (user) {
+    lamp?.classList.add("hidden");
+    if (label) label.textContent = user.email || "Personal AI · Account";
+    if (signout) signout.classList.remove("hidden");
+    const name = document.querySelector(".profile .avatar");
+    if (name) name.textContent = (user.email || "B").charAt(0).toUpperCase();
+  } else {
+    if (label) label.textContent = "Personal AI · Guest";
+    if (signout) signout.classList.add("hidden");
+  }
+});
+</script>
+
 <script>
 const $ = id => document.getElementById(id);
 const promptBox=$('prompt'),messages=$('messages'),hero=$('hero'),cards=$('cards');
@@ -83,7 +126,67 @@ function pullLamp(){const screen=$('lampScreen');screen.classList.add('lit');$('
 $('pullCord').addEventListener('click',pullLamp);
 function renderMode(){ $('formTitle').textContent=createMode?'Create your account':'Welcome back';$('formHint').textContent=createMode?'Set up your Smart Buwaba account.':'Sign in to your Smart Buwaba account.';$('accountSubmit').textContent=createMode?'Create account':'Sign in';$('accountPassword').autocomplete=createMode?'new-password':'current-password';$('switchText').textContent=createMode?'Already have an account?':'New here?';$('switchMode').textContent=createMode?'Sign in':'Create account'}
 $('switchMode').addEventListener('click',()=>{createMode=!createMode;renderMode();tone('light')});
-$('accountForm').addEventListener('submit',e=>{e.preventDefault();tone('error');showToast('Account sign-in is not connected yet. Configure Firebase Authentication before using real accounts.','error')});
+$('accountForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('accountEmail').value.trim();
+  const password = $('accountPassword').value;
+  const submit = $('accountSubmit');
+  if (!window.smartBuwabaAuthAction) {
+    showToast('Firebase ikukonzekera. Dikirani masekondi pang’ono ndipo yesaninso.', 'error');
+    return;
+  }
+  submit.disabled = true;
+  submit.textContent = createMode ? 'Creating account…' : 'Signing in…';
+  try {
+    await window.smartBuwabaAuthAction(createMode ? 'create' : 'signin', email, password);
+    showToast(createMode ? 'Account yanu yapangidwa bwino!' : 'Mwalowa bwino. Takulandirani!');
+    tone('lamp');
+  } catch (error) {
+    const messages = {
+      'auth/email-already-in-use': 'Email imeneyi ili kale ndi account. Yesani kulowa.',
+      'auth/invalid-email': 'Email yanu si yolondola.',
+      'auth/weak-password': 'Password ikhale ndi zilembo zosachepera 6.',
+      'auth/invalid-credential': 'Email kapena password si yolondola.',
+      'auth/user-not-found': 'Palibe account ya email imeneyi. Pangani account kaye.',
+      'auth/wrong-password': 'Password si yolondola.',
+      'auth/too-many-requests': 'Mwayesa kangapo. Dikirani pang’ono musanayesenso.',
+      'auth/network-request-failed': 'Internet yalephera. Yang’anani kulumikizana kwanu.'
+    };
+    showToast(messages[error.code] || ('Firebase error: ' + (error.message || 'Yesaninso.')), 'error');
+  } finally {
+    submit.disabled = false;
+    renderMode();
+  }
+});
+$('resetPassword').addEventListener('click', async () => {
+  const email = $('accountEmail').value.trim();
+  if (!email) {
+    showToast('Lembani email yanu pamwamba kaye.', 'error');
+    $('accountEmail').focus();
+    return;
+  }
+  try {
+    await window.smartBuwabaAuthAction('reset', email);
+    showToast('Tumizani: yang’anani email yanu kuti mukonzenso password.');
+  } catch (error) {
+    showToast(error.code === 'auth/user-not-found' ? 'Palibe account ya email imeneyi.' : 'Sitinathe kutumiza link. Yang’anani email ndi internet.', 'error');
+  }
+});
+$('signOutButton').addEventListener('click', async () => {
+  try {
+    await window.smartBuwabaAuthAction('signout');
+    $('lampScreen').classList.remove('hidden');
+    $('entryForm').classList.remove('hidden');
+    $('pullCord').classList.add('hidden');
+    $('lampScreen').classList.add('lit');
+    createMode = false;
+    renderMode();
+    $('accountPassword').value = '';
+    showToast('Mwatuluka mu account yanu.');
+  } catch (error) {
+    showToast('Sitinathe kutuluka. Yesaninso.', 'error');
+  }
+});
 $('guestButton').addEventListener('click',()=>{if(!navigator.onLine){showToast('You are offline. Reconnect to use the AI chat.','error');return}$('lampScreen').classList.add('hidden');$('profileLabel').textContent='Personal AI · Guest';tone('lamp')});
 function suggest(text){promptBox.value=text;promptBox.focus()}
 document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>suggest(b.dataset.prompt)));
