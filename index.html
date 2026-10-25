@@ -273,6 +273,7 @@ function newChat(){messages.innerHTML='';hero.classList.remove('hidden');cards.c
 $('newChat').addEventListener('click',newChat);
 function addMessage(text,who,options={}){const item=document.createElement('div');item.className='message '+who;if(who==='ai'){const label=document.createElement('div');label.className='message-label';label.textContent='✳ SMART BUWABA';item.appendChild(label)}const content=document.createElement('div');content.textContent=text;item.appendChild(content);if(who==='ai'&&options.speakable){const tools=document.createElement('div');tools.className='message-tools';const speak=document.createElement('button');speak.type='button';speak.className='tiny-btn';speak.textContent='🔊 Speak';speak.addEventListener('click',()=>speakText(text));tools.appendChild(speak);const copy=document.createElement('button');copy.type='button';copy.className='tiny-btn';copy.textContent='Copy';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text);showToast('Answer copied.')}catch(e){showToast('Copy is not available in this browser.','error')}});tools.appendChild(copy);item.appendChild(tools)}messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
 function addTyping(){const item=document.createElement('div');item.className='message ai';item.id='typingMessage';const label=document.createElement('div');label.className='message-label';label.textContent='✳ SMART BUWABA';item.appendChild(label);const dots=document.createElement('div');dots.className='typing';dots.innerHTML='<i></i><i></i><i></i><span class="muted" style="margin-left:6px;font-size:11px">Thinking…</span>';item.appendChild(dots);messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
+window.isSmartBuwabaVoiceEnabled=()=>voiceEnabled;
 function speakText(text){if(!('speechSynthesis'in window)){showToast('Text-to-speech is not supported in this browser.','error');return}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const lang=$('voiceLanguage').value;u.lang=lang==='auto'?'en-US':lang;u.rate=.88;u.pitch=1.02;u.volume=1;window.speechSynthesis.speak(u)}
 $('voiceToggle').addEventListener('click',()=>{voiceEnabled=!voiceEnabled;$('voiceToggle').textContent=voiceEnabled?'🔊 Voice on':'🔇 Voice off';$('voiceToggle').setAttribute('aria-pressed',String(voiceEnabled));if(!voiceEnabled&&'speechSynthesis'in window)window.speechSynthesis.cancel();tone('light')});
 $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=promptBox.value.trim();if(!text){tone('error');showToast('Lembani uthenga kaye, bro.','error');promptBox.focus();return}if(!navigator.onLine){addMessage('Offline mode: AI ikufunika internet kuti iyankhe. Mukalumikizanso internet, yesaninso.','ai');showToast('Palibe internet pakali pano.','error');return}hero.classList.add('hidden');cards.classList.add('hidden');addMessage(text,'user');promptBox.value='';promptBox.style.height='auto';const send=$('sendButton'),mic=$('mic');send.disabled=true;mic.disabled=true;$('connectionStatus').textContent='THINKING';const typing=addTyping();tone('send');try{const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});let data={};try{data=await response.json()}catch(e){}if(!response.ok)throw new Error(data.error||'AI request failed.');if(!data.reply)throw new Error('AI returned an empty reply.');typing.remove();addMessage(data.reply,'ai',{speakable:true});if(voiceEnabled)speakText(data.reply);$('connectionStatus').textContent='READY'}catch(error){typing.remove();addMessage('Pepani bro, AI yalephera kuyankha. Yang’anani internet kapena yesaninso pang’ono.','ai');$('connectionStatus').textContent='CHECK CONNECTION';tone('error');console.error('Smart Buwaba chat error:',error)}finally{send.disabled=false;mic.disabled=false;promptBox.focus()}});
@@ -310,9 +311,14 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   }
   function enterApp() {
     playCosmicSound();
-    intro.classList.add('hidden');
-    byId('lampScreen')?.classList.remove('hidden');
-    try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {}
+    if (intro.dataset.entering === '1') return;
+    intro.dataset.entering = '1';
+    byId('enterCosmos').disabled = true;
+    byId('skipCosmos').disabled = true;
+    window.setTimeout(() => {
+      intro.classList.add('hidden');
+      try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {}
+    }, 850);
   }
   window.addEventListener('load', () => {
     window.setTimeout(() => intro?.classList.add('brain-stage'), 1700);
@@ -365,7 +371,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       let data = {}; try { data = await response.json(); } catch(e) {}
       if (!response.ok || !data.reply) throw new Error(data.error || 'AI reply failed');
       transcript('You: ' + text + '\n\nSmart Buwaba: ' + data.reply);
-      if (window.voiceEnabled !== false) await speakAnswer(data.reply);
+      if (window.isSmartBuwabaVoiceEnabled ? window.isSmartBuwabaVoiceEnabled() : true) await speakAnswer(data.reply);
       else status('Answer ready');
     } catch (error) {
       const msg = 'Pepani, sindinathe kuyankha. Yang’anani internet kapena yesaninso.';
