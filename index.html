@@ -18,9 +18,76 @@
 .app{min-height:100vh;display:flex}.sidebar{width:250px;flex-shrink:0;padding:25px 18px;border-right:1px solid #25304a;background:#0b1020;display:flex;flex-direction:column}.brand{display:flex;align-items:center;gap:12px;margin-bottom:36px}.logo{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;color:#08151b;font-size:22px;font-weight:950;background:linear-gradient(145deg,var(--green),var(--cyan));box-shadow:0 0 30px #80e8ff24}.brand strong{display:block;font-size:13px;letter-spacing:1px}.brand small{display:block;font-size:10px;color:var(--muted);margin-top:4px}.new-chat{padding:13px;border-radius:12px;border:1px solid #344866;background:#17233b;color:var(--green);text-align:left}.side-label{font-size:10px;letter-spacing:2px;color:#7888a5;margin:28px 8px 10px}.side-link{padding:12px 10px;border-radius:10px;color:#b9c5dc;font-size:13px;margin:2px 0}.side-link.active{background:#1a2941;color:var(--green)}.profile{margin-top:auto;border-top:1px solid var(--line);padding-top:19px;display:flex;align-items:center;gap:10px;font-size:12px}.avatar{width:35px;height:35px;display:grid;place-items:center;border-radius:50%;background:#233753;color:var(--green)}.profile small{color:var(--muted)}.main{min-width:0;flex:1;display:flex;flex-direction:column;min-height:100vh}.topbar{height:69px;padding:0 28px;border-bottom:1px solid #25304a;display:flex;align-items:center;justify-content:space-between;gap:15px}.topbar strong{font-size:13px}.top-actions{display:flex;align-items:center;gap:12px}.status{font-size:10px;color:var(--green);letter-spacing:1px}.status::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 10px #8df7c2}.voice-toggle{border:1px solid #30415e;background:#141e34;color:#dce8ff;border-radius:10px;padding:8px 10px;font-size:11px}.content{width:min(900px,100%);margin:0 auto;padding:25px 25px 20px;flex:1}.hero{text-align:center;padding:40px 0 25px}.orb{width:86px;height:86px;border-radius:28px;margin:0 auto 25px;display:grid;place-items:center;font-size:34px;color:var(--green);border:1px solid #4f9d9c80;background:radial-gradient(circle at 30% 20%,#334d71,#152039 65%,#0b1221);box-shadow:0 0 55px #80e8ff15,inset 0 0 24px #8df7c212;animation:orbPulse 4s ease-in-out infinite}@keyframes orbPulse{50%{box-shadow:0 0 65px #80e8ff27,inset 0 0 32px #8df7c224}}.eyebrow{font-size:10px;font-weight:800;letter-spacing:3px;color:var(--green)}h1{font-size:clamp(31px,5vw,48px);letter-spacing:-2px;line-height:1.08;margin:15px 0 13px}h1 span{background:linear-gradient(90deg,var(--green),var(--cyan));background-clip:text;color:transparent}.subtitle{font-size:13px;line-height:1.8;color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:27px 0}.card{border:1px solid #27344f;border-radius:17px;padding:18px;background:linear-gradient(145deg,#141e34,#0e1426);text-align:left;color:white;transition:transform .2s,border-color .2s}.card:hover{border-color:#69bda9;transform:translateY(-3px)}.symbol{font-size:22px;margin-bottom:13px;color:var(--green)}.card strong{display:block;font-size:13px}.card small{display:block;color:var(--muted);margin-top:7px;font-size:11px;line-height:1.6}.messages{display:flex;flex-direction:column;gap:17px}.message{max-width:86%;padding:15px 17px;border-radius:16px;font-size:13px;line-height:1.8;overflow-wrap:anywhere;white-space:pre-wrap;animation:rise .25s ease}.message.user{align-self:flex-end;background:linear-gradient(135deg,#203e50,#18364a);border:1px solid #315d6c}.message.ai{align-self:flex-start;background:#111a2d;border:1px solid #293751}.message-label{color:var(--green);font-size:10px;margin-bottom:7px;letter-spacing:1px;font-weight:800}.message-tools{display:flex;gap:7px;margin-top:10px}.tiny-btn{border:1px solid #2e3d59;border-radius:9px;padding:5px 9px;background:#172139;color:#d3e0f4;font-size:10px}.typing{display:flex;align-items:center;gap:5px;padding:5px 0}.typing i{width:6px;height:6px;border-radius:50%;background:var(--green);animation:bounce .8s infinite alternate}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}@keyframes bounce{to{opacity:.3;transform:translateY(-4px)}}.composer-wrap{padding:14px 25px 24px;background:linear-gradient(transparent,var(--bg) 25%)}.composer{width:min(820px,100%);margin:auto;border:1px solid #303d59;background:#10182b;border-radius:18px;padding:12px;display:flex;align-items:flex-end;gap:9px;box-shadow:0 15px 60px #0004}.composer:focus-within{border-color:#5e9c9a}.composer textarea{flex:1;min-width:0;resize:none;max-height:140px;border:0;outline:0;background:transparent;color:white;padding:10px 3px;font-size:13px}.composer textarea::placeholder{color:#8491aa}.icon-btn{width:41px;height:41px;flex-shrink:0;border-radius:12px;border:1px solid #2c3b57;background:#17223a;color:#d9e7fa}.send{background:linear-gradient(120deg,var(--green),var(--cyan));color:#09131b;border:0;font-size:20px;font-weight:900}.mic.listening{color:var(--green);border-color:var(--green);box-shadow:0 0 18px #8df7c230;animation:orbPulse 1s infinite}.footnote{text-align:center;color:#6d7b96;font-size:10px;margin-top:12px}.language-select{background:#141e34;color:#dce8ff;border:1px solid #30415e;border-radius:9px;padding:7px;font-size:11px;max-width:110px}
 @media(max-width:680px){.sidebar{display:none}.topbar{height:59px;padding:0 15px}.content{padding:13px 16px}.hero{padding:32px 0 15px}.orb{width:75px;height:75px}.cards{gap:9px}.card{padding:14px}.composer-wrap{padding:10px 12px 17px}.message{max-width:95%}.entry-card{padding:24px 19px}.lamp-stage{height:240px}.lamp-assembly{top:72px}.top-actions{gap:6px}.status{font-size:9px}.voice-toggle{padding:7px}.language-select{max-width:94px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Cosmic welcome intro */
+#cosmicIntro{position:fixed;inset:0;z-index:200;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#172c56 0,#080b16 48%,#02040b 100%);text-align:center;padding:24px;isolation:isolate}
+#cosmicIntro::before,#cosmicIntro::after{content:"";position:absolute;border-radius:50%;filter:blur(45px);pointer-events:none;z-index:-1}
+#cosmicIntro::before{width:300px;height:300px;background:#1a77c755;top:5%;left:-90px;animation:cosmicGlow 7s ease-in-out infinite alternate}
+#cosmicIntro::after{width:270px;height:270px;background:#8df7c233;bottom:-80px;right:-50px;animation:cosmicGlow 6s ease-in-out infinite alternate-reverse}
+.cosmicStars{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 15% 25%,#fff9 40%,transparent 100%),radial-gradient(1px 1px at 80% 18%,#fff9 40%,transparent 100%),radial-gradient(2px 2px at 73% 72%,#80e8ffb0 40%,transparent 100%),radial-gradient(1px 1px at 25% 80%,#fff9 40%,transparent 100%),radial-gradient(1px 1px at 90% 49%,#8df7c2 40%,transparent 100%),radial-gradient(1px 1px at 44% 13%,#fff9 40%,transparent 100%);opacity:.8}
+.cosmic-content{position:relative;width:min(540px,100%);display:flex;flex-direction:column;align-items:center}
+.planetSystem{position:relative;width:280px;height:250px;margin:0 auto 7px;animation:systemFloat 4s ease-in-out infinite}
+.planetOrbit{position:absolute;border:1px solid #7bbaff45;border-radius:50%;left:50%;top:48%;transform:translate(-50%,-50%) rotate(-22deg)}
+.planetOrbit.one{width:245px;height:100px;animation:orbitSpin 8s linear infinite}
+.planetOrbit.two{width:200px;height:165px;transform:translate(-50%,-50%) rotate(56deg);animation:orbitSpin 12s linear infinite reverse}
+.planetOrbit.three{width:275px;height:205px;transform:translate(-50%,-50%) rotate(72deg);animation:orbitSpin 16s linear infinite}
+.planet{position:absolute;border-radius:50%;box-shadow:inset -8px -8px 16px #0008,0 0 20px #80e8ff40}
+.planet.p1{width:24px;height:24px;background:linear-gradient(135deg,#8df7c2,#169a9b);top:18%;left:24%}
+.planet.p2{width:17px;height:17px;background:linear-gradient(135deg,#ffe4a8,#f08b75);right:10%;top:53%}
+.planet.p3{width:12px;height:12px;background:linear-gradient(135deg,#a5b4fc,#6366f1);bottom:12%;left:18%}
+.planet.sun{width:80px;height:80px;left:50%;top:48%;transform:translate(-50%,-50%);background:radial-gradient(circle at 32% 27%,#fff,#a5f5ff 18%,#37b9d4 47%,#2354a6 78%);box-shadow:0 0 35px #80e8ff8c,0 0 90px #3189f34d;animation:sunPulse 3s ease-in-out infinite}
+.brainReveal{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%) scale(.25);opacity:0;font-size:72px;filter:drop-shadow(0 0 24px #8df7c2);transition:opacity .9s,transform .9s;z-index:3}
+#cosmicIntro.brain-stage .planetSystem{transform:scale(.83);opacity:.28;transition:transform 1s,opacity 1s}
+#cosmicIntro.brain-stage .brainReveal{opacity:1;transform:translate(-50%,-50%) scale(1);animation:brainBeat 2s ease-in-out infinite}
+.cosmicKicker{font-size:10px;letter-spacing:5px;color:var(--green);font-weight:850;margin:0 0 12px}
+.cosmicTitle{font-size:clamp(28px,7vw,43px);line-height:1.08;letter-spacing:-1.5px;margin:0;color:#f5fbff;opacity:0;transform:translateY(12px);transition:opacity .8s,transform .8s}
+.cosmicTitle span{display:block;color:var(--green);margin-top:6px}
+#cosmicIntro.brain-stage .cosmicTitle{opacity:1;transform:translateY(0)}
+.cosmicSub{color:#a5b5cf;font-size:12px;line-height:1.8;max-width:340px;margin:14px auto 20px;opacity:0;transition:opacity .8s .25s}
+#cosmicIntro.brain-stage .cosmicSub{opacity:1}
+.cosmicActions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;opacity:0;transform:translateY(8px);transition:opacity .7s .4s,transform .7s .4s}
+#cosmicIntro.ready .cosmicActions{opacity:1;transform:translateY(0)}
+.cosmicSkip{border:1px solid #334866;background:#111c31;color:#c6d6f0;border-radius:12px;padding:12px 15px;font-weight:700}
+@keyframes orbitSpin{from{rotate:0deg}to{rotate:360deg}}@keyframes systemFloat{50%{translate:0 -8px}}@keyframes sunPulse{50%{box-shadow:0 0 50px #80e8ffb0,0 0 110px #3189f36b;scale:1.04}}@keyframes brainBeat{50%{filter:drop-shadow(0 0 35px #8df7c2);scale:1.07}}@keyframes cosmicGlow{to{transform:scale(1.3);opacity:.5}}
+/* Hands-free voice conversation */
+#voiceStudio{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:auto;padding:22px;background:radial-gradient(ellipse at 50% 35%,#173453 0,#090e1e 48%,#050810 100%);text-align:center}
+.voiceClose{position:absolute;top:20px;right:20px;border:1px solid #344664;background:#121c31;color:#e7f0ff;border-radius:12px;width:42px;height:42px;font-size:20px}
+.voiceBrand{font-size:11px;letter-spacing:4px;font-weight:850;color:#dce9ff}.voiceBrand span{color:var(--green)}
+.voiceOrbWrap{width:245px;height:245px;display:grid;place-items:center;position:relative;margin:25px auto 10px}
+.voiceRing{position:absolute;inset:5px;border:1px solid #80e8ff4c;border-radius:50%;animation:voiceRing 4s linear infinite}
+.voiceRing.r2{inset:25px;border-color:#8df7c255;animation-duration:6s;animation-direction:reverse}
+.voiceRing.r3{inset:47px;border-style:dashed;border-color:#80e8ff45;animation-duration:11s}
+.voiceCore{width:122px;height:122px;display:grid;place-items:center;border-radius:38px;background:radial-gradient(circle at 30% 20%,#375a79,#142440 70%);border:1px solid #6ed8d8a0;box-shadow:0 0 45px #80e8ff2a,inset 0 0 30px #8df7c21b;font-size:55px;transition:.3s}
+#voiceStudio.listening .voiceCore{box-shadow:0 0 60px #8df7c26b,inset 0 0 35px #8df7c240;border-color:var(--green);animation:voicePulse 1.4s ease-in-out infinite}
+#voiceStudio.speaking .voiceCore{box-shadow:0 0 60px #80e8ff80;border-color:var(--cyan);animation:voicePulse .7s ease-in-out infinite}
+.voiceWave{display:flex;justify-content:center;align-items:center;gap:5px;height:35px;margin:10px auto}
+.voiceWave i{width:4px;height:10px;border-radius:5px;background:var(--green);opacity:.55}
+#voiceStudio.listening .voiceWave i,#voiceStudio.speaking .voiceWave i{animation:waveBars .65s ease-in-out infinite alternate;opacity:1}
+.voiceWave i:nth-child(2n){animation-delay:.12s!important}.voiceWave i:nth-child(3n){animation-delay:.25s!important}.voiceWave i:nth-child(4n){animation-delay:.34s!important}
+.voiceTitle{font-size:clamp(25px,6vw,38px);letter-spacing:-1px;margin:3px 0 8px}.voiceStatus{color:var(--green);font-size:11px;letter-spacing:2px;font-weight:800;text-transform:uppercase}.voiceTranscript{min-height:48px;max-width:480px;color:#b7c5dc;font-size:13px;line-height:1.8;margin:10px auto 17px}
+.voiceActions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.voiceStart{min-width:165px}.voiceHint{font-size:11px;color:#778aa8;line-height:1.8;max-width:390px;margin:19px auto 0}
+@keyframes voiceRing{to{transform:rotate(360deg)}}@keyframes voicePulse{50%{transform:scale(1.04)}}@keyframes waveBars{to{height:28px;box-shadow:0 0 10px #8df7c270}}
+@media(max-width:520px){.planetSystem{transform:scale(.85);margin-top:-10px;margin-bottom:-10px}.voiceOrbWrap{transform:scale(.86);margin:6px auto -5px}}
+@media(prefers-reduced-motion:reduce){.planetOrbit,.planetSystem,.planet.sun,.voiceRing,.voiceCore,.voiceWave i{animation:none!important}}
+
 </style>
 </head>
 <body>
+
+<div id="cosmicIntro" role="dialog" aria-modal="true" aria-label="Welcome to Smart Buwaba AI">
+  <div class="cosmicStars"></div>
+  <div class="cosmic-content">
+    <div class="cosmicKicker">A NEW INTELLIGENCE AWAKENS</div>
+    <div class="planetSystem" aria-hidden="true">
+      <div class="planetOrbit one"></div><div class="planetOrbit two"></div><div class="planetOrbit three"></div>
+      <div class="planet sun"></div><div class="planet p1"></div><div class="planet p2"></div><div class="planet p3"></div>
+      <div class="brainReveal">🧠</div>
+    </div>
+    <h2 class="cosmicTitle">WELCOME TO <span>SMART BUWABA AI</span></h2>
+    <p class="cosmicSub">Your voice. Your ideas. Your universe.<br>A smarter conversation begins here.</p>
+    <div class="cosmicActions"><button class="primary" id="enterCosmos" type="button">Enter Smart Buwaba AI ↗</button><button class="cosmicSkip" id="skipCosmos" type="button">Skip intro</button></div>
+  </div>
+</div>
 <div id="offlineBanner">⚡ Offline mode — AI replies need internet.</div>
 <div class="offline-screen hidden" id="offlineScreen" role="dialog" aria-modal="true" aria-labelledby="offlineTitle">
   <div class="offline-card"><div class="offline-icon">⌁</div><h2 id="offlineTitle">Looks like you're offline</h2><p>Smart Buwaba needs an internet connection to think and reply. Check your Wi-Fi or mobile data, then try again.</p><button class="primary" id="retryConnection" type="button">Try connection again</button></div>
@@ -48,6 +115,18 @@
     <p class="entry-foot">A little light. A lot of possibility.<br>Secure account access powered by Firebase.</p>
   </div>
 </section>
+
+<section id="voiceStudio" class="hidden" role="dialog" aria-modal="true" aria-labelledby="voiceTitle">
+  <button class="voiceClose" id="closeVoiceStudio" type="button" aria-label="Close voice assistant">×</button>
+  <div class="voiceBrand">SMART <span>BUWABA</span> AI · VOICE</div>
+  <div class="voiceOrbWrap" aria-hidden="true"><div class="voiceRing"></div><div class="voiceRing r2"></div><div class="voiceRing r3"></div><div class="voiceCore">🧠</div></div>
+  <div class="voiceWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="voiceStatus" id="voiceStatus">Ready when you are</div>
+  <h2 class="voiceTitle" id="voiceTitle">Talk to Buwaba</h2>
+  <p class="voiceTranscript" id="voiceTranscript">Tap “Start talking”, then say “Hey Smart Buwaba” and ask your question. I'll answer out loud.</p>
+  <div class="voiceActions"><button class="primary voiceStart" id="startVoiceStudio" type="button">🎙 Start talking</button><button class="secondary" id="stopVoiceStudio" type="button">Stop listening</button></div>
+  <p class="voiceHint">Keep this screen open while talking. Microphone permission is required. Wake-word listening depends on your browser and may stop when the browser interrupts it.</p>
+</section>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="app" id="app">
   <aside class="sidebar">
@@ -57,7 +136,7 @@
     <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Smart Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong>Smart Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="auto">Auto voice</option><option value="ny-MW">Chichewa</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
+    <header class="topbar"><strong>Smart Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="auto">Auto voice</option><option value="ny-MW">Chichewa</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
       <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p></div>
       <div class="cards" id="cards">
@@ -200,11 +279,187 @@ $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=
 promptBox.addEventListener('input',()=>{promptBox.style.height='auto';promptBox.style.height=Math.min(promptBox.scrollHeight,140)+'px'});
 promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatForm').requestSubmit()}});
 function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('Voice input is not supported here. Try the latest Chrome browser.','error');return}if(recognition){try{recognition.stop()}catch(e){}}recognition=new SR();const lang=$('voiceLanguage').value;recognition.lang=lang==='auto'?'en-US':lang;recognition.interimResults=true;recognition.continuous=false;const mic=$('mic');recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani tsopano.')};recognition.onresult=event=>{let finalText='';for(let i=event.resultIndex;i<event.results.length;i++)finalText+=event.results[i][0].transcript;if(finalText)promptBox.value=finalText};recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':'Voice input sinagwire. Yesaninso.','error')};recognition.onend=()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';if(promptBox.value.trim())promptBox.focus()};try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}}
-$('mic').addEventListener('click',startVoice);$('voiceCard').addEventListener('click',startVoice);
+$('mic').addEventListener('click',startVoice);$('voiceCard').addEventListener('click',openVoiceStudio);
 function updateOnline(){const offline=!navigator.onLine;document.body.classList.toggle('offline',offline);$('offlineScreen').classList.toggle('hidden',!offline);$('connectionStatus').textContent=offline?'OFFLINE':'READY';if(offline&&'speechSynthesis'in window)window.speechSynthesis.cancel()}
 $('retryConnection').addEventListener('click',()=>{updateOnline();if(navigator.onLine)showToast('Connection restored. Welcome back!');else showToast('Still offline. Check Wi-Fi or mobile data.','error')});
 window.addEventListener('online',updateOnline);window.addEventListener('offline',updateOnline);updateOnline();
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(err=>console.warn('Offline cache unavailable:',err)))}
 </script>
+
+<script>
+(() => {
+  const byId = id => document.getElementById(id);
+  const intro = byId('cosmicIntro');
+  let introToneCtx = null;
+  function playCosmicSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      introToneCtx = introToneCtx || new AudioCtx();
+      if (introToneCtx.state === 'suspended') introToneCtx.resume();
+      const ctx = introToneCtx, now = ctx.currentTime;
+      [[220,.00,.16],[330,.18,.18],[440,.36,.2],[660,.58,.34]].forEach(([hz,delay,duration]) => {
+        const osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(hz, now + delay);
+        gain.gain.setValueAtTime(.0001, now + delay);
+        gain.gain.exponentialRampToValueAtTime(.07, now + delay + .035);
+        gain.gain.exponentialRampToValueAtTime(.0001, now + delay + duration);
+        osc.connect(gain); gain.connect(ctx.destination); osc.start(now + delay); osc.stop(now + delay + duration + .02);
+      });
+    } catch (e) {}
+  }
+  function enterApp() {
+    playCosmicSound();
+    intro.classList.add('hidden');
+    byId('lampScreen')?.classList.remove('hidden');
+    try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {}
+  }
+  window.addEventListener('load', () => {
+    window.setTimeout(() => intro?.classList.add('brain-stage'), 1700);
+    window.setTimeout(() => intro?.classList.add('ready'), 3000);
+  });
+  byId('enterCosmos').addEventListener('click', enterApp);
+  byId('skipCosmos').addEventListener('click', enterApp);
+
+  const studio = byId('voiceStudio');
+  let voiceSession = false, wakeArmed = false, voiceRecognition = null, processingVoice = false, restartTimer = null;
+  const status = text => { byId('voiceStatus').textContent = text; };
+  const transcript = text => { byId('voiceTranscript').textContent = text; };
+  function openVoiceStudio() {
+    studio.classList.remove('hidden');
+    status('Ready when you are');
+    transcript('Tap “Start talking”, then say “Hey Smart Buwaba” and ask your question.');
+  }
+  window.openVoiceStudio = openVoiceStudio;
+  byId('voiceStudioButton').addEventListener('click', openVoiceStudio);
+  byId('closeVoiceStudio').addEventListener('click', () => {
+    voiceSession = false; wakeArmed = false;
+    clearTimeout(restartTimer);
+    try { voiceRecognition?.stop(); } catch(e) {}
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    studio.classList.add('hidden'); studio.classList.remove('listening','speaking');
+    status('Voice assistant closed');
+  });
+  function speakAnswer(text) {
+    if (!('speechSynthesis' in window)) {
+      transcript(text); status('Answer ready · speech not supported'); return Promise.resolve();
+    }
+    return new Promise(resolve => {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const lang = byId('voiceLanguage').value;
+      utterance.lang = lang === 'auto' ? 'en-US' : lang;
+      utterance.rate = .9; utterance.pitch = 1.02; utterance.volume = 1;
+      utterance.onstart = () => { studio.classList.remove('listening'); studio.classList.add('speaking'); status('Smart Buwaba is speaking'); };
+      utterance.onend = () => { studio.classList.remove('speaking'); resolve(); };
+      utterance.onerror = () => { studio.classList.remove('speaking'); resolve(); };
+      window.speechSynthesis.speak(utterance);
+    });
+  }
+  async function askAI(text) {
+    processingVoice = true; wakeArmed = false;
+    try { voiceRecognition?.stop(); } catch(e) {}
+    studio.classList.remove('listening'); status('Thinking…'); transcript('You: ' + text);
+    try {
+      const response = await fetch('/api/chat', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});
+      let data = {}; try { data = await response.json(); } catch(e) {}
+      if (!response.ok || !data.reply) throw new Error(data.error || 'AI reply failed');
+      transcript('You: ' + text + '\n\nSmart Buwaba: ' + data.reply);
+      if (window.voiceEnabled !== false) await speakAnswer(data.reply);
+      else status('Answer ready');
+    } catch (error) {
+      const msg = 'Pepani, sindinathe kuyankha. Yang’anani internet kapena yesaninso.';
+      transcript(msg); status('Connection issue');
+      await speakAnswer(msg);
+    } finally {
+      processingVoice = false;
+      if (voiceSession) {
+        status('Listening for “Hey Smart Buwaba”');
+        restartListening(650);
+      }
+    }
+  }
+  function normalize(s) { return s.toLowerCase().replace(/[.,!?;:]/g,' ').replace(/\s+/g,' ').trim(); }
+  function makeRecognition() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      status('Voice recognition unavailable');
+      transcript('Voice input is not supported by this browser. Try the latest Google Chrome on desktop or Android.');
+      return null;
+    }
+    const r = new SR();
+    r.continuous = true; r.interimResults = false;
+    const lang = byId('voiceLanguage').value;
+    r.lang = lang === 'auto' ? 'en-US' : lang;
+    r.onstart = () => { if (voiceSession && !processingVoice) { studio.classList.add('listening'); status(wakeArmed ? 'Listening to your question…' : 'Listening for “Hey Smart Buwaba”'); } };
+    r.onresult = event => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (!event.results[i].isFinal) continue;
+        const raw = event.results[i][0].transcript.trim();
+        const phrase = normalize(raw);
+        if (!phrase) continue;
+        if (wakeArmed) {
+          askAI(raw); return;
+        }
+        const wake = phrase.match(/(?:hey|hi|hello)?\s*smart\s*b[u]?waba\b/);
+        if (wake) {
+          const question = phrase.slice(wake.index + wake[0].length).trim();
+          if (question) askAI(question);
+          else {
+            wakeArmed = true; status('I’m listening to you'); transcript('I heard you. Now ask your question.');
+            try { r.stop(); } catch(e) {}
+            setTimeout(() => { if (voiceSession && !processingVoice) restartListening(250); }, 300);
+          }
+          return;
+        }
+      }
+    };
+    r.onerror = event => {
+      studio.classList.remove('listening');
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        voiceSession = false; status('Microphone permission needed');
+        transcript('Allow microphone access in your browser, then tap Start talking again.');
+      } else if (event.error === 'no-speech') {
+        status('Still here · say “Hey Smart Buwaba”');
+      }
+    };
+    r.onend = () => {
+      studio.classList.remove('listening');
+      if (voiceSession && !processingVoice && !studio.classList.contains('hidden')) restartListening(550);
+    };
+    return r;
+  }
+  function restartListening(delay=300) {
+    clearTimeout(restartTimer);
+    restartTimer = setTimeout(() => {
+      if (!voiceSession || processingVoice || studio.classList.contains('hidden')) return;
+      try {
+        if (!voiceRecognition) voiceRecognition = makeRecognition();
+        if (voiceRecognition) voiceRecognition.start();
+      } catch(e) { /* Browser may still be closing the previous recognition session. */ }
+    }, delay);
+  }
+  byId('startVoiceStudio').addEventListener('click', () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      status('Voice recognition unavailable');
+      transcript('Try the latest Google Chrome. Some browsers do not support speech recognition.');
+      return;
+    }
+    voiceSession = true; wakeArmed = false;
+    status('Starting microphone…');
+    transcript('Say “Hey Smart Buwaba, uli bwanji?” or “Hey Smart Buwaba” followed by your question.');
+    restartListening(100);
+  });
+  byId('stopVoiceStudio').addEventListener('click', () => {
+    voiceSession = false; wakeArmed = false; clearTimeout(restartTimer);
+    try { voiceRecognition?.stop(); } catch(e) {}
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    studio.classList.remove('listening','speaking'); status('Microphone paused');
+    transcript('Voice mode paused. Tap Start talking when you are ready.');
+  });
+})();
+</script>
+
 </body>
 </html>
