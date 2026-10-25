@@ -148,7 +148,7 @@
       </div>
       <div class="messages" id="messages" aria-live="polite"></div>
     </section>
-    <footer class="composer-wrap"><form class="composer" id="chatForm"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><textarea id="prompt" rows="1" placeholder="Message Smart Buwaba..." aria-label="Message Smart Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">SMART BUWABA AI · BUILT FOR YOUR WORLD<div class="app-actions" aria-label="Install or share Smart Buwaba"><button class="app-action" id="installAppButton" type="button">⬇ Install app</button><button class="app-action" id="shareAppButton" type="button">↗ Share app</button></div></div></footer>
+    <footer class="composer-wrap"><form class="composer" id="chatForm" onsubmit="return false;"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><textarea id="prompt" rows="1" placeholder="Message Smart Buwaba..." aria-label="Message Smart Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">SMART BUWABA AI · BUILT FOR YOUR WORLD<div class="app-actions" aria-label="Install or share Smart Buwaba"><button class="app-action" id="installAppButton" type="button">⬇ Install app</button><button class="app-action" id="shareAppButton" type="button">↗ Share app</button></div></div></footer>
   </main>
 </div>
 
@@ -352,6 +352,9 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 (() => {
   const byId = id => document.getElementById(id);
   const intro = byId('cosmicIntro');
+  let introAlreadySeen = false;
+  try { introAlreadySeen = sessionStorage.getItem('sbai-intro-seen') === '1'; } catch(e) {}
+  if (introAlreadySeen) intro?.classList.add('hidden');
   let introToneCtx = null;
   function playCosmicSound() {
     try {
@@ -382,6 +385,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     }, 850);
   }
   window.addEventListener('load', () => {
+    if (introAlreadySeen) { intro?.classList.add('hidden'); return; }
     window.setTimeout(() => intro?.classList.add('brain-stage'), 1700);
     window.setTimeout(() => intro?.classList.add('ready'), 3000);
     window.setTimeout(() => { if (intro && !intro.classList.contains('hidden')) { intro.classList.add('hidden'); try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {} } }, 5600);
