@@ -507,7 +507,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   const studio = byId('voiceStudio');
   let voiceSession = false, wakeArmed = false, voiceRecognition = null, processingVoice = false, restartTimer = null;
   let liveSocket = null, liveStream = null, liveAudioContext = null, liveProcessor = null;
-  let liveSource = null, liveMuteGain = null, liveReady = false, livePlayTime = 0;
+  let liveSource = null, liveMuteGain = null, liveReady = false, livePlayTime = 0, liveConnectTimer = null;
   let liveTurnComplete = false, liveFallbackTriggered = false;
   let liveAssistantSpeaking = false, liveUserSpeechDetected = false, liveMicSilenceFrames = 0;
   let liveCommandTimer = null, liveCommandHandled = false;
@@ -536,7 +536,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     liveReady = false;
     liveTurnComplete = false;
     liveAssistantSpeaking = false; liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
-    clearTimeout(restartTimer); clearTimeout(liveCommandTimer);
+    clearTimeout(restartTimer); clearTimeout(liveCommandTimer); clearTimeout(liveConnectTimer); liveConnectTimer = null;
     if (liveProcessor) {
       liveProcessor.onaudioprocess = null;
       try { liveProcessor.disconnect(); } catch (e) {}
@@ -823,12 +823,20 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       liveAudioContext = new AudioContextClass();
       try { await liveAudioContext.resume(); } catch (e) {}
 
-      const tokenResponse = await fetch('/api/live-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: '{}',
-        cache: 'no-store'
-      });
+      const tokenController = new AbortController();
+      const tokenTimeout = setTimeout(() => tokenController.abort(), 15000);
+      let tokenResponse;
+      try {
+        tokenResponse = await fetch('/api/live-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}',
+          cache: 'no-store',
+          signal: tokenController.signal
+        });
+      } finally {
+        clearTimeout(tokenTimeout);
+      }
       const tokenData = await tokenResponse.json().catch(() => ({}));
       if (!tokenResponse.ok || !tokenData.token) {
         const code = tokenData.error || 'GEMINI_LIVE_TOKEN_FAILED';
@@ -836,9 +844,16 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       }
       if (!voiceSession || studio.classList.contains('hidden')) return;
 
-      const socketUrl = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=' + encodeURIComponent(tokenData.token);
+      // Ephemeral Live API tokens currently require the v1alpha constrained WebSocket endpoint.
+      const socketUrl = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained?access_token=' + encodeURIComponent(tokenData.token);
       const socket = new WebSocket(socketUrl);
       liveSocket = socket;
+      // Never leave the voice panel stuck on Connecting if Live setup does not complete.
+      liveConnectTimer = setTimeout(() => {
+        if (voiceSession && liveSocket === socket && !liveReady) {
+          fallbackToLegacy('Gemini Live sinamalize kulumikizana mu masekondi 15. Ndikuyesa njira ina ya mawu.');
+        }
+      }, 15000);
 
       socket.onopen = () => {
         if (!voiceSession || liveSocket !== socket) return;
@@ -890,10 +905,14 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         let message;
         try { message = JSON.parse(event.data); } catch (e) { return; }
         if (message.error) {
-          fallbackToLegacy('Real-time voice sinathe kuyamba.');
+          clearTimeout(liveConnectTimer); liveConnectTimer = null;
+          const detail = message.error.message || message.error.status || 'API error';
+          console.warn('Gemini Live setup error:', detail);
+          fallbackToLegacy('Gemini Live yakana kulumikizana (' + String(detail).slice(0, 120) + '). Ndikuyesa njira ina ya mawu.');
           return;
         }
         if (message.setupComplete) {
+          clearTimeout(liveConnectTimer); liveConnectTimer = null;
           liveReady = true;
           status('Microphone ikuyamba…');
           beginLiveMicrophone().catch(error => {
@@ -982,11 +1001,13 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       };
     } catch (error) {
       console.error('Smart Buwaba Live Voice startup failed:', error?.code || error?.message || error);
-      const msg = error?.code === 'GEMINI_API_KEY_MISSING'
-        ? 'Smart Buwaba ikusowa GEMINI_API_KEY pa server.'
-        : error?.code === 'GEMINI_LIVE_TOKEN_FAILED'
-          ? 'Gemini Live sinapereke token. Yang’anani quota ndi mwayi wa Live API mu Google AI Studio.'
-          : 'Sitinathe kulumikiza real-time voice.';
+      const msg = error?.name === 'AbortError'
+        ? 'Pempho la token ya mawu latenga nthawi yaitali. Yang’anani intaneti ndipo yesaninso.'
+        : error?.code === 'GEMINI_API_KEY_MISSING'
+          ? 'Smart Buwaba ikusowa GEMINI_API_KEY pa server.'
+          : error?.code === 'GEMINI_LIVE_TOKEN_FAILED'
+            ? 'Gemini Live sinapereke token. Yang’anani quota, GEMINI_API_KEY ndi mwayi wa Live API mu Google AI Studio.'
+            : 'Sitinathe kulumikiza real-time voice. Ndikuyesa njira ina ya mawu.';
       fallbackToLegacy(msg);
     }
   }
