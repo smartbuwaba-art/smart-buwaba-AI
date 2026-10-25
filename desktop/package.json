@@ -1,0 +1,36 @@
+{
+  "name": "smart-buwaba-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart Buwaba AI desktop companion for Windows voice commands",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.smartbuwaba.desktop",
+    "productName": "Smart Buwaba AI",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "Smart-Buwaba-AI-Portable-${version}.${ext}"
+    }
+  }
+}
