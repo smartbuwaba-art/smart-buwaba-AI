@@ -526,24 +526,128 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   function speakAnswer(text) {
     return speakNaturalSmartBuwaba(text, studio);
   }
+  const voiceConversationHistory = [];
+
+  async function requestVoiceStream(text, history, onDelta) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, history, stream: true, voiceMode: true }),
+        signal: controller.signal,
+        cache: 'no-store'
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        const code = data.error || 'GEMINI_REQUEST_FAILED';
+        throw Object.assign(new Error(code), { code });
+      }
+      if (!response.body) throw new Error('Streaming is not supported by this browser.');
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let reply = '';
+
+      function consumeEvent(rawEvent) {
+        const line = rawEvent.split(/\r?\n/).find(line => line.startsWith('data:'));
+        if (!line) return;
+        let data;
+        try { data = JSON.parse(line.slice(5).trim()); } catch (e) { return; }
+        if (data.error) throw Object.assign(new Error(data.error), { code: data.error });
+        if (typeof data.delta === 'string' && data.delta) {
+          reply += data.delta;
+          onDelta(data.delta, reply);
+        }
+      }
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split(/\r?\n\r?\n/);
+        buffer = events.pop() || '';
+        for (const event of events) consumeEvent(event);
+      }
+      buffer += decoder.decode();
+      if (buffer.trim()) consumeEvent(buffer);
+      if (!reply.trim()) throw new Error('GEMINI_EMPTY_RESPONSE');
+      return reply.trim();
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   async function askAI(text) {
     processingVoice = true; wakeArmed = false;
     try { voiceRecognition?.stop(); } catch(e) {}
-    studio.classList.remove('listening'); status('Thinking…'); transcript('You: ' + text);
+    studio.classList.remove('listening');
+    status('Thinking…');
+    transcript('You: ' + text + '\n\nSmart Buwaba is preparing an answer…');
+
+    const history = voiceConversationHistory.slice(-10);
+    const shouldSpeak = window.isSmartBuwabaVoiceEnabled ? window.isSmartBuwabaVoiceEnabled() : true;
+    let firstSentenceBuffer = '';
+    let speechRemainder = '';
+    let earlySpeech = null;
+
     try {
-      const reply = await requestSmartBuwabaAI(text);
+      const reply = await requestVoiceStream(text, history, (delta, streamedReply) => {
+        transcript('You: ' + text + '\n\nSmart Buwaba: ' + streamedReply);
+        if (!shouldSpeak) return;
+
+        if (!earlySpeech) {
+          firstSentenceBuffer += delta;
+          const boundary = firstSentenceBuffer.match(/[.!?](?:["'”’)]*)\s+/);
+          if (boundary && boundary.index + boundary[0].length >= 28) {
+            const splitAt = boundary.index + boundary[0].length;
+            const firstSentence = firstSentenceBuffer.slice(0, splitAt).trim();
+            speechRemainder = firstSentenceBuffer.slice(splitAt);
+            // Start generating audio when the first complete sentence arrives.
+            earlySpeech = speakAnswer(firstSentence);
+          }
+        } else {
+          speechRemainder += delta;
+        }
+      });
+
+      voiceConversationHistory.push(
+        { role: 'user', content: text },
+        { role: 'assistant', content: reply }
+      );
+      if (voiceConversationHistory.length > 12) voiceConversationHistory.splice(0, voiceConversationHistory.length - 12);
       transcript('You: ' + text + '\n\nSmart Buwaba: ' + reply);
-      if (window.isSmartBuwabaVoiceEnabled ? window.isSmartBuwabaVoiceEnabled() : true) await speakAnswer(reply);
-      else status('Answer ready');
+
+      if (shouldSpeak) {
+        if (earlySpeech) {
+          await earlySpeech;
+          const remainder = speechRemainder.trim();
+          if (remainder) await speakAnswer(remainder);
+        } else {
+          await speakAnswer(reply);
+        }
+      } else {
+        status('Answer ready');
+      }
     } catch (error) {
-      const msg = 'Pepani, sindinathe kuyankha pano. Yesaninso pang’ono.';
-      transcript(msg); status('TRY AGAIN');
+      const codes = {
+        GEMINI_QUOTA_EXCEEDED: 'Quota ya Gemini yafika. Yang’anani usage ya Gemini API.',
+        GEMINI_API_KEY_INVALID: 'API key ya Gemini ikufunika kukonzedwa.',
+        GEMINI_ACCESS_DENIED: 'Gemini yakana mwayi wa API key kapena project.',
+        GEMINI_MODEL_NOT_FOUND: 'Model ya Gemini sinapezeke.',
+        GEMINI_TEMPORARY_FAILURE: 'Server ya AI ili ndi vuto kwakanthawi.'
+      };
+      const code = error.code || error.message || '';
+      const msg = codes[code] || (error.name === 'AbortError' ? 'Yankho latenga nthawi yayitali. Yang’anani intaneti yanu, kenako yesaninso.' : 'Pepani, sindinathe kuyankha pano. Yesaninso pang’ono.');
+      transcript(msg);
+      status('TRY AGAIN');
       await speakAnswer(msg);
     } finally {
       processingVoice = false;
       if (voiceSession) {
-        status('Listening for “Hey Smart Buwaba”');
-        restartListening(650);
+        status('Listening for your question…');
+        restartListening(450);
       }
     }
   }
@@ -652,6 +756,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       transcript('Gwiritsani ntchito Google Chrome yaposachedwa. Browser imeneyi siyithandiza kuzindikira mawu.');
       return;
     }
+    voiceConversationHistory.length = 0;
     voiceSession = true; wakeArmed = true;
     status('Listening for your question…');
     transcript('Lankhulani funso lanu mwachindunji, mwachitsanzo: “Hey Smart Buwaba, uli bwanji?” kapena “Ndiuze za mapulaneti.”');
