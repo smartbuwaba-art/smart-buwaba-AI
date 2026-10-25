@@ -728,7 +728,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     const saturnOrbit=new THREE.Group();saturnOrbit.rotation.z=-.1;saturnOrbit.rotation.x=.45;world.add(saturnOrbit);
     const saturn=planet(.42,"saturn",new THREE.Vector3(1.7,-.1,-.12),0xdcb98d);
     const ringMat=new THREE.MeshStandardMaterial({color:0xe9c89b,roughness:.9,side:THREE.DoubleSide,transparent:true,opacity:.82,depthWrite:false});
-    const ring=new THREE.Mesh(new THREE.RingGeometry(.56,.9,128),ringMat);ring.rotation.x=Math.PI/2+.18;ring.rotation.y=-.16;saturn.group.add(ring);fadeMats.push(ringMat);saturnOrbit.add(saturn.group);
+    const ring=new THREE.Mesh(new THREE.RingGeometry(.56,.9,128),ringMat);ring.rotation.x=.62;ring.rotation.y=-.16;saturn.group.add(ring);fadeMats.push(ringMat);saturnOrbit.add(saturn.group);
     const marsOrbit=new THREE.Group();marsOrbit.rotation.x=.36;marsOrbit.rotation.z=.4;world.add(marsOrbit);const mars=planet(.245,"mars",new THREE.Vector3(-.83,-1.12,.2),0xec8060);marsOrbit.add(mars.group);
     const iceOrbit=new THREE.Group();iceOrbit.rotation.x=.58;iceOrbit.rotation.z=-.32;world.add(iceOrbit);const ice=planet(.255,"ice",new THREE.Vector3(1.02,1.12,-.5),0x6addff);iceOrbit.add(ice.group);
 
@@ -736,11 +736,11 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     const starGeom=new THREE.BufferGeometry();starGeom.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));
     const stars=new THREE.Points(starGeom,new THREE.PointsMaterial({color:0xd9f2ff,size:.018,transparent:true,opacity:.83}));scene.add(stars);
 
-    const brain=new THREE.Group();scene.add(brain);
+    const brain=new THREE.Group();scene.add(brain);const brainMats=[];
     function addLobe(side){
       const hemi=new THREE.Group();hemi.position.x=side*.32;hemi.scale.set(.86,1,.82);
       const base=new THREE.MeshStandardMaterial({color:side<0?0x79dac2:0x8cebd0,roughness:.43,metalness:.04,emissive:0x134d54,emissiveIntensity:.22,transparent:true});
-      const sphere=new THREE.Mesh(new THREE.SphereGeometry(.66,56,44),base);sphere.scale.set(.85,1,.84);hemi.add(sphere);fadeMats.push(base);
+      const sphere=new THREE.Mesh(new THREE.SphereGeometry(.66,56,44),base);sphere.scale.set(.85,1,.84);hemi.add(sphere);brainMats.push(base);
       const groove=new THREE.MeshStandardMaterial({color:0x1c6b70,roughness:.72,emissive:0x071e36,emissiveIntensity:.22,transparent:true});
       const highlight=new THREE.MeshStandardMaterial({color:0xd2fff0,roughness:.4,emissive:0x367e7b,emissiveIntensity:.18,transparent:true});
       const paths=[
@@ -751,11 +751,11 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         [[-.43,-.10,.26],[-.35,-.20,.37],[-.24,-.12,.46],[-.14,-.22,.48]]
       ];
       paths.forEach((path,i)=>{const pts=path.map(p=>new THREE.Vector3(side<0?p[0]:-p[0],p[1],p[2]));const curve=new THREE.CatmullRomCurve3(pts);hemi.add(new THREE.Mesh(new THREE.TubeGeometry(curve,32,.021,8,false),i%2?groove:highlight))});
-      fadeMats.push(groove,highlight);brain.add(hemi);
+      brainMats.push(groove,highlight);brain.add(hemi);
     }
     addLobe(-1);addLobe(1);
     const seam=new THREE.CatmullRomCurve3([new THREE.Vector3(0,.66,.12),new THREE.Vector3(0,.35,.43),new THREE.Vector3(0,0,.56),new THREE.Vector3(0,-.35,.43),new THREE.Vector3(0,-.57,.2)]);
-    const seamMat=new THREE.MeshStandardMaterial({color:0x17636c,roughness:.6,transparent:true});brain.add(new THREE.Mesh(new THREE.TubeGeometry(seam,48,.026,10,false),seamMat));fadeMats.push(seamMat);
+    const seamMat=new THREE.MeshStandardMaterial({color:0x17636c,roughness:.6,transparent:true});brain.add(new THREE.Mesh(new THREE.TubeGeometry(seam,48,.026,10,false),seamMat));brainMats.push(seamMat);
 
     root.classList.add("webgl-ready");
     function resize(){const w=Math.max(1,root.clientWidth),h=Math.max(1,root.clientHeight),aspect=w/h;camera.aspect=aspect;camera.position.z=aspect<1.08?10:8.6;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
