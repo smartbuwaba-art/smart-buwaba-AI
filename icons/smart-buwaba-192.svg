@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8df7c2"/><stop offset="1" stop-color="#80e8ff"/></linearGradient><radialGradient id="r"><stop stop-color="#1c3850"/><stop offset="1" stop-color="#080b16"/></radialGradient></defs>
+<rect width="192" height="192" rx="42" fill="url(#r)"/>
+<circle cx="96" cy="86" r="66" fill="#8df7c2" opacity=".08"/>
+<path d="M95 36c-9-12-28-8-31 7-16 1-24 19-15 32-13 11-8 30 5 34-2 16 14 26 27 17l14-10 14 10c13 9 29-1 27-17 13-4 18-23 5-34 9-13 1-31-15-32-3-15-22-19-31-7Z" fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/>
+<path d="M96 41v81M67 53c14 0 20 10 13 21s-7 18 5 25M52 77c12 0 17 7 13 18M69 112c9-3 15 2 15 10M125 53c-14 0-20 10-13 21s7 18-5 25M140 77c-12 0-17 7-13 18M123 112c-9-3-15 2-15 10" fill="none" stroke="#b5ffe4" stroke-width="4" stroke-linecap="round"/>
+<path d="M147 32l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#80e8ff"/>
+<text x="96" y="157" font-family="Arial,sans-serif" font-size="17" font-weight="800" text-anchor="middle" letter-spacing="2" fill="#f4f7ff">BUWABA</text>
+</svg>
