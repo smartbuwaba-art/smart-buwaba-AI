@@ -1,5 +1,5 @@
-const CACHE_NAME = "smart-buwaba-shell-v1";
-const APP_SHELL = ["/", "/index.html"];
+const CACHE_NAME = "smart-buwaba-shell-v2";
+const APP_SHELL = ["/", "/index.html", "/manifest.json", "/icons/smart-buwaba-192.svg", "/icons/smart-buwaba-512.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
