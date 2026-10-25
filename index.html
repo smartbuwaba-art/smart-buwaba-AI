@@ -432,7 +432,7 @@ async function speakNaturalSmartBuwaba(text,studio=null){
 }
 function speakText(text){void speakNaturalSmartBuwaba(text);}
 $('voiceToggle').addEventListener('click',()=>{voiceEnabled=!voiceEnabled;$('voiceToggle').textContent=voiceEnabled?'🔊 Voice on':'🔇 Voice off';$('voiceToggle').setAttribute('aria-pressed',String(voiceEnabled));if(!voiceEnabled){stopSmartBuwabaAudio();if('speechSynthesis'in window)window.speechSynthesis.cancel();}tone('light')});
-$('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=promptBox.value.trim();if(!text){tone('error');showToast('Lembani uthenga kaye, bro.','error');promptBox.focus();return}if(window.executeSmartBuwabaVoiceCommand?.(text)){promptBox.value='';return}hero.classList.add('hidden');cards.classList.add('hidden');addMessage(text,'user');promptBox.value='';promptBox.style.height='auto';const send=$('sendButton'),mic=$('mic');send.disabled=true;mic.disabled=true;$('connectionStatus').textContent='THINKING';const typing=addTyping();tone('send');try{const reply=await requestSmartBuwabaAI(text);typing.remove();addMessage(reply,'ai',{speakable:true});if(voiceEnabled)speakText(reply);$('connectionStatus').textContent='READY'}catch(error){
+$('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=promptBox.value.trim();if(!text){tone('error');showToast('Lembani uthenga kaye, bro.','error');promptBox.focus();return}if(await window.executeSmartBuwabaVoiceCommand?.(text)){promptBox.value='';return}hero.classList.add('hidden');cards.classList.add('hidden');addMessage(text,'user');promptBox.value='';promptBox.style.height='auto';const send=$('sendButton'),mic=$('mic');send.disabled=true;mic.disabled=true;$('connectionStatus').textContent='THINKING';const typing=addTyping();tone('send');try{const reply=await requestSmartBuwabaAI(text);typing.remove();addMessage(reply,'ai',{speakable:true});if(voiceEnabled)speakText(reply);$('connectionStatus').textContent='READY'}catch(error){
   typing.remove();
   const failureMessages={
     GEMINI_API_KEY_MISSING:'AI server ikusowa GEMINI_API_KEY ku Vercel. Tiyenera kuwonjezera key mu Environment Variables.',
@@ -453,7 +453,7 @@ $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=
 }finally{send.disabled=false;mic.disabled=false;promptBox.focus()}});
 promptBox.addEventListener('input',()=>{promptBox.style.height='auto';promptBox.style.height=Math.min(promptBox.scrollHeight,140)+'px'});
 promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatForm').requestSubmit()}});
-function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('Voice input is not supported here. Try the latest Chrome browser.','error');return}if(recognition){try{recognition.stop()}catch(e){}}recognition=new SR();const lang=$('voiceLanguage').value;recognition.lang=(!lang||lang==='auto')?'ny-MW':lang;recognition.interimResults=true;recognition.continuous=false;const mic=$('mic');recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani tsopano.')};recognition.onresult=event=>{let finalText='';for(let i=event.resultIndex;i<event.results.length;i++)finalText+=event.results[i][0].transcript;if(finalText)promptBox.value=finalText};recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':event.error==='language-not-supported'?'Browser sinathandize kuzindikira chinenero cha mawu. Sankhani Chichewa pa menyu, kenako yesaninso.':'Voice input sinagwire. Yesaninso.','error')};recognition.onend=()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';const spoken=promptBox.value.trim();if(spoken&&window.executeSmartBuwabaVoiceCommand?.(spoken))return;if(spoken)promptBox.focus()};try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}}
+function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('Voice input is not supported here. Try the latest Chrome browser.','error');return}if(recognition){try{recognition.stop()}catch(e){}}recognition=new SR();const lang=$('voiceLanguage').value;recognition.lang=(!lang||lang==='auto')?'ny-MW':lang;recognition.interimResults=true;recognition.continuous=false;const mic=$('mic');recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani tsopano.')};recognition.onresult=event=>{let finalText='';for(let i=event.resultIndex;i<event.results.length;i++)finalText+=event.results[i][0].transcript;if(finalText)promptBox.value=finalText};recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':event.error==='language-not-supported'?'Browser sinathandize kuzindikira chinenero cha mawu. Sankhani Chichewa pa menyu, kenako yesaninso.':'Voice input sinagwire. Yesaninso.','error')};recognition.onend=async()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';const spoken=promptBox.value.trim();if(spoken&&await window.executeSmartBuwabaVoiceCommand?.(spoken))return;if(spoken)promptBox.focus()};try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}}
 $('mic').addEventListener('click',startVoice);$('voiceCard').addEventListener('click',()=>window.openVoiceStudio?.());
 restoreLatestConversation();
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(err=>console.warn('Offline cache unavailable:',err)))}
@@ -723,13 +723,15 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     return String(value || '')
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .toLowerCase().replace(/[’‘]/g, "'")
-      .replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim()
+      .replace(/[.,!?;:]/g, ' ')
+      .replace(/\b(pita|pitani|ndipite)\s+ku(?=[a-z])/g, '$1 ku ')
+      .replace(/\s+/g, ' ').trim()
       .replace(/^(?:(?:hey|hi|hello)\s+)?(?:smart\s+)?buwaba\s+/, '');
   }
 
   function findSpokenAppCommand(value) {
     let phrase = normalizeVoiceCommandText(value);
-    const command = phrase.match(/^(?:please\s+)?(?:tsegula|tsegulani|nditsegulire|open|launch|go to|pita ku|nditengere ku|ndipite ku|switch to|play|sewera|sewerani|yamba kusewera)\s+(.+)$/);
+    const command = phrase.match(/^(?:please\s+)?(?:tsegula|tsegulani|tsegulireni|segula|nditsegulire|open|launch|go to|pita ku|pitani ku|pita pa|pitani pa|nditengere ku|nditengere pa|ndipite ku|switch to|play|sewera|sewerani|yamba kusewera)\s+(.+)$/);
     if (!command) return null;
     let target = command[1].trim()
       .replace(/^(?:the\s+)?app\s+(?:(?:ya|la|wa)\s+)?/, '')
@@ -752,30 +754,44 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       { names: /^(?:chatgpt|chat gpt)$/, label: 'ChatGPT', url: 'https://chatgpt.com/' },
       { names: /^(?:camera|kamera)$/, label: 'Camera', nativeApp: 'camera', nativeOnly: true },
       { names: /^(?:settings|setting|ma settings|zokonda)$/, label: 'Settings', nativeApp: 'settings', nativeOnly: true },
-      { names: /^(?:calculator|kalkuleta|calculator app)$/, label: 'Calculator', nativeApp: 'calculator', nativeOnly: true }
+      { names: /^(?:calculator|kalkuleta|calculator app)$/, label: 'Calculator', nativeApp: 'calculator', nativeOnly: true },
+      { names: /^(?:notepad|text editor|notepad app)$/, label: 'Notepad', nativeApp: 'notepad', nativeOnly: true },
+      { names: /^(?:file explorer|file manager|files|my files|windows explorer)$/, label: 'File Explorer', nativeApp: 'file_explorer', nativeOnly: true },
+      { names: /^(?:task manager|taskmanager)$/, label: 'Task Manager', nativeApp: 'task_manager', nativeOnly: true },
+      { names: /^(?:paint|microsoft paint|drawing app)$/, label: 'Paint', nativeApp: 'paint', nativeOnly: true }
     ];
     return destinations.find(destination => destination.names.test(target)) || null;
   }
 
-  function runSpokenAppCommand(value) {
+  async function runSpokenAppCommand(value) {
     const destination = findSpokenAppCommand(value);
-    if (!destination || liveCommandHandled) return false;
+    if (!destination || (liveCommandHandled && voiceSession)) return false;
 
+    liveCommandHandled = true;
     let nativeLaunched = false;
-    if (destination.nativeApp && window.SmartBuwabaNative &&
-        typeof window.SmartBuwabaNative.openApp === 'function') {
+    const bridge = window.SmartBuwabaNative || window.SmartBuwabaDesktop;
+    if (destination.nativeApp && bridge && typeof bridge.openApp === 'function') {
       try {
-        nativeLaunched = window.SmartBuwabaNative.openApp(destination.nativeApp) === true;
+        nativeLaunched = (await Promise.resolve(bridge.openApp(destination.nativeApp))) === true;
       } catch (error) {
         console.warn('Native app launch was unavailable:', error);
       }
     }
-    // Actions that require Android's native layer must not pretend to work in a browser.
-    if (destination.nativeOnly && !nativeLaunched) return false;
 
-    liveCommandHandled = true;
-    voiceSession = false;
-    stopLiveVoice();
+    // A browser must not pretend it can open local settings/apps without a native bridge.
+    if (destination.nativeOnly && !nativeLaunched) {
+      liveCommandHandled = false;
+      return false;
+    }
+    if (!nativeLaunched && !destination.url) {
+      liveCommandHandled = false;
+      return false;
+    }
+
+    if (voiceSession) {
+      voiceSession = false;
+      stopLiveVoice();
+    }
     try { voiceRecognition?.stop(); } catch (e) {}
     voiceRecognition = null;
     studio.classList.remove('listening', 'speaking');
@@ -783,9 +799,12 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     transcript('Smart Buwaba: Ndikutsegulira ' + destination.label + '.');
 
     if (nativeLaunched || destination.nativeOnly) return true;
-    // On Android, this fallback is handed to the host app/browser; on PC it opens the website.
-    if (destination.url) window.location.assign(destination.url);
-    return true;
+    if (destination.url) {
+      window.location.assign(destination.url);
+      return true;
+    }
+    liveCommandHandled = false;
+    return false;
   }
 
   window.executeSmartBuwabaVoiceCommand = runSpokenAppCommand;
@@ -917,7 +936,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
           renderLiveTranscript();
           clearTimeout(liveCommandTimer);
           liveCommandTimer = setTimeout(() => {
-            if (voiceSession && !liveCommandHandled) runSpokenAppCommand(liveInputText);
+            if (voiceSession && !liveCommandHandled) void runSpokenAppCommand(liveInputText);
           }, 300);
         }
         const output = server.outputTranscription?.text;
@@ -1162,7 +1181,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         const question = raw.slice((wake.index || 0) + wake[0].length).replace(/^[\s,.:!?-]+/, '').trim();
         if (question) {
           handledThisSession = true;
-          if (!runSpokenAppCommand(question)) askAI(question);
+          void runSpokenAppCommand(question).then(handled => { if (!handled && voiceSession) askAI(question); });
         } else {
           wakeArmed = true;
           handledThisSession = true;
@@ -1172,7 +1191,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         return;
       }
       handledThisSession = true;
-      if (!runSpokenAppCommand(raw)) askAI(raw);
+      void runSpokenAppCommand(raw).then(handled => { if (!handled && voiceSession) askAI(raw); });
     };
     r.onerror = event => {
       studio.classList.remove('listening');
