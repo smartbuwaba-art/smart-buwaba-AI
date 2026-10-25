@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "GEMINI_API_KEY_MISSING" });
   }
 
-  const { message, history } = req.body || {};
+  const { message, history, stream, voiceMode } = req.body || {};
   if (!message || typeof message !== "string" || !message.trim()) {
     return res.status(400).json({ error: "MESSAGE_REQUIRED" });
   }
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
 
   const conversationText = (Array.isArray(history) ? history.map(item => typeof item?.content === "string" ? item.content : "").join(" ") : "") + " " + currentMessage;
   const isLongCreativeRequest = /\b(song|songs|songwriting|lyrics|lyric|nyimbo|ndakatulo|poem|poetry|chorus|verse|rap|ballad)\b/i.test(conversationText);
-  const maxOutputTokens = isLongCreativeRequest ? 1400 : 500;
+  const maxOutputTokens = isLongCreativeRequest ? 1400 : (voiceMode ? 180 : 500);
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const models = [...new Set([
@@ -76,6 +76,80 @@ export default async function handler(req, res) {
     "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
   ])];
+
+  // Voice Studio streams the answer so it can begin speaking before generation finishes.
+  if (stream === true && voiceMode === true) {
+    const voiceInstruction = SYSTEM_INSTRUCTION + `
+VOICE MODE:
+- Respond naturally as if talking to the user, not writing an essay.
+- For ordinary questions, answer in 1–2 short, useful sentences so spoken replies start quickly.
+- Do not add greetings or introductions unless they help answer the request.
+- If the user asks for a full song, detailed explanation, or another complete creative work, honor that request instead of shortening it.
+- Use fluent, natural Malawian Chichewa when the user speaks Chichewa.`;
+    let streamError = null;
+    let quotaStreamSeen = false;
+    let missingStreamModelSeen = false;
+
+    for (const model of models) {
+      let emitted = false;
+      try {
+        const generated = await ai.models.generateContentStream({
+          model,
+          contents,
+          config: {
+            systemInstruction: voiceInstruction,
+            maxOutputTokens,
+          },
+        });
+
+        for await (const chunk of generated) {
+          const delta = typeof chunk.text === "string" ? chunk.text : "";
+          if (!delta) continue;
+          if (!res.headersSent) {
+            res.status(200);
+            res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+            res.setHeader("Cache-Control", "no-cache, no-transform");
+            res.setHeader("Connection", "keep-alive");
+            res.setHeader("X-Accel-Buffering", "no");
+          }
+          res.write("data: " + JSON.stringify({ delta }) + "\n\n");
+          emitted = true;
+        }
+
+        if (!res.headersSent) {
+          res.status(200);
+          res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+          res.setHeader("Cache-Control", "no-cache, no-transform");
+          res.setHeader("Connection", "keep-alive");
+        }
+        res.write("data: " + JSON.stringify({ done: true }) + "\n\n");
+        return res.end();
+      } catch (error) {
+        streamError = error;
+        const info = getErrorInfo(error);
+        if (info.isQuota) quotaStreamSeen = true;
+        if (info.isModelMissing) missingStreamModelSeen = true;
+
+        // Once any text reached the browser, changing models would corrupt the answer.
+        if (emitted || res.headersSent) {
+          res.write("data: " + JSON.stringify({ error: "GEMINI_STREAM_INTERRUPTED" }) + "\n\n");
+          return res.end();
+        }
+        if (info.isQuota || info.isModelMissing || info.status >= 500 || info.status === 0) continue;
+        break;
+      }
+    }
+
+    const info = getErrorInfo(streamError);
+    let code = "GEMINI_REQUEST_FAILED";
+    if (info.isInvalidKey) code = "GEMINI_API_KEY_INVALID";
+    else if (info.status === 403) code = "GEMINI_ACCESS_DENIED";
+    else if (quotaStreamSeen) code = "GEMINI_QUOTA_EXCEEDED";
+    else if (missingStreamModelSeen && info.isModelMissing) code = "GEMINI_MODEL_NOT_FOUND";
+    else if (info.status >= 500 || info.status === 0) code = "GEMINI_TEMPORARY_FAILURE";
+    console.error("Smart Buwaba streaming response failed.", { code, status: info.status });
+    return res.status(info.status >= 400 ? info.status : 500).json({ error: code });
+  }
 
   let lastError = null;
   let quotaSeen = false;
