@@ -57,14 +57,18 @@ export default async function handler(req, res) {
       const text = typeof item?.content === "string" ? item.content.trim().slice(0, 1800) : "";
       if (!role || !text || (!contents.length && role !== "user")) continue;
       const last = contents[contents.length - 1];
-      if (last && last.role === role) last.parts[0].text += "\\n" + text;
+      if (last && last.role === role) last.parts[0].text += "\n" + text;
       else contents.push({ role, parts: [{ text }] });
     }
   }
   const currentMessage = message.trim().slice(0, 4000);
   const lastTurn = contents[contents.length - 1];
-  if (lastTurn?.role === "user") lastTurn.parts[0].text += "\\n" + currentMessage;
+  if (lastTurn?.role === "user") lastTurn.parts[0].text += "\n" + currentMessage;
   else contents.push({ role: "user", parts: [{ text: currentMessage }] });
+
+  const conversationText = (Array.isArray(history) ? history.map(item => typeof item?.content === "string" ? item.content : "").join(" ") : "") + " " + currentMessage;
+  const isLongCreativeRequest = /\b(song|songs|songwriting|lyrics|lyric|nyimbo|ndakatulo|poem|poetry|chorus|verse|rap|ballad)\b/i.test(conversationText);
+  const maxOutputTokens = isLongCreativeRequest ? 1400 : 500;
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const models = [...new Set([
@@ -84,7 +88,7 @@ export default async function handler(req, res) {
         contents,
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
-          maxOutputTokens: 300,
+          maxOutputTokens,
         },
       });
 
