@@ -43,10 +43,28 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "GEMINI_API_KEY_MISSING" });
   }
 
-  const { message } = req.body || {};
-  if (!message || typeof message !== "string") {
+  const { message, history } = req.body || {};
+  if (!message || typeof message !== "string" || !message.trim()) {
     return res.status(400).json({ error: "MESSAGE_REQUIRED" });
   }
+
+  // Keep a short, alternating conversation history so follow-up requests make sense.
+  const contents = [];
+  if (Array.isArray(history)) {
+    for (const item of history.slice(-12)) {
+      const role = item?.role === "assistant" || item?.role === "model"
+        ? "model" : item?.role === "user" ? "user" : null;
+      const text = typeof item?.content === "string" ? item.content.trim().slice(0, 1800) : "";
+      if (!role || !text || (!contents.length && role !== "user")) continue;
+      const last = contents[contents.length - 1];
+      if (last && last.role === role) last.parts[0].text += "\\n" + text;
+      else contents.push({ role, parts: [{ text }] });
+    }
+  }
+  const currentMessage = message.trim().slice(0, 4000);
+  const lastTurn = contents[contents.length - 1];
+  if (lastTurn?.role === "user") lastTurn.parts[0].text += "\\n" + currentMessage;
+  else contents.push({ role: "user", parts: [{ text: currentMessage }] });
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const models = [...new Set([
@@ -63,7 +81,7 @@ export default async function handler(req, res) {
     try {
       const response = await ai.models.generateContent({
         model,
-        contents: message,
+        contents,
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
           maxOutputTokens: 300,
