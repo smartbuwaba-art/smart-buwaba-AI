@@ -155,7 +155,7 @@
     <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Smart Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong>Smart Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="auto">Auto voice</option><option value="ny-MW">Chichewa</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
+    <header class="topbar"><strong>Smart Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
       <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Smart Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div></div>
       <div class="cards" id="cards">
@@ -453,7 +453,7 @@ $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=
 }finally{send.disabled=false;mic.disabled=false;promptBox.focus()}});
 promptBox.addEventListener('input',()=>{promptBox.style.height='auto';promptBox.style.height=Math.min(promptBox.scrollHeight,140)+'px'});
 promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatForm').requestSubmit()}});
-function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('Voice input is not supported here. Try the latest Chrome browser.','error');return}if(recognition){try{recognition.stop()}catch(e){}}recognition=new SR();const lang=$('voiceLanguage').value;recognition.lang=(!lang||lang==='auto'||lang==='ny-MW')?'en-US':lang;recognition.interimResults=true;recognition.continuous=false;const mic=$('mic');recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani tsopano.')};recognition.onresult=event=>{let finalText='';for(let i=event.resultIndex;i<event.results.length;i++)finalText+=event.results[i][0].transcript;if(finalText)promptBox.value=finalText};recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':'Voice input sinagwire. Yesaninso.','error')};recognition.onend=()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';if(promptBox.value.trim())promptBox.focus()};try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}}
+function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('Voice input is not supported here. Try the latest Chrome browser.','error');return}if(recognition){try{recognition.stop()}catch(e){}}recognition=new SR();const lang=$('voiceLanguage').value;recognition.lang=(!lang||lang==='auto')?'ny-MW':lang;recognition.interimResults=true;recognition.continuous=false;const mic=$('mic');recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani tsopano.')};recognition.onresult=event=>{let finalText='';for(let i=event.resultIndex;i<event.results.length;i++)finalText+=event.results[i][0].transcript;if(finalText)promptBox.value=finalText};recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':event.error==='language-not-supported'?'Browser sinathandize kuzindikira chinenero cha mawu. Sankhani Chichewa pa menyu, kenako yesaninso.':'Voice input sinagwire. Yesaninso.','error')};recognition.onend=()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';if(promptBox.value.trim())promptBox.focus()};try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}}
 $('mic').addEventListener('click',startVoice);$('voiceCard').addEventListener('click',()=>window.openVoiceStudio?.());
 restoreLatestConversation();
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(err=>console.warn('Offline cache unavailable:',err)))}
@@ -560,7 +560,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     r.interimResults = true;
     const lang = byId('voiceLanguage').value;
     // Browser speech recognition often does not support Chichewa locale codes.
-    r.lang = (!lang || lang === 'auto' || lang === 'ny-MW') ? 'en-US' : lang;
+    r.lang = (!lang || lang === 'auto') ? 'ny-MW' : lang;
     let finalTranscript = '';
     let handledThisSession = false;
     r.onstart = () => {
@@ -611,6 +611,10 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         voiceSession = false;
         status('Microphone permission needed');
         transcript('Lolani microphone mu Chrome: dinani chizindikiro cha kumanzere kwa adiresi ya webusaiti, kenako Microphone → Allow.');
+      } else if (event.error === 'language-not-supported') {
+        voiceSession = false;
+        status('Chichewa speech recognition unavailable');
+        transcript('Browser iyi sinalandire ny-MW pa speech recognition. Yesani Chrome yaposachedwa ndipo onani kuti voice language ndi Chichewa.');
       } else if (event.error === 'network') {
         status('Reconnecting voice…');
         transcript('Kulumikizana kwa mawu kwaduka. Ndikuyesanso; yesaninso pang’ono ngati zikupitiriza.');
