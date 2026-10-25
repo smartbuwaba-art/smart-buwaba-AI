@@ -600,7 +600,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         if (!earlySpeech) {
           firstSentenceBuffer += delta;
           const boundary = firstSentenceBuffer.match(/[.!?](?:["'”’)]*)\s+/);
-          if (boundary && boundary.index + boundary[0].length >= 28) {
+          if (boundary && boundary.index + boundary[0].length >= 12) {
             const splitAt = boundary.index + boundary[0].length;
             const firstSentence = firstSentenceBuffer.slice(0, splitAt).trim();
             speechRemainder = firstSentenceBuffer.slice(splitAt);
