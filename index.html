@@ -709,9 +709,13 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     source.onended = () => {
       liveAudioSources.delete(source);
       try { source.disconnect(); } catch (e) {}
-      if (!liveAudioSources.size && liveTurnComplete && liveReady && voiceSession) {
+      // The last playback buffer must always release the microphone gate.
+      // Do not depend on turnComplete here: an interruption can reset that flag
+      // before this audio buffer ends, otherwise the mic can remain muted forever.
+      if (!liveAudioSources.size && liveReady && voiceSession) {
         liveAssistantSpeaking = false;
-        liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
+        liveUserSpeechDetected = false;
+        liveMicSilenceFrames = 0;
         studio.classList.remove('speaking');
         studio.classList.add('listening');
         status('Ndikumvetsera… funsani funso lina.');
