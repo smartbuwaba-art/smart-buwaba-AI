@@ -453,7 +453,7 @@ function addGeneratedImage(prompt,imageData,mimeType='image/png'){
   download.className='tiny-btn image-download';
   download.textContent='⬇ Tsitsani chithunzi';
   download.href=image.src;
-  download.download='smart-buwaba-image.png';
+  download.download=(mimeType||'').toLowerCase().includes('jpeg')?'smart-buwaba-image.jpg':'smart-buwaba-image.png';
   tools.appendChild(download);
   item.appendChild(tools);
   item.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -497,6 +497,7 @@ async function generateImageFromPrompt(){
       GEMINI_IMAGE_MODEL_UNAVAILABLE:'Image model imeneyi sikupezeka pa project/key yanu pano.',
       GEMINI_IMAGE_NO_OUTPUT:'Gemini sanabweze chithunzi. Yesaninso ndi kufotokoza kosiyana.',
       GEMINI_IMAGE_TEMPORARY_FAILURE:'Image server ili ndi vuto kwakanthawi. Yesaninso pambuyo pake.',
+      GEMINI_IMAGE_BAD_REQUEST:'Google yakana mawonekedwe a pempho la chithunzi. Tasintha format yake; yesaninso.',
       GEMINI_IMAGE_REQUEST_FAILED:'Pempho la chithunzi lalephera. Tiyenera kuyang’ana Vercel Function Logs.',
       IMAGE_PROMPT_REQUIRED:'Lembani mmene mukufunira chithunzi kaye.',
       IMAGE_PROMPT_TOO_LONG:'Mafotokozedwe a chithunzi ndi aatali kwambiri. Afupikitseni.'
