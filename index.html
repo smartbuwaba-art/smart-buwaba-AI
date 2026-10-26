@@ -517,6 +517,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   let liveSource = null, liveMuteGain = null, liveReady = false, livePlayTime = 0, liveConnectTimer = null;
   let liveTurnComplete = false, liveFallbackTriggered = false;
   let liveAssistantSpeaking = false, liveUserSpeechDetected = false, liveMicSilenceFrames = 0;
+  let livePlaybackRecoveryTimer = null;
   let liveCommandTimer = null, liveCommandHandled = false;
   const liveAudioSources = new Set();
   let liveTranscriptHistory = [], liveInputText = '', liveOutputText = '';
@@ -531,12 +532,37 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   }
 
   function stopLivePlayback() {
+    clearTimeout(livePlaybackRecoveryTimer);
+    livePlaybackRecoveryTimer = null;
     for (const source of liveAudioSources) {
       try { source.stop(); } catch (e) {}
       try { source.disconnect(); } catch (e) {}
     }
     liveAudioSources.clear();
     livePlayTime = liveAudioContext ? liveAudioContext.currentTime : 0;
+  }
+
+  function restoreLiveListening(force = false) {
+    if (!liveReady || !voiceSession) return;
+    if (!force && (liveAudioSources.size || !liveTurnComplete)) return;
+    clearTimeout(livePlaybackRecoveryTimer);
+    livePlaybackRecoveryTimer = null;
+    liveAssistantSpeaking = false;
+    liveUserSpeechDetected = false;
+    liveMicSilenceFrames = 0;
+    studio.classList.remove('speaking');
+    studio.classList.add('listening');
+    status('Ndikumvetsera… funsani funso lina.');
+  }
+
+  function scheduleLiveMicRecovery() {
+    clearTimeout(livePlaybackRecoveryTimer);
+    if (!liveAudioContext || !liveReady || !voiceSession) {
+      livePlaybackRecoveryTimer = null;
+      return;
+    }
+    const remainingMs = Math.max(0, (livePlayTime - liveAudioContext.currentTime) * 1000);
+    livePlaybackRecoveryTimer = setTimeout(() => restoreLiveListening(true), remainingMs + 1200);
   }
 
   function stopLiveVoice() {
@@ -712,19 +738,13 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       // The last playback buffer must always release the microphone gate.
       // Do not depend on turnComplete here: an interruption can reset that flag
       // before this audio buffer ends, otherwise the mic can remain muted forever.
-      if (!liveAudioSources.size && liveReady && voiceSession) {
-        liveAssistantSpeaking = false;
-        liveUserSpeechDetected = false;
-        liveMicSilenceFrames = 0;
-        studio.classList.remove('speaking');
-        studio.classList.add('listening');
-        status('Ndikumvetsera… funsani funso lina.');
-      }
+      if (!liveAudioSources.size) restoreLiveListening(false);
     };
     const startAt = Math.max(livePlayTime, liveAudioContext.currentTime + 0.025);
     livePlayTime = startAt + audioBuffer.duration;
     source.start(startAt);
     liveAssistantSpeaking = true;
+    scheduleLiveMicRecovery();
     studio.classList.remove('listening');
     studio.classList.add('speaking');
     status('Smart Buwaba akuyankha ndi mawu…');
@@ -1015,13 +1035,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
           liveOutputText = '';
           liveTurnComplete = true;
           renderLiveTranscript();
-          if (!liveAudioSources.size) {
-            liveAssistantSpeaking = false;
-            liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
-            studio.classList.remove('speaking');
-            studio.classList.add('listening');
-            status('Ndikumvetsera… funsani funso lina.');
-          }
+          if (!liveAudioSources.size) restoreLiveListening(false);
+          else scheduleLiveMicRecovery();
         }
       };
 
