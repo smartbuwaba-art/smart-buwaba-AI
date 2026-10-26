@@ -517,6 +517,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   let liveSource = null, liveMuteGain = null, liveReady = false, livePlayTime = 0, liveConnectTimer = null;
   let liveTurnComplete = false, liveFallbackTriggered = false;
   let liveAssistantSpeaking = false, liveUserSpeechDetected = false, liveMicSilenceFrames = 0;
+  let liveAudioStreamOpen = false, livePreRoll = [];
   let livePlaybackRecoveryTimer = null;
   let liveCommandTimer = null, liveCommandHandled = false;
   const liveAudioSources = new Set();
@@ -569,6 +570,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     liveReady = false;
     liveTurnComplete = false;
     liveAssistantSpeaking = false; liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
+    liveAudioStreamOpen = false; livePreRoll = [];
     clearTimeout(restartTimer); clearTimeout(liveCommandTimer); clearTimeout(liveConnectTimer); liveConnectTimer = null;
     if (liveProcessor) {
       liveProcessor.onaudioprocess = null;
@@ -653,6 +655,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     await liveAudioContext.resume();
     livePlayTime = liveAudioContext.currentTime;
     liveAssistantSpeaking = false; liveUserSpeechDetected = false; liveMicSilenceFrames = 0;
+    liveAudioStreamOpen = false; livePreRoll = [];
     liveSource = liveAudioContext.createMediaStreamSource(stream);
     // Short chunks keep the Live API microphone stream responsive.
     liveProcessor = liveAudioContext.createScriptProcessor(1024, 1, 1);
@@ -661,10 +664,27 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 
     function sendLiveAudio(pcm) {
       const socket = liveSocket;
-      if (!socket || socket.readyState !== WebSocket.OPEN) return;
+      if (!socket || socket.readyState !== WebSocket.OPEN) return false;
       socket.send(JSON.stringify({
         realtimeInput: { audio: { data: pcm16ToBase64(pcm), mimeType: 'audio/pcm;rate=16000' } }
       }));
+      liveAudioStreamOpen = true;
+      return true;
+    }
+
+    function endLiveAudioStream() {
+      const socket = liveSocket;
+      if (!liveAudioStreamOpen) return;
+      try {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          // Hybrid VAD: explicitly flush the user's completed utterance.
+          socket.send(JSON.stringify({ realtimeInput: { audioStreamEnd: true } }));
+        }
+      } catch (error) {
+        console.warn('Live audio stream end could not be sent.', error);
+      } finally {
+        liveAudioStreamOpen = false;
+      }
     }
 
     liveProcessor.onaudioprocess = event => {
@@ -677,32 +697,48 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       let sumSquares = 0;
       for (let i = 0; i < input.length; i++) sumSquares += input[i] * input[i];
       const rms = Math.sqrt(sumSquares / Math.max(1, input.length));
+      const speechDetected = rms > 0.008;
 
-      // Do not feed the assistant's own speaker audio back into the microphone stream.
-      // Silence chunks keep the Live API stream open while its reply is being played.
+      // Do not send the assistant's own speaker audio back as microphone input.
+      // The input stream has already been ended at the end of the user's utterance.
       if (liveAssistantSpeaking) {
-        pcm.fill(0);
-        sendLiveAudio(pcm);
+        endLiveAudioStream();
+        livePreRoll = [];
         return;
       }
 
-      // Google Live performs VAD on the continuous audio stream; this local meter
-      // only resets the playback-complete flag when the next human turn starts.
-      if (rms > 0.012) {
-        if (!liveUserSpeechDetected) liveTurnComplete = false;
-        liveUserSpeechDetected = true;
-        liveMicSilenceFrames = 0;
-        if (liveReady) status('Ndikumvetsera… lankhulani mwachibadwa.');
-      } else if (liveUserSpeechDetected) {
-        liveMicSilenceFrames++;
-        if (liveMicSilenceFrames >= 18) {
-          liveUserSpeechDetected = false;
-          liveMicSilenceFrames = 0;
-        }
-      }
-
       try {
-        sendLiveAudio(pcm);
+        if (speechDetected) {
+          if (!liveUserSpeechDetected) {
+            liveTurnComplete = false;
+            liveUserSpeechDetected = true;
+            // Preserve a short pre-roll so the beginning of a word is not clipped.
+            for (const buffered of livePreRoll) sendLiveAudio(buffered);
+            livePreRoll = [];
+          }
+          liveMicSilenceFrames = 0;
+          sendLiveAudio(pcm);
+          status('Ndikumvetsera… lankhulani mwachibadwa.');
+          return;
+        }
+
+        if (liveUserSpeechDetected) {
+          // Send trailing silence, then flush the turn after about 0.5 seconds.
+          sendLiveAudio(pcm);
+          liveMicSilenceFrames++;
+          if (liveMicSilenceFrames >= 24) {
+            endLiveAudioStream();
+            liveUserSpeechDetected = false;
+            liveMicSilenceFrames = 0;
+            livePreRoll = [];
+          }
+          return;
+        }
+
+        // Keep only a small pre-roll while idle. Do not stream endless silence.
+        // audioStreamEnd lets Gemini finalise one turn and accept the next utterance.
+        livePreRoll.push(pcm);
+        if (livePreRoll.length > 4) livePreRoll.shift();
       } catch (error) {
         console.warn('Live microphone chunk could not be sent.', error);
       }
