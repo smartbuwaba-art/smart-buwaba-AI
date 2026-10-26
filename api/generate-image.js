@@ -21,17 +21,16 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Api-Revision": "2026-05-20",
         "x-goog-api-key": apiKey
       },
       body: JSON.stringify({
         model: process.env.GEMINI_IMAGE_MODEL || "gemini-3.1-flash-image",
-        input: [{
-          type: "text",
-          text: "Create one beautiful, high-quality image based on this description. Use thoughtful composition, clear visual details, natural lighting, and a polished professional finish. Follow the requested subject and style: " + prompt
-        }],
+        input: "Create one beautiful, high-quality image based on this description. Use thoughtful composition, clear visual details, natural lighting, and a polished professional finish. Follow the requested subject and style: " + prompt,
         response_format: {
           type: "image",
-          mime_type: "image/png",
+          mime_type: "image/jpeg",
+          delivery: "inline",
           aspect_ratio: "1:1",
           image_size: "1K"
         },
@@ -57,6 +56,9 @@ export default async function handler(req, res) {
       }
       if (upstream.status === 404 || /model.{0,60}(not found|not supported|unavailable)/i.test(detail)) {
         return res.status(503).json({ error: "GEMINI_IMAGE_MODEL_UNAVAILABLE" });
+      }
+      if (upstream.status === 400 || /invalid argument|unsupported.*(format|mime|response_format)|bad request/i.test(detail)) {
+        return res.status(400).json({ error: "GEMINI_IMAGE_BAD_REQUEST" });
       }
       return res.status(upstream.status >= 400 && upstream.status < 500 ? upstream.status : 502)
         .json({ error: "GEMINI_IMAGE_REQUEST_FAILED" });
