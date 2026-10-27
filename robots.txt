@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://smart-buwaba-ai-app.vercel.app/sitemap.xml
