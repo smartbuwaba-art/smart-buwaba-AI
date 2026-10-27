@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080b16">
-<meta name="description" content="Smart Buwaba AI — your personal intelligent assistant.">
+<meta name="description" content="Smart Buwaba AI is a multilingual AI assistant for chatting, voice conversations, learning, coding, and creative help.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://smart-buwaba-ai-app.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Smart Buwaba AI">
+<meta property="og:title" content="Smart Buwaba AI — Your Multilingual AI Assistant">
+<meta property="og:description" content="Chat, learn, create, and get help with Smart Buwaba AI.">
+<meta property="og:url" content="https://smart-buwaba-ai-app.vercel.app/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Smart Buwaba AI">
+<meta name="twitter:description" content="A multilingual AI assistant for chat, voice, learning, and creativity.">
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/svg+xml" href="/icons/smart-buwaba-192.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1433,8 +1443,11 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     liveOutputText = '';
     wakeArmed = true;
     processingVoice = false;
+    liveFallbackTriggered = true;
     voiceSession = true;
-    void startLiveVoice();
+    status('Voice mode ready');
+    transcript('Voice mode yokhazikika yayamba. Lankhulani funso lanu; ndikayankha, ndidzayambiranso kumvetsera funso lotsatira. Ngati mawu sakumveka, sankhani English (US) pa Voice Language.');
+    restartListening(180);
   });
   byId('stopVoiceStudio').addEventListener('click', () => {
     voiceSession = false; wakeArmed = false; clearTimeout(restartTimer);
