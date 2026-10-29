@@ -4,22 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080b16">
-<meta name="description" content="Smart Buwaba AI is a multilingual AI assistant for chatting, voice conversations, learning, coding, and creative help.">
+<meta name="description" content="Chat Buwaba AI is a multilingual AI assistant for chatting, voice conversations, learning, coding, and creative help.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://smart-buwaba-ai-app.vercel.app/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Smart Buwaba AI">
-<meta property="og:title" content="Smart Buwaba AI — Your Multilingual AI Assistant">
-<meta property="og:description" content="Chat, learn, create, and get help with Smart Buwaba AI.">
+<meta property="og:site_name" content="Chat Buwaba AI">
+<meta property="og:title" content="Chat Buwaba AI — Your Multilingual AI Assistant">
+<meta property="og:description" content="Chat, learn, create, and get help with Chat Buwaba AI.">
 <meta property="og:url" content="https://smart-buwaba-ai-app.vercel.app/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Smart Buwaba AI">
+<meta name="twitter:title" content="Chat Buwaba AI">
 <meta name="twitter:description" content="A multilingual AI assistant for chat, voice, learning, and creativity.">
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/svg+xml" href="/icons/smart-buwaba-192.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Smart Buwaba">
-<title>Smart Buwaba AI</title>
+<meta name="apple-mobile-web-app-title" content="Chat Buwaba">
+<title>Chat Buwaba AI</title>
 <style>
 :root{color-scheme:dark;--bg:#080b16;--panel:#101629;--panel2:#141d34;--green:#8df7c2;--cyan:#80e8ff;--muted:#98a5bd;--line:#27334e;--pink:#ff9eb8}
 *{box-sizing:border-box}html{min-height:100%;scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1d3154 0,transparent 50%),var(--bg);color:#f4f7ff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.hidden{display:none!important}.muted{color:var(--muted)}.glow{box-shadow:0 0 36px #70f7bd18}
@@ -107,7 +107,7 @@
 </head>
 <body>
 
-<div id="cosmicIntro" role="dialog" aria-modal="true" aria-label="Welcome to Smart Buwaba AI">
+<div id="cosmicIntro" role="dialog" aria-modal="true" aria-label="Welcome to Chat Buwaba AI">
   <div class="cosmicStars"></div>
   <div class="cosmic-content">
     <div class="cosmicKicker">A NEW INTELLIGENCE AWAKENS</div>
@@ -116,12 +116,12 @@
       <div class="planet sun"></div><div class="planet p1"></div><div class="planet p2"></div><div class="planet p3"></div>
       <div class="brainReveal" aria-label="A glowing human brain"><svg viewBox="0 0 100 100" role="img" aria-hidden="true"><defs><linearGradient id="brainGlow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5ffe9"/><stop offset="1" stop-color="#50d7b2"/></linearGradient></defs><path d="M48 18C42 8 28 12 26 23 15 23 11 35 17 43 8 51 14 63 22 66 20 78 31 85 41 78L48 72Z M52 18C58 8 72 12 74 23 85 23 89 35 83 43 92 51 86 63 78 66 80 78 69 85 59 78L52 72Z" fill="url(#brainGlow)" stroke="#d5fff0" stroke-width="2.5" stroke-linejoin="round"/><path d="M49 19V76 M31 24C40 25 42 34 36 40S27 49 35 55 M20 44C31 42 34 49 30 59 M31 69C40 67 43 73 41 79 M69 24C60 25 58 34 64 40S73 49 65 55 M80 44C69 42 66 49 70 59 M69 69C60 67 57 73 59 79" fill="none" stroke="#176c67" stroke-width="3.2" stroke-linecap="round"/></svg></div>
     </div>
-    <h2 class="cosmicTitle">WELCOME TO <span>SMART BUWABA AI</span></h2>
+    <h2 class="cosmicTitle">WELCOME TO <span>Chat Buwaba AI</span></h2>
     <p class="cosmicSub">Your voice. Your ideas. Your universe.<br>A smarter conversation begins here.</p>
-    <div class="cosmicActions"><button class="primary" id="enterCosmos" type="button">Enter Smart Buwaba AI ↗</button><button class="cosmicSkip" id="skipCosmos" type="button">Skip intro</button></div>
+    <div class="cosmicActions"><button class="primary" id="enterCosmos" type="button">Enter Chat Buwaba AI ↗</button><button class="cosmicSkip" id="skipCosmos" type="button">Skip intro</button></div>
   </div>
 </div>
-<section class="lamp-screen" id="lampScreen" aria-label="Welcome to Smart Buwaba">
+<section class="lamp-screen" id="lampScreen" aria-label="Welcome to Chat Buwaba">
   <div class="entry-card">
     <div class="entry-brand">SMART <span>BUWABA</span> AI</div>
     <div class="lamp-stage">
@@ -133,7 +133,7 @@
     <button class="pull-button" id="pullCord" type="button">↟ Pull the cord</button>
     <div class="entry-form hidden" id="entryForm">
       <h2 id="formTitle">Welcome back</h2>
-      <p class="form-hint" id="formHint">Sign in to your Smart Buwaba account.</p>
+      <p class="form-hint" id="formHint">Sign in to your Chat Buwaba account.</p>
       <form id="accountForm">
         <label class="field"><span>Email address</span><input id="accountEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
         <label class="field"><span>Password</span><input id="accountPassword" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required></label>
@@ -152,7 +152,7 @@
   <div class="voiceWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="voiceStatus" id="voiceStatus">Ready when you are</div>
   <h2 class="voiceTitle" id="voiceTitle">Talk to Buwaba</h2>
-  <p class="voiceTranscript" id="voiceTranscript">Tap “Start talking”, then say “Hey Smart Buwaba” and ask your question. I'll answer out loud.</p>
+  <p class="voiceTranscript" id="voiceTranscript">Tap “Start talking”, then say “Hey Chat Buwaba” and ask your question. I'll answer out loud.</p>
   <div class="voiceActions"><button class="primary voiceStart" id="startVoiceStudio" type="button">🎙 Start talking</button><button class="secondary" id="stopVoiceStudio" type="button">Stop listening</button></div>
   <div class="voiceActions hidden" id="nativeAppActions" aria-label="Open apps on this device" style="margin-top:12px">
     <button class="secondary" type="button" data-native-command="open calculator">Calculator</button>
@@ -166,15 +166,15 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="app" id="app">
   <aside class="sidebar">
-    <div class="brand"><div class="logo">B</div><div><strong>SMART BUWABA</strong><small>Personal Intelligence</small></div></div>
+    <div class="brand"><div class="logo">B</div><div><strong>Chat Buwaba</strong><small>Personal Intelligence</small></div></div>
     <button class="new-chat" id="newChat">＋ &nbsp; New conversation</button><div class="side-label">SAVED CHATS</div><div class="chat-history" id="chatHistory" aria-label="Saved conversations"></div>
     <div class="side-label">WORKSPACE</div><div class="side-link active">◈ &nbsp; AI Assistant</div><div class="side-link">◎ &nbsp; Voice Studio</div><div class="side-link">⌘ &nbsp; Smart tools</div>
-    <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Smart Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
+    <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Chat Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong>Smart Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
+    <header class="topbar"><strong>Chat Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
-      <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Smart Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div></div>
+      <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Chat Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div></div>
       <div class="cards" id="cards">
         <button class="card" data-prompt="Help me write something creative"><div class="symbol">✧</div><strong>Creative Studio</strong><small>Ideas, writing, music concepts and inspiration.</small></button>
         <button class="card" data-prompt="Help me with technology and coding"><div class="symbol">⌘</div><strong>Smart Solutions</strong><small>Explore technology, code and new possibilities.</small></button>
@@ -183,7 +183,7 @@
       </div>
       <div class="messages" id="messages" aria-live="polite"></div>
     </section>
-    <footer class="composer-wrap"><form class="composer" id="chatForm"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><button class="icon-btn image-btn" id="imageButton" type="button" aria-label="Generate image" title="Pangani chithunzi">▧</button><textarea id="prompt" rows="1" placeholder="Message Smart Buwaba..." aria-label="Message Smart Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">SMART BUWABA AI · BUILT FOR YOUR WORLD<div class="app-actions" aria-label="Install or share Smart Buwaba"><button class="app-action" id="installAppButton" type="button">⬇ Install app</button><button class="app-action" id="shareAppButton" type="button">↗ Share app</button></div></div></footer>
+    <footer class="composer-wrap"><form class="composer" id="chatForm"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><button class="icon-btn image-btn" id="imageButton" type="button" aria-label="Generate image" title="Pangani chithunzi">▧</button><textarea id="prompt" rows="1" placeholder="Message Chat Buwaba..." aria-label="Message Chat Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">Chat Buwaba AI · BUILT FOR YOUR WORLD<div class="app-actions" aria-label="Install or share Chat Buwaba"><button class="app-action" id="installAppButton" type="button">⬇ Install app</button><button class="app-action" id="shareAppButton" type="button">↗ Share app</button></div></div></footer>
   </main>
 </div>
 
@@ -244,21 +244,21 @@ installAppButtons.forEach(button=>button.addEventListener('click',async()=>{
     deferredInstallPrompt.prompt();
     const choice=await deferredInstallPrompt.userChoice;
     deferredInstallPrompt=null;
-    if(choice.outcome==='accepted')showToast('Smart Buwaba yaikidwa pa chipangizo chanu.');
+    if(choice.outcome==='accepted')showToast('Chat Buwaba yaikidwa pa chipangizo chanu.');
     return;
   }
-  showToast('Pa Chrome, dinani menyu ⋮ kenako sankhani Install Smart Buwaba kapena Add to Home screen.');
+  showToast('Pa Chrome, dinani menyu ⋮ kenako sankhani Install Chat Buwaba kapena Add to Home screen.');
 }));
 window.addEventListener('appinstalled',()=>{
   deferredInstallPrompt=null;
-  showToast('Smart Buwaba yaikidwa pa chipangizo chanu.');
+  showToast('Chat Buwaba yaikidwa pa chipangizo chanu.');
 });
 shareAppButtons.forEach(button=>button.addEventListener('click',async()=>{
-  const data={title:'Smart Buwaba AI',text:'Yesani Smart Buwaba AI.',url:window.location.origin};
+  const data={title:'Chat Buwaba AI',text:'Yesani Chat Buwaba AI.',url:window.location.origin};
   try{
     if(navigator.share){await navigator.share(data);return;}
     if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(window.location.origin);showToast('Link yakopedwa. Tumizani kwa anzanu.');return;}
-    window.prompt('Koperani link ya Smart Buwaba AI:',window.location.origin);
+    window.prompt('Koperani link ya Chat Buwaba AI:',window.location.origin);
   }catch(error){
     if(error.name!=='AbortError')showToast('Sitinathe kugawana link. Koperani link pa address bar.','error');
   }
@@ -279,7 +279,7 @@ function tone(kind='light'){
 function showToast(text,kind='light'){const t=$('toast');t.textContent=text;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),4200);tone(kind)}
 function pullLamp(){const screen=$('lampScreen');screen.classList.add('lit');$('cord').classList.add('pulled');tone('lamp');$('entryCopy').textContent='The light is on. Choose how you want to begin.';$('pullCord').classList.add('hidden');$('entryForm').classList.remove('hidden')}
 $('pullCord').addEventListener('click',pullLamp);
-function renderMode(){ $('formTitle').textContent=createMode?'Create your account':'Welcome back';$('formHint').textContent=createMode?'Set up your Smart Buwaba account.':'Sign in to your Smart Buwaba account.';$('accountSubmit').textContent=createMode?'Create account':'Sign in';$('accountPassword').autocomplete=createMode?'new-password':'current-password';$('switchText').textContent=createMode?'Already have an account?':'New here?';$('switchMode').textContent=createMode?'Sign in':'Create account'}
+function renderMode(){ $('formTitle').textContent=createMode?'Create your account':'Welcome back';$('formHint').textContent=createMode?'Set up your Chat Buwaba account.':'Sign in to your Chat Buwaba account.';$('accountSubmit').textContent=createMode?'Create account':'Sign in';$('accountPassword').autocomplete=createMode?'new-password':'current-password';$('switchText').textContent=createMode?'Already have an account?':'New here?';$('switchMode').textContent=createMode?'Sign in':'Create account'}
 $('switchMode').addEventListener('click',()=>{createMode=!createMode;renderMode();tone('light')});
 $('accountForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -347,8 +347,8 @@ function suggest(text){promptBox.value=text;promptBox.focus()}
 document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>suggest(b.dataset.prompt)));
 function newChat(){currentConversationId=null;messages.innerHTML='';hero.classList.remove('hidden');cards.classList.remove('hidden');promptBox.value='';renderSavedChats();promptBox.focus()}
 $('newChat').addEventListener('click',newChat);
-function addMessage(text,who,options={}){if(!options.restore&&(who==='user'||who==='ai')){const conv=ensureConversation(who==='user'?text:'New conversation');if(who==='user'&&(!conv.messages||conv.messages.length===0))conv.title=text.trim().slice(0,42);conv.messages=conv.messages||[];conv.messages.push({text,who,speakable:!!options.speakable});conv.updatedAt=Date.now();persistConversations()}const item=document.createElement('div');item.className='message '+who;if(who==='ai'){const label=document.createElement('div');label.className='message-label';label.textContent='✳ SMART BUWABA';item.appendChild(label)}const content=document.createElement('div');content.textContent=text;item.appendChild(content);if(who==='ai'&&options.speakable){const tools=document.createElement('div');tools.className='message-tools';const speak=document.createElement('button');speak.type='button';speak.className='tiny-btn';speak.textContent='🔊 Speak';speak.addEventListener('click',()=>speakText(text));tools.appendChild(speak);const copy=document.createElement('button');copy.type='button';copy.className='tiny-btn';copy.textContent='Copy';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text);showToast('Answer copied.')}catch(e){showToast('Copy is not available in this browser.','error')}});tools.appendChild(copy);item.appendChild(tools)}messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
-function addTyping(){const item=document.createElement('div');item.className='message ai';item.id='typingMessage';const label=document.createElement('div');label.className='message-label';label.textContent='✳ SMART BUWABA';item.appendChild(label);const dots=document.createElement('div');dots.className='typing';dots.innerHTML='<i></i><i></i><i></i><span class="muted" style="margin-left:6px;font-size:11px">Thinking…</span>';item.appendChild(dots);messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
+function addMessage(text,who,options={}){if(!options.restore&&(who==='user'||who==='ai')){const conv=ensureConversation(who==='user'?text:'New conversation');if(who==='user'&&(!conv.messages||conv.messages.length===0))conv.title=text.trim().slice(0,42);conv.messages=conv.messages||[];conv.messages.push({text,who,speakable:!!options.speakable});conv.updatedAt=Date.now();persistConversations()}const item=document.createElement('div');item.className='message '+who;if(who==='ai'){const label=document.createElement('div');label.className='message-label';label.textContent='✳ Chat Buwaba';item.appendChild(label)}const content=document.createElement('div');content.textContent=text;item.appendChild(content);if(who==='ai'&&options.speakable){const tools=document.createElement('div');tools.className='message-tools';const speak=document.createElement('button');speak.type='button';speak.className='tiny-btn';speak.textContent='🔊 Speak';speak.addEventListener('click',()=>speakText(text));tools.appendChild(speak);const copy=document.createElement('button');copy.type='button';copy.className='tiny-btn';copy.textContent='Copy';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text);showToast('Answer copied.')}catch(e){showToast('Copy is not available in this browser.','error')}});tools.appendChild(copy);item.appendChild(tools)}messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
+function addTyping(){const item=document.createElement('div');item.className='message ai';item.id='typingMessage';const label=document.createElement('div');label.className='message-label';label.textContent='✳ Chat Buwaba';item.appendChild(label);const dots=document.createElement('div');dots.className='typing';dots.innerHTML='<i></i><i></i><i></i><span class="muted" style="margin-left:6px;font-size:11px">Thinking…</span>';item.appendChild(dots);messages.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});return item}
 async function requestSmartBuwabaAI(message){
   const activeConversation=savedConversations.find(c=>c.id===currentConversationId);
   const history=(activeConversation?.messages||[]).slice(0,-1).slice(-10).map(m=>({role:m.who==='ai'?'assistant':'user',content:m.text}));
@@ -425,7 +425,7 @@ function speakWithBrowser(text,studio,language){
   const female=matching.find(v=>/female|woman|samantha|zira|aria|jenny|susan|karen|victoria|eva|sonia|google.*female|microsoft.*(zira|jenny|aria)/i.test(v.name));
   const chosen=female||matching[0];if(chosen)utterance.voice=chosen;
   return new Promise(resolve=>{
-    utterance.onstart=()=>{if(studio){studio.classList.remove('listening');studio.classList.add('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Smart Buwaba is speaking';}};
+    utterance.onstart=()=>{if(studio){studio.classList.remove('listening');studio.classList.add('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Chat Buwaba is speaking';}};
     utterance.onend=()=>{if(studio)studio.classList.remove('speaking');resolve();};
     utterance.onerror=()=>{if(studio)studio.classList.remove('speaking');resolve();};
     window.speechSynthesis.speak(utterance);
@@ -441,7 +441,7 @@ async function speakNaturalSmartBuwaba(text,studio=null){
     try{
       if(studio){studio.classList.remove('listening');studio.classList.add('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Preparing clear Chichewa voice…';}
       await playNyanjaSpeech(spoken);
-      if(studio){studio.classList.remove('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Smart Buwaba finished speaking';}
+      if(studio){studio.classList.remove('speaking');const s=document.getElementById('voiceStatus');if(s)s.textContent='Chat Buwaba finished speaking';}
       return;
     }catch(error){console.warn('Gemini Chichewa speech unavailable; using browser voice fallback.',error);if(studio)studio.classList.remove('speaking');}
   }
@@ -516,7 +516,7 @@ async function generateImageFromPrompt(){
     addMessage('Pepani bro, '+(imageErrors[code]||'Sindinathe kupanga chithunzicho pano. Yesaninso.'),'ai');
     $('connectionStatus').textContent='READY';
     tone('light');
-    console.error('Smart Buwaba image error:',error);
+    console.error('Chat Buwaba image error:',error);
   }finally{
     send.disabled=false;mic.disabled=false;imageButton.disabled=false;promptBox.focus();
   }
@@ -539,7 +539,7 @@ $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=
   addMessage('Pepani bro, '+friendly,'ai');
   $('connectionStatus').textContent='READY';
   tone('light');
-  console.error('Smart Buwaba chat error:',error)
+  console.error('Chat Buwaba chat error:',error)
 }finally{send.disabled=false;mic.disabled=false;promptBox.focus()}});
 promptBox.addEventListener('input',()=>{promptBox.style.height='auto';promptBox.style.height=Math.min(promptBox.scrollHeight,140)+'px'});
 promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatForm').requestSubmit()}});
@@ -611,8 +611,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   function renderLiveTranscript() {
     const parts = liveTranscriptHistory.slice();
     if (liveInputText.trim()) parts.push('Inu: ' + liveInputText.trim());
-    if (liveOutputText.trim()) parts.push('Smart Buwaba: ' + liveOutputText.trim());
-    transcript(parts.join('\n\n') || 'Lankhulani mwachibadwa. Smart Buwaba akumvetsera.');
+    if (liveOutputText.trim()) parts.push('Chat Buwaba: ' + liveOutputText.trim());
+    transcript(parts.join('\n\n') || 'Lankhulani mwachibadwa. Chat Buwaba akumvetsera.');
   }
 
   function stopLivePlayback() {
@@ -831,7 +831,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     liveMuteGain.connect(liveAudioContext.destination);
     studio.classList.add('listening');
     status('Ndikumvetsera… lankhulani mwachibadwa.');
-    transcript('Ndayamba kumvetsera. Lankhulani funso lanu; simukufunika kunena “Hey Smart Buwaba.”');
+    transcript('Ndayamba kumvetsera. Lankhulani funso lanu; simukufunika kunena “Hey Chat Buwaba.”');
   }
 
   function playLiveAudioChunk(encoded, mimeType) {
@@ -866,7 +866,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     scheduleLiveMicRecovery();
     studio.classList.remove('listening');
     studio.classList.add('speaking');
-    status('Smart Buwaba akuyankha ndi mawu…');
+    status('Chat Buwaba akuyankha ndi mawu…');
   }
 
   function normalizeVoiceCommandText(value) {
@@ -950,7 +950,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     voiceRecognition = null;
     studio.classList.remove('listening', 'speaking');
     status('Opening ' + destination.label + '…');
-    transcript('Smart Buwaba: Ndikutsegulira ' + destination.label + '.');
+    transcript('Chat Buwaba: Ndikutsegulira ' + destination.label + '.');
 
     if (nativeLaunched || destination.nativeOnly) return true;
     if (destination.url) {
@@ -1048,7 +1048,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
             },
             systemInstruction: {
               parts: [{
-                text: 'You are Smart Buwaba AI, a helpful assistant for Malawi and the world. ' +
+                text: 'You are Chat Buwaba AI, a helpful assistant for Malawi and the world. ' +
                   languageInstruction +
                   ' Speak directly to the user in a warm, clear conversational voice. ' +
                   'For ordinary questions, answer quickly and naturally in a few sentences. ' +
@@ -1146,7 +1146,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
           if (userLine || assistantLine) {
             liveTranscriptHistory.push(
               'Inu: ' + (userLine || '(mawu sanalembedwe)') +
-              '\nSmart Buwaba: ' + (assistantLine || '(yankho la mawu)')
+              '\nChat Buwaba: ' + (assistantLine || '(yankho la mawu)')
             );
             if (liveTranscriptHistory.length > 6) liveTranscriptHistory.splice(0, liveTranscriptHistory.length - 6);
           }
@@ -1166,11 +1166,11 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         if (voiceSession && liveSocket === socket) fallbackToLegacy('Real-time voice yalumikizidwa.');
       };
     } catch (error) {
-      console.error('Smart Buwaba Live Voice startup failed:', error?.code || error?.message || error);
+      console.error('Chat Buwaba Live Voice startup failed:', error?.code || error?.message || error);
       const msg = error?.name === 'AbortError'
         ? 'Pempho la token ya mawu latenga nthawi yaitali. Yang’anani intaneti ndipo yesaninso.'
         : error?.code === 'GEMINI_API_KEY_MISSING'
-          ? 'Smart Buwaba ikusowa GEMINI_API_KEY pa server.'
+          ? 'Chat Buwaba ikusowa GEMINI_API_KEY pa server.'
           : error?.code === 'GEMINI_LIVE_TOKEN_FAILED'
             ? 'Gemini Live sinapereke token. Yang’anani quota, GEMINI_API_KEY ndi mwayi wa Live API mu Google AI Studio.'
             : 'Sitinathe kulumikiza real-time voice. Ndikuyesa njira ina ya mawu.';
@@ -1181,7 +1181,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   function openVoiceStudio() {
     studio.classList.remove('hidden');
     status('Ready when you are');
-    transcript('Dinani “Start talking” ndipo lankhulani mwachibadwa. Smart Buwaba ayankha ndi mawu, ndipo ungamudule polankhulanso.');
+    transcript('Dinani “Start talking” ndipo lankhulani mwachibadwa. Chat Buwaba ayankha ndi mawu, ndipo ungamudule polankhulanso.');
   }
   window.openVoiceStudio = openVoiceStudio;
   byId('voiceStudioButton').addEventListener('click', openVoiceStudio);
@@ -1255,7 +1255,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     try { voiceRecognition?.stop(); } catch(e) {}
     studio.classList.remove('listening');
     status('Thinking…');
-    transcript('You: ' + text + '\n\nSmart Buwaba is preparing an answer…');
+    transcript('You: ' + text + '\n\nChat Buwaba is preparing an answer…');
 
     const history = voiceConversationHistory.slice(-10);
     const shouldSpeak = window.isSmartBuwabaVoiceEnabled ? window.isSmartBuwabaVoiceEnabled() : true;
@@ -1265,7 +1265,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 
     try {
       const reply = await requestVoiceStream(text, history, (delta, streamedReply) => {
-        transcript('You: ' + text + '\n\nSmart Buwaba: ' + streamedReply);
+        transcript('You: ' + text + '\n\nChat Buwaba: ' + streamedReply);
         if (!shouldSpeak) return;
 
         if (!earlySpeech) {
@@ -1288,7 +1288,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
         { role: 'assistant', content: reply }
       );
       if (voiceConversationHistory.length > 12) voiceConversationHistory.splice(0, voiceConversationHistory.length - 12);
-      transcript('You: ' + text + '\n\nSmart Buwaba: ' + reply);
+      transcript('You: ' + text + '\n\nChat Buwaba: ' + reply);
 
       if (shouldSpeak) {
         if (earlySpeech) {
@@ -1342,7 +1342,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
     r.onstart = () => {
       if (voiceSession && !processingVoice) {
         studio.classList.add('listening');
-        status(wakeArmed ? 'Listening to your question…' : 'Listening for “Hey Smart Buwaba”');
+        status(wakeArmed ? 'Listening to your question…' : 'Listening for “Hey Chat Buwaba”');
       }
     };
     r.onresult = event => {
