@@ -1,8 +1,14 @@
-const { app, BrowserWindow, ipcMain, shell, session } = require("electron");
+const { app, BrowserWindow, ipcMain, shell, session, Tray, Menu, nativeImage, screen } = require("electron");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
 
 const APP_URL = "https://smart-buwaba-ai-app.vercel.app/";
+let assistantWindow = null;
+let bubbleWindow = null;
+let tray = null;
+let quitting = false;
+const bubbleIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8df7c2"/><stop offset="1" stop-color="#80e8ff"/></linearGradient></defs><circle cx="32" cy="32" r="30" fill="url(#g)"/><text x="32" y="43" font-family="Arial,sans-serif" font-size="36" font-weight="900" text-anchor="middle" fill="#08131c">B</text></svg>';
+const appIcon = nativeImage.createFromDataURL("data:image/svg+xml;base64," + Buffer.from(bubbleIconSvg).toString("base64"));
 const APP_ORIGIN = new URL(APP_URL).origin;
 const INTERNAL_HOSTS = new Set([
   "smart-buwaba-ai-app.vercel.app",
@@ -127,13 +133,13 @@ async function openApprovedApp(appName) {
   return false;
 }
 
-function createWindow() {
+function createAssistantWindow() {
   const window = new BrowserWindow({
     width: 1320,
     height: 860,
     minWidth: 900,
     minHeight: 620,
-    title: "Smart Buwaba AI",
+    title: "Chat Buwaba",\n    icon: appIcon,
     backgroundColor: "#03070b",
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
@@ -178,6 +184,13 @@ app.whenReady().then(() => {
   });
   session.defaultSession.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
     return permission === "media" && requestingOrigin === APP_ORIGIN;
+  });
+
+  ipcMain.handle("chat-buwaba:show-assistant", event => {
+    const expectedBubbleUrl = require("node:url").pathToFileURL(path.join(__dirname, "bubble.html")).href;
+    if (event.senderFrame?.url !== expectedBubbleUrl) return false;
+    openAssistant();
+    return true;
   });
 
   ipcMain.handle("smart-buwaba:open-app", async (event, appName) => {
