@@ -9,7 +9,7 @@
     "dist:win": "electron-builder --win portable"
   },
   "devDependencies": {
-    "electron": "45.0.0",
+    "electron": "45.1.0",
     "electron-builder": "^26.0.12"
   },
   "build": {
@@ -37,4 +37,4 @@
     }
   },
   "productName": "Chat Buwaba"
-}\n
+}
