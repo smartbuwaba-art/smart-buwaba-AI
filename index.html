@@ -172,7 +172,7 @@
     <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Chat Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong>Chat Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
+    <header class="topbar"><strong>Chat Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="floatingButton" type="button" aria-pressed="false">⭕ Floating B: Off</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
       <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Chat Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div></div>
       <div class="cards" id="cards">
@@ -1573,5 +1573,27 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   }).catch(error=>console.warn("3D intro unavailable; using the CSS planet fallback.",error));
 })();
 </script>
+
+<script>
+(() => {
+  const button = document.getElementById("floatingButton");
+  const bridge = window.SmartBuwabaNative;
+  if (!button || !bridge || typeof bridge.setFloatingButton !== "function") return;
+  const refresh = () => {
+    const on = typeof bridge.isFloatingButtonEnabled === "function" && bridge.isFloatingButtonEnabled();
+    button.textContent = on ? "⭕ Floating B: On" : "⭕ Floating B: Off";
+    button.setAttribute("aria-pressed", String(on));
+  };
+  button.addEventListener("click", () => {
+    const result = bridge.setFloatingButton(button.getAttribute("aria-pressed") !== "true");
+    if (result === "permission") button.textContent = "Allow display over apps…";
+    else refresh();
+  });
+  window.addEventListener("chatbuwaba-floating-enabled", refresh);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+  refresh();
+})();
+</script>
+
 </body>
 </html>
