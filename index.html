@@ -252,6 +252,15 @@ onAuthStateChanged(auth, user => {
 <script>
 const $ = id => document.getElementById(id);
 const promptBox=$('prompt'),messages=$('messages'),hero=$('hero'),cards=$('cards');
+window.typeSmartBuwabaText = spoken => {
+  const text=String(spoken||'').trim();
+  if(!text)return false;
+  promptBox.value=text;
+  promptBox.dispatchEvent(new Event('input'));
+  promptBox.focus();
+  showToast('Ndalemba mawu anu. Werengani kaye, kenako dinani Send.');
+  return true;
+};
 let deferredInstallPrompt=null;
 const installAppButtons=[$('installAppButton'),$('installAppButtonTop')].filter(Boolean);
 const shareAppButtons=[$('shareAppButton'),$('shareAppButtonTop')].filter(Boolean);
@@ -978,6 +987,8 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   }
 
   async function runSpokenAppCommand(value) {
+    const typeCommand = normalizeVoiceCommandText(value).match(/^(?:lemba|lembani|andika|write|type)(?:\s+kuti)?\s+(.+)$/i);
+    if (typeCommand && typeof window.typeSmartBuwabaText === 'function') return window.typeSmartBuwabaText(typeCommand[1]);
     const destination = findSpokenAppCommand(value);
     if (!destination || (liveCommandHandled && voiceSession)) return false;
 
