@@ -103,6 +103,16 @@
 @media(max-width:520px){.planetSystem{width:min(410px,100vw);height:clamp(285px,78vw,335px)}.cosmicKicker{letter-spacing:2.8px;font-size:9px}.cosmicTitle{font-size:clamp(25px,7.4vw,36px);letter-spacing:-.8px}.cosmicSub{max-width:300px}}
 @media(max-height:650px){.planetSystem{height:255px;width:min(380px,95vw)}.cosmicKicker{margin-bottom:5px}.cosmicSub{margin:8px auto 12px}}
 
+
+/* Buwaba quick-action menu and Chichewa dictation state */
+.b-menu{position:fixed;z-index:180;top:78px;right:18px;width:min(310px,calc(100vw - 28px));padding:14px;border:1px solid #3a506e;border-radius:18px;background:linear-gradient(150deg,#17243d,#0b1222);box-shadow:0 22px 70px #000b;display:grid;gap:8px}
+.b-menu-title{display:flex;align-items:center;justify-content:space-between;padding:3px 4px 8px;color:#8df7c2;font-size:12px;font-weight:850;letter-spacing:1.5px}
+.b-menu button{width:100%;text-align:left;border:1px solid #30415e;border-radius:11px;background:#17233b;color:#eaf3ff;padding:11px 12px;font-size:12px;font-weight:650}
+.b-menu button:hover{border-color:#8df7c2;background:#1b3043}
+#bMenuButton{font-weight:900;color:#08151b;background:linear-gradient(120deg,var(--green),var(--cyan));border:0}
+#mic.recording{background:#5a2435;color:#fff;border-color:#ff9eb8;box-shadow:0 0 22px #ff9eb855;animation:orbPulse 1s infinite}
+@media(max-width:680px){.b-menu{top:68px;right:10px}}
+
 </style>
 </head>
 <body>
@@ -163,6 +173,16 @@
   </div>
   <p class="voiceHint">Keep this screen open while talking. Microphone permission is required. Wake-word listening depends on your browser and may stop when the browser interrupts it.</p>
 </section>
+
+<div class="b-menu hidden" id="bMenu" role="menu" aria-label="Buwaba quick actions">
+  <div class="b-menu-title"><span>BUWABA QUICK ACTIONS</span><span aria-hidden="true">✦</span></div>
+  <button type="button" data-b-action="dictate">🎙 Lankhula kuti zilembedwe</button>
+  <button type="button" data-b-action="voice">◉ Tsegula Voice Studio</button>
+  <button type="button" data-b-action="floating">⭕ Yatsa / zimitsa Floating B</button>
+  <button type="button" data-b-action="whatsapp">WhatsApp</button>
+  <button type="button" data-b-action="youtube">YouTube</button>
+  <button type="button" data-b-action="settings">Zokonda pa chipangizo</button>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="app" id="app">
   <aside class="sidebar">
@@ -172,7 +192,7 @@
     <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Chat Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong>Chat Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="floatingButton" type="button" aria-pressed="false">⭕ Floating B: Off</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
+    <header class="topbar"><strong>Chat Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="bMenuButton" type="button" aria-expanded="false" aria-controls="bMenu">B ▾</button><button class="voice-toggle" id="floatingButton" type="button" aria-pressed="false">⭕ Floating B: Off</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
       <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Chat Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div></div>
       <div class="cards" id="cards">
@@ -264,7 +284,7 @@ shareAppButtons.forEach(button=>button.addEventListener('click',async()=>{
   }
 }));
 
-let createMode=false,voiceEnabled=true,recognition=null,toastTimer=null;
+let createMode=false,voiceEnabled=true,recognition=null,toastTimer=null,voiceRecorder=null,voiceChunks=[],voiceStream=null,recordingLimitTimer=null;
 const CHAT_STORAGE_KEY='sbai-conversations-v1';
 let savedConversations=[];let currentConversationId=null;
 try{savedConversations=JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY)||'[]');if(!Array.isArray(savedConversations))savedConversations=[];}catch(e){savedConversations=[];}
@@ -543,7 +563,47 @@ $('chatForm').addEventListener('submit',async e=>{e.preventDefault();const text=
 }finally{send.disabled=false;mic.disabled=false;promptBox.focus()}});
 promptBox.addEventListener('input',()=>{promptBox.style.height='auto';promptBox.style.height=Math.min(promptBox.scrollHeight,140)+'px'});
 promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('chatForm').requestSubmit()}});
-function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('Voice input is not supported here. Try the latest Chrome browser.','error');return}if(recognition){try{recognition.stop()}catch(e){}}recognition=new SR();const lang=$('voiceLanguage').value;recognition.lang=(!lang||lang==='auto')?'ny-MW':lang;recognition.interimResults=true;recognition.continuous=false;const mic=$('mic');recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani tsopano.')};recognition.onresult=event=>{let finalText='';for(let i=event.resultIndex;i<event.results.length;i++)finalText+=event.results[i][0].transcript;if(finalText)promptBox.value=finalText};recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':event.error==='language-not-supported'?'Browser sinathandize kuzindikira chinenero cha mawu. Sankhani Chichewa pa menyu, kenako yesaninso.':'Voice input sinagwire. Yesaninso.','error')};recognition.onend=async()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';const spoken=promptBox.value.trim();if(spoken&&await window.executeSmartBuwabaVoiceCommand?.(spoken))return;if(spoken)promptBox.focus()};try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}}
+async function startVoice(){
+  const mic=$('mic');
+  if(voiceRecorder&&voiceRecorder.state==='recording'){voiceRecorder.stop();return}
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){showToast('Browser iyi siyikuthandiza kujambula mawu. Yesani Chrome yatsopano.','error');return}
+    if(recognition){try{recognition.stop()}catch(e){}}
+    recognition=new SR();recognition.lang=$('voiceLanguage').value==='auto'?'ny-MW':$('voiceLanguage').value;recognition.interimResults=true;recognition.continuous=false;
+    recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani Chichewa.')};
+    recognition.onresult=event=>{let spoken='';for(let i=event.resultIndex;i<event.results.length;i++)spoken+=event.results[i][0].transcript;if(spoken){promptBox.value=spoken;promptBox.dispatchEvent(new Event('input'))}};
+    recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':'Voice input sinagwire. Yesaninso.','error')};
+    recognition.onend=()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';promptBox.focus()};
+    try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}
+    return;
+  }
+  try{
+    voiceStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    const mimeType=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'].find(type=>MediaRecorder.isTypeSupported(type))||'';
+    voiceRecorder=new MediaRecorder(voiceStream,mimeType?{mimeType}:undefined);voiceChunks=[];
+    voiceRecorder.ondataavailable=event=>{if(event.data&&event.data.size)voiceChunks.push(event.data)};
+    voiceRecorder.onstart=()=>{mic.classList.add('recording');mic.textContent='■';$('connectionStatus').textContent='RECORDING';showToast('Lankhulani Chichewa. Mukamaliza, dinaninso batani la maikolofoni.')};
+    voiceRecorder.onerror=()=>showToast('Kujambula mawu kwalephera. Yesaninso.','error');
+    voiceRecorder.onstop=async()=>{
+      clearTimeout(recordingLimitTimer);mic.classList.remove('recording');mic.textContent='♩';
+      voiceStream?.getTracks().forEach(track=>track.stop());voiceStream=null;
+      $('connectionStatus').textContent='TRANSCRIBING';
+      const blob=new Blob(voiceChunks,{type:voiceRecorder?.mimeType||'audio/webm'});voiceRecorder=null;voiceChunks=[];
+      if(!blob.size){$('connectionStatus').textContent='READY';showToast('Sindinamve mawu. Lankhulaninso.','error');return}
+      try{
+        const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
+        const response=await fetch('/api/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audioBase64:btoa(binary),mimeType:blob.type||'audio/webm',language:$('voiceLanguage').value})});
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.transcript)throw new Error(data.error||'TRANSCRIPTION_FAILED');
+        promptBox.value=data.transcript.trim();promptBox.dispatchEvent(new Event('input'));promptBox.focus();$('connectionStatus').textContent='READY';
+        showToast('Mawu asinthidwa kukhala malemba. Werengani kaye, kenako dinani Send.');
+        if(await window.executeSmartBuwabaVoiceCommand?.(promptBox.value))promptBox.value='';
+      }catch(error){$('connectionStatus').textContent='READY';const messages={GEMINI_API_KEY_MISSING:'Server ikusowa GEMINI_API_KEY mu Vercel.',AUDIO_TOO_LARGE:'Mawu ndi aatali kwambiri. Chepetsani kujambula.',TRANSCRIPTION_FAILED:'Sindinathe kusintha mawu kukhala malemba. Yesaninso.'};showToast(messages[error.message]||'Kulemba mawu kwalephera. Yang’anani intaneti, kenako yesaninso.','error');console.error('Chichewa transcription error:',error)}
+    };
+    voiceRecorder.start();recordingLimitTimer=setTimeout(()=>{if(voiceRecorder?.state==='recording'){showToast('Kujambula kwafika masekondi 45. Ndikusintha mawu anu.');voiceRecorder.stop()}},45000);
+  }catch(error){voiceStream?.getTracks().forEach(track=>track.stop());voiceStream=null;$('connectionStatus').textContent='READY';showToast(error.name==='NotAllowedError'?'Lolani microphone mu browser settings.':'Microphone sinapezeke. Yang’anani chilolezo chake.','error')}
+}
 $('mic').addEventListener('click',startVoice);$('voiceCard').addEventListener('click',()=>window.openVoiceStudio?.());
 restoreLatestConversation();
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(err=>console.warn('Offline cache unavailable:',err)))}
@@ -1592,6 +1652,30 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   window.addEventListener("chatbuwaba-floating-enabled", refresh);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
   refresh();
+})();
+</script>
+
+
+<script>
+(() => {
+  const button=document.getElementById('bMenuButton'),menu=document.getElementById('bMenu');
+  if(!button||!menu)return;
+  const close=()=>{menu.classList.add('hidden');button.setAttribute('aria-expanded','false')};
+  button.addEventListener('click',()=>{const opening=menu.classList.contains('hidden');menu.classList.toggle('hidden',!opening);button.setAttribute('aria-expanded',String(opening))});
+  menu.addEventListener('click',async event=>{
+    const action=event.target.closest('[data-b-action]')?.dataset.bAction;if(!action)return;
+    close();
+    if(action==='dictate'){startVoice();return}
+    if(action==='voice'){window.openVoiceStudio?.();return}
+    if(action==='floating'){document.getElementById('floatingButton')?.click();return}
+    const commands={whatsapp:'open WhatsApp',youtube:'open YouTube',settings:'open settings'};
+    if(commands[action]){
+      const handled=await window.executeSmartBuwabaVoiceCommand?.(commands[action]);
+      if(!handled)showToast('Sindingathe kutsegula pulogalamuyi pa chipangizochi.','error');
+    }
+  });
+  document.addEventListener('click',event=>{if(!menu.contains(event.target)&&!button.contains(event.target))close()});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')close()});
 })();
 </script>
 
