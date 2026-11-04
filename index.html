@@ -1665,7 +1665,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   menu.addEventListener('click',async event=>{
     const action=event.target.closest('[data-b-action]')?.dataset.bAction;if(!action)return;
     close();
-    if(action==='dictate'){startVoice();return}
+    if(action==='dictate'){document.getElementById('mic')?.click();return}
     if(action==='voice'){window.openVoiceStudio?.();return}
     if(action==='floating'){document.getElementById('floatingButton')?.click();return}
     const commands={whatsapp:'open WhatsApp',youtube:'open YouTube',settings:'open settings'};
