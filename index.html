@@ -580,8 +580,9 @@ async function startVoice(){
     if(!SR){showToast('Browser iyi siyikuthandiza kujambula mawu. Yesani Chrome yatsopano.','error');return}
     if(recognition){try{recognition.stop()}catch(e){}}
     recognition=new SR();recognition.lang=$('voiceLanguage').value==='auto'?'ny-MW':$('voiceLanguage').value;recognition.interimResults=true;recognition.continuous=false;
-    recognition.onstart=()=>{mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani Chichewa.')};
-    recognition.onresult=event=>{let spoken='';for(let i=event.resultIndex;i<event.results.length;i++)spoken+=event.results[i][0].transcript;if(spoken){promptBox.value=spoken;promptBox.dispatchEvent(new Event('input'))}};
+    let fallbackFinalText='';
+    recognition.onstart=()=>{fallbackFinalText='';mic.classList.add('listening');$('connectionStatus').textContent='LISTENING';showToast('Ndikumvetsera… lankhulani Chichewa.')};
+    recognition.onresult=event=>{let finalPart='',interimPart='';for(let i=event.resultIndex;i<event.results.length;i++){const result=event.results[i];if(result.isFinal)finalPart+=result[0].transcript+' ';else interimPart+=result[0].transcript}fallbackFinalText+=finalPart;const spoken=(fallbackFinalText+interimPart).trim();if(spoken){promptBox.value=spoken;promptBox.dispatchEvent(new Event('input'))}};
     recognition.onerror=event=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';showToast(event.error==='not-allowed'?'Lolani microphone mu browser settings.':'Voice input sinagwire. Yesaninso.','error')};
     recognition.onend=()=>{mic.classList.remove('listening');$('connectionStatus').textContent='READY';promptBox.focus()};
     try{recognition.start()}catch(e){showToast('Microphone sinayambe. Yesaninso.','error')}
@@ -606,7 +607,7 @@ async function startVoice(){
         const data=await response.json().catch(()=>({}));
         if(!response.ok||!data.transcript)throw new Error(data.error||'TRANSCRIPTION_FAILED');
         promptBox.value=data.transcript.trim();promptBox.dispatchEvent(new Event('input'));promptBox.focus();$('connectionStatus').textContent='READY';
-        showToast('Mawu asinthidwa kukhala malemba. Werengani kaye, kenako dinani Send.');
+        if(data.warning==='NYANJA_SPEECH_SERVICE_NOT_CONFIGURED')showToast('Mawu alembedwa pogwiritsa ntchito njira yosungira. Kuti Chichewa chikhale cholondola kwambiri, Cloud Speech iyenera kulumikizidwa.');else showToast('Mawu asinthidwa kukhala malemba. Werengani kaye, kenako dinani Send.');
         if(await window.executeSmartBuwabaVoiceCommand?.(promptBox.value))promptBox.value='';
       }catch(error){$('connectionStatus').textContent='READY';const messages={GEMINI_API_KEY_MISSING:'Server ikusowa GEMINI_API_KEY mu Vercel.',AUDIO_TOO_LARGE:'Mawu ndi aatali kwambiri. Chepetsani kujambula.',TRANSCRIPTION_FAILED:'Sindinathe kusintha mawu kukhala malemba. Yesaninso.'};showToast(messages[error.message]||'Kulemba mawu kwalephera. Yang’anani intaneti, kenako yesaninso.','error');console.error('Chichewa transcription error:',error)}
     };
