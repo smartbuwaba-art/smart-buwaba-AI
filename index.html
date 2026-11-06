@@ -138,6 +138,63 @@
 .entry-foot{margin-top:17px}
 @media(max-width:520px){.cosmicLoading{margin-bottom:16px}.cosmicLoadingMeta{font-size:8px;letter-spacing:1.2px}.entry-card{padding:24px 18px 20px}}
 
+
+/* Full-screen illustrated welcome inspired by the supplied concept */
+#cosmicIntro{padding:10px 14px 0;background:radial-gradient(ellipse at 50% 30%,#064b35 0,#061b1b 38%,#02050c 76%,#010208 100%);overflow:hidden;align-items:center}
+#cosmicIntro::before{width:75vw;height:75vw;max-width:700px;max-height:700px;top:-24%;left:12%;background:#00ff6a35;filter:blur(65px)}
+#cosmicIntro::after{width:60vw;height:60vw;max-width:600px;max-height:600px;bottom:-35%;right:10%;background:#008cff36;filter:blur(65px)}
+.cosmicStars{opacity:1;background-image:radial-gradient(2px 2px at 10% 18%,#fff 35%,transparent 100%),radial-gradient(2px 2px at 84% 15%,#8df7ff 35%,transparent 100%),radial-gradient(1px 1px at 70% 38%,#fff 35%,transparent 100%),radial-gradient(2px 2px at 22% 62%,#6affb5 35%,transparent 100%),radial-gradient(1px 1px at 92% 72%,#fff 35%,transparent 100%),radial-gradient(1px 1px at 48% 9%,#fff 35%,transparent 100%),radial-gradient(2px 2px at 5% 82%,#a5eaff 35%,transparent 100%),radial-gradient(1px 1px at 60% 87%,#fff 35%,transparent 100%)}
+.cosmic-content{width:min(780px,100%);height:100%;max-height:100dvh;justify-content:flex-start;gap:0;padding:6px 0 20px;overflow:visible}
+.cosmicKicker{font-size:9px;letter-spacing:3px;margin:0 0 -3px;color:#b8ff9a;text-shadow:0 0 16px #00ff6a}
+.planetSystem{position:absolute;top:3%;left:50%;translate:-50% 0;width:min(95vw,760px);height:clamp(250px,47vh,440px);margin:0;opacity:.95;z-index:0;pointer-events:none}
+#cosmicRenderer{opacity:.92}
+.planetOrbit{border-color:#27ff765e;box-shadow:0 0 12px #00ff6540}
+.planetOrbit.one{width:92%;height:33%;border-width:2px}
+.planetOrbit.two{width:72%;height:54%;border-color:#00eaff66}
+.planetOrbit.three{width:100%;height:68%;border-color:#80ffbd55}
+.robotStage{position:relative;z-index:3;width:min(470px,95vw);height:clamp(205px,34vh,315px);margin:clamp(25px,5vh,55px) auto -4px;display:grid;place-items:center}
+.robotHalo{position:absolute;width:68%;height:85%;border-radius:50%;background:#00ff6650;filter:blur(44px);animation:robotHaloPulse 2.8s ease-in-out infinite}
+.buwabaRobot{position:relative;z-index:2;width:min(100%,430px);height:100%;overflow:visible;filter:drop-shadow(0 0 17px #00ff6666);animation:robotFloat 3.8s ease-in-out infinite}
+.robotBubble{position:absolute;z-index:4;display:grid;place-items:center;border:2px solid #7dff8d;border-radius:16px;background:linear-gradient(145deg,#20ef70,#008d49);color:white;box-shadow:0 0 22px #00ff6a70;font-weight:900}
+.robotBubbleLeft{width:47px;height:43px;left:8%;top:47%;font-size:24px}
+.robotBubbleRight{width:54px;height:39px;right:5%;top:55%;font-size:17px;letter-spacing:3px}
+.cosmicTitle{position:relative;z-index:5;font-size:clamp(49px,10vw,82px);line-height:.82;letter-spacing:-3px;font-weight:1000;text-transform:none;text-shadow:4px 5px 0 #050609,0 0 25px #00ff5c60;opacity:0;transform:translateY(12px);transition:opacity .8s,transform .8s}
+.cosmicTitle .titleTop{display:block;color:#fff;font-style:italic;-webkit-text-stroke:1px #050609;text-shadow:4px 5px 0 #050609,0 0 18px #fff5}
+.cosmicTitle .titleBrand{display:block;margin-top:8px;color:#9dff00;font-style:italic;-webkit-text-stroke:1px #063a10;text-shadow:3px 4px 0 #003d15,0 0 18px #48ff3c}
+#cosmicIntro.brain-stage .cosmicTitle{opacity:1;transform:translateY(0)}
+.cosmicSub{position:relative;z-index:5;margin:13px auto 10px;color:#fff;font-size:clamp(13px,3vw,20px);font-style:italic;font-weight:850;letter-spacing:.4px;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .8s .25s}
+.cosmicSub i{color:#7dff18;font-style:normal}
+#cosmicIntro.brain-stage .cosmicSub{opacity:1}
+.cosmicLoading{position:relative;z-index:6;width:min(520px,84vw);margin:3px auto 8px;padding:5px;border:2px solid #70ff31;border-radius:99px;background:#02080b;box-shadow:0 0 10px #00ff5c,0 0 25px #00ff5c70;opacity:0;animation:cosmicLoadReveal .6s ease 1s forwards}
+.cosmicLoadingTrack{height:clamp(17px,3.2vh,28px);border-radius:99px;background:#010507;overflow:hidden;box-shadow:inset 0 2px 7px #000}
+.cosmicLoadingTrack span{background:linear-gradient(90deg,#70ff00,#b6ff1b,#00e64d);box-shadow:0 0 16px #6fff00}
+.cosmicLoadingMeta{justify-content:center;margin-top:8px;color:#fff;font-size:clamp(12px,2.7vw,18px);letter-spacing:.1px;text-shadow:0 2px 5px #000}
+.cosmicLoadingMeta strong{display:none}
+.cosmicLoadingMeta span{font-size:inherit;letter-spacing:inherit}
+.cosmicActions{display:none}
+.cosmicFooter{position:relative;z-index:4;margin-top:auto;width:100%;padding-top:35px;color:#fff;font-size:11px;font-style:italic;font-weight:750;text-shadow:0 1px 5px #000}
+.cosmicFooter::before{content:"";position:absolute;left:-10vw;right:-10vw;top:0;height:80px;border-top:4px solid #29caff;border-radius:50% 50% 0 0/42% 42% 0 0;background:linear-gradient(180deg,#0868a955,#001326 65%);box-shadow:0 -5px 22px #00cfff9c;z-index:-1}
+.cosmicFooter strong{color:#7eff27;font-size:18px;font-style:italic}
+@keyframes robotFloat{50%{transform:translateY(-7px) rotate(-.5deg)}}
+@keyframes robotHaloPulse{50%{opacity:.55;transform:scale(1.13)}}
+@media(max-width:520px){
+ .cosmic-content{padding-top:5px;padding-bottom:16px}
+ .planetSystem{top:4%;height:clamp(245px,43vh,330px)}
+ .robotStage{height:clamp(190px,29vh,245px);margin-top:clamp(22px,5vh,42px);width:min(410px,98vw)}
+ .cosmicTitle{font-size:clamp(48px,13vw,68px);letter-spacing:-2px}
+ .robotBubbleLeft{left:2%;top:48%}.robotBubbleRight{right:1%;top:55%}
+ .cosmicLoading{width:84vw}
+ .cosmicFooter{font-size:10px;padding-top:30px}
+}
+@media(max-height:680px){
+ .cosmic-content{padding-top:0;padding-bottom:8px}
+ .cosmicKicker{font-size:8px;margin-bottom:-8px}
+ .robotStage{height:clamp(150px,27vh,220px);margin-top:15px}
+ .planetSystem{height:240px;top:1%}
+ .cosmicSub{margin:8px auto 6px}
+ .cosmicFooter{padding-top:24px}
+}
+
 </style>
 </head>
 <body>
@@ -145,16 +202,51 @@
 <div id="cosmicIntro" role="dialog" aria-modal="true" aria-label="Welcome to Chat Buwaba AI">
   <div class="cosmicStars"></div>
   <div class="cosmic-content">
-    <div class="cosmicKicker">A NEW INTELLIGENCE AWAKENS</div>
+    <div class="cosmicKicker">✦ POWERED BY SMART BUWABA ✦</div>
     <div class="planetSystem" aria-hidden="true"><canvas id="cosmicRenderer" aria-label="Animated realistic 3D planets" role="img"></canvas>
       <div class="planetOrbit one"></div><div class="planetOrbit two"></div><div class="planetOrbit three"></div>
       <div class="planet sun"></div><div class="planet p1"></div><div class="planet p2"></div><div class="planet p3"></div>
       <div class="brainReveal" aria-label="A glowing human brain"><svg viewBox="0 0 100 100" role="img" aria-hidden="true"><defs><linearGradient id="brainGlow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5ffe9"/><stop offset="1" stop-color="#50d7b2"/></linearGradient></defs><path d="M48 18C42 8 28 12 26 23 15 23 11 35 17 43 8 51 14 63 22 66 20 78 31 85 41 78L48 72Z M52 18C58 8 72 12 74 23 85 23 89 35 83 43 92 51 86 63 78 66 80 78 69 85 59 78L52 72Z" fill="url(#brainGlow)" stroke="#d5fff0" stroke-width="2.5" stroke-linejoin="round"/><path d="M49 19V76 M31 24C40 25 42 34 36 40S27 49 35 55 M20 44C31 42 34 49 30 59 M31 69C40 67 43 73 41 79 M69 24C60 25 58 34 64 40S73 49 65 55 M80 44C69 42 66 49 70 59 M69 69C60 67 57 73 59 79" fill="none" stroke="#176c67" stroke-width="3.2" stroke-linecap="round"/></svg></div>
     </div>
-    <h2 class="cosmicTitle">WELCOME TO <span>Chat Buwaba AI</span></h2>
-    <p class="cosmicSub">Your voice. Your ideas. Your universe.<br>A smarter conversation begins here.</p>
+    <div class="robotStage" aria-hidden="true">
+      <div class="robotHalo"></div>
+      <svg class="buwabaRobot" viewBox="0 0 360 300">
+        <defs>
+          <linearGradient id="botWhite" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#b9d1ec"/><stop offset="1" stop-color="#526b91"/></linearGradient>
+          <linearGradient id="botGreen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5ff4d"/><stop offset="1" stop-color="#00b94e"/></linearGradient>
+          <linearGradient id="botGlass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#152e40"/><stop offset="1" stop-color="#020811"/></linearGradient>
+          <filter id="botGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <ellipse cx="183" cy="277" rx="100" ry="14" fill="#00ff6a" opacity=".22"/>
+        <path d="M117 204Q103 218 104 267L153 267 163 221M236 205Q254 222 258 267L211 267 202 222" fill="url(#botWhite)" stroke="#314c70" stroke-width="5"/>
+        <path d="M129 173Q178 149 230 174L251 257Q185 282 111 256Z" fill="url(#botWhite)" stroke="#d8ecff" stroke-width="5"/>
+        <path d="M155 190Q181 178 208 190L220 234Q183 250 143 234Z" fill="#101e2b" stroke="#6fffa2" stroke-width="4"/>
+        <path d="M166 206L183 197 201 207 197 228 179 235 160 225Z" fill="#142c25" stroke="#8bff50" stroke-width="3"/>
+        <text x="181" y="224" text-anchor="middle" font-size="24" font-weight="900" font-style="italic" fill="#8dff42">SB</text>
+        <path d="M123 91Q125 37 180 34Q238 34 242 91L236 151Q230 174 181 177Q132 174 126 151Z" fill="url(#botWhite)" stroke="#e9f6ff" stroke-width="6"/>
+        <rect x="137" y="68" width="88" height="83" rx="28" fill="url(#botGlass)" stroke="#8fa9c9" stroke-width="4"/>
+        <path d="M159 108Q171 91 184 108M195 108Q207 91 218 108" fill="none" stroke="#00ff65" stroke-width="7" stroke-linecap="round" filter="url(#botGlow)"/>
+        <path d="M166 126Q181 143 199 126" fill="none" stroke="#00ff65" stroke-width="6" stroke-linecap="round" filter="url(#botGlow)"/>
+        <path d="M123 86Q97 78 99 113L105 143Q116 158 133 144L137 92Z" fill="url(#botWhite)" stroke="#9bb9d8" stroke-width="5"/>
+        <path d="M230 86Q255 78 257 113L251 143Q240 158 222 144L220 92Z" fill="url(#botWhite)" stroke="#9bb9d8" stroke-width="5"/>
+        <path d="M104 99Q117 85 133 99L135 132Q119 147 105 130Z" fill="#142337" stroke="#65ff75" stroke-width="4"/>
+        <path d="M223 99Q239 85 252 99L251 130Q237 147 222 132Z" fill="#142337" stroke="#65ff75" stroke-width="4"/>
+        <path d="M130 38Q139 5 181 8Q223 5 233 38L218 48H145Z" fill="url(#botWhite)" stroke="#d9eaff" stroke-width="5"/>
+        <path d="M159 22Q181 13 204 22L198 35H164Z" fill="#18283d"/>
+        <path d="M124 184Q93 171 75 198L48 222Q38 233 48 244L62 251Q76 254 89 239L132 220" fill="url(#botWhite)" stroke="#b8d5f4" stroke-width="5"/>
+        <path d="M47 224Q25 209 12 223Q2 235 18 249L48 267Q66 276 78 261L83 246Z" fill="url(#botWhite)" stroke="#d6eaff" stroke-width="5"/>
+        <path d="M54 239L39 226M67 249L53 237M48 258L35 246" stroke="#718cac" stroke-width="4" stroke-linecap="round"/>
+        <path d="M231 186Q258 172 276 190L295 209" fill="none" stroke="#b7cce5" stroke-width="17" stroke-linecap="round"/>
+        <circle cx="278" cy="211" r="12" fill="url(#botGreen)" stroke="#eaffd0" stroke-width="3"/>
+      </svg>
+      <div class="robotBubble robotBubbleLeft">✳</div><div class="robotBubble robotBubbleRight">•••</div>
+    </div>
+    <h2 class="cosmicTitle"><span class="titleTop">Chat</span><span class="titleBrand">Buwaba AI</span></h2>
+    <p class="cosmicSub">Ask <i>•</i> Chat <i>•</i> Learn <i>•</i> Create</p>
     <div class="cosmicLoading" role="status" aria-label="Loading Chat Buwaba AI"><div class="cosmicLoadingTrack"><span id="cosmicLoadingBar"></span></div><div class="cosmicLoadingMeta"><span>INITIALIZING YOUR UNIVERSE</span><strong id="cosmicLoadingPercent">0%</strong></div></div>
     <div class="cosmicActions"><button class="primary" id="enterCosmos" type="button">Enter Chat Buwaba AI ↗</button><button class="cosmicSkip" id="skipCosmos" type="button">Skip intro</button></div>
+    <div class="cosmicFooter">Powered by <strong>SB</strong> Smart Buwaba</div>
+
   </div>
 </div>
 <section class="lamp-screen" id="lampScreen" aria-label="Welcome to Chat Buwaba">
