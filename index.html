@@ -113,6 +113,31 @@
 #mic.recording{background:#5a2435;color:#fff;border-color:#ff9eb8;box-shadow:0 0 22px #ff9eb855;animation:orbPulse 1s infinite}
 @media(max-width:680px){.b-menu{top:68px;right:10px}}
 
+
+/* Final cosmic intro and matching sign-in screen */
+.cosmicLoading{width:min(300px,82vw);margin:0 auto 22px;opacity:0;animation:cosmicLoadReveal .6s ease 1s forwards}
+.cosmicLoadingTrack{height:5px;border-radius:99px;background:#ffffff1a;overflow:hidden;box-shadow:0 0 18px #80e8ff18}
+.cosmicLoadingTrack span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8df7c2,#80e8ff,#b7a6ff);box-shadow:0 0 18px #80e8ff;transition:width .12s linear}
+.cosmicLoadingMeta{display:flex;justify-content:space-between;gap:12px;margin-top:9px;color:#91a6c7;font-size:9px;letter-spacing:1.7px}
+.cosmicLoadingMeta strong{color:#bdf9e0;font-size:10px;letter-spacing:1px;font-variant-numeric:tabular-nums}
+@keyframes cosmicLoadReveal{to{opacity:1}}
+#cosmicIntro{background:radial-gradient(ellipse at 50% 45%,#19396a 0,#080d1d 49%,#02040b 100%)}
+.cosmicActions{margin-top:2px}
+.lamp-screen{background:radial-gradient(ellipse at 50% 18%,#1a3761 0,transparent 48%),radial-gradient(ellipse at 50% 100%,#0b3a43 0,transparent 45%),#050914}
+.lamp-screen::before{background:#4edfc4;opacity:.1}
+.entry-card{width:min(440px,100%);padding:30px 28px 25px;border:1px solid #5a789b80;border-radius:26px;background:linear-gradient(155deg,#14223bed,#091426f5);box-shadow:0 28px 100px #000a,0 0 55px #54d9d31c}
+.entry-brand{font-size:11px;letter-spacing:4px;color:#d8e9ff}
+.entry-brand span{color:var(--green)}
+.lamp-stage,.pull-button{display:none!important}
+.entry-title{font-size:clamp(25px,6vw,34px);margin:4px 0 9px}
+.entry-copy{font-size:12px;margin:0 auto 16px}
+.entry-form{display:block!important;margin-top:18px}
+.entry-form h2{font-size:20px}
+.entry-form .form-hint{font-size:12px}
+.field input{background:#080f20;border-color:#344c6c}
+.entry-foot{margin-top:17px}
+@media(max-width:520px){.cosmicLoading{margin-bottom:16px}.cosmicLoadingMeta{font-size:8px;letter-spacing:1.2px}.entry-card{padding:24px 18px 20px}}
+
 </style>
 </head>
 <body>
@@ -128,6 +153,7 @@
     </div>
     <h2 class="cosmicTitle">WELCOME TO <span>Chat Buwaba AI</span></h2>
     <p class="cosmicSub">Your voice. Your ideas. Your universe.<br>A smarter conversation begins here.</p>
+    <div class="cosmicLoading" role="status" aria-label="Loading Chat Buwaba AI"><div class="cosmicLoadingTrack"><span id="cosmicLoadingBar"></span></div><div class="cosmicLoadingMeta"><span>INITIALIZING YOUR UNIVERSE</span><strong id="cosmicLoadingPercent">0%</strong></div></div>
     <div class="cosmicActions"><button class="primary" id="enterCosmos" type="button">Enter Chat Buwaba AI ↗</button><button class="cosmicSkip" id="skipCosmos" type="button">Skip intro</button></div>
   </div>
 </div>
@@ -141,7 +167,7 @@
     <h1 class="entry-title">A brighter way to <span>think.</span></h1>
     <p class="entry-copy" id="entryCopy">Pull the little cord to switch on your personal AI experience.</p>
     <button class="pull-button" id="pullCord" type="button">↟ Pull the cord</button>
-    <div class="entry-form hidden" id="entryForm">
+    <div class="entry-form" id="entryForm">
       <h2 id="formTitle">Welcome back</h2>
       <p class="form-hint" id="formHint">Sign in to your Chat Buwaba account.</p>
       <form id="accountForm">
@@ -657,9 +683,29 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
   }
   window.addEventListener('load', () => {
     if (introAlreadySeen) { intro?.classList.add('hidden'); return; }
+    const bar = byId('cosmicLoadingBar');
+    const percent = byId('cosmicLoadingPercent');
+    const duration = 5200;
+    const started = performance.now();
+    let raf = 0;
+    const updateProgress = now => {
+      const progress = Math.min(100, Math.round(((now - started) / duration) * 100));
+      if (bar) bar.style.width = progress + '%';
+      if (percent) percent.textContent = progress + '%';
+      if (progress < 100) raf = requestAnimationFrame(updateProgress);
+    };
+    raf = requestAnimationFrame(updateProgress);
     window.setTimeout(() => intro?.classList.add('brain-stage'), 1700);
     window.setTimeout(() => intro?.classList.add('ready'), 3000);
-    window.setTimeout(() => { if (intro && !intro.classList.contains('hidden')) { intro.classList.add('hidden'); try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {} } }, 5600);
+    window.setTimeout(() => {
+      cancelAnimationFrame(raf);
+      if (bar) bar.style.width = '100%';
+      if (percent) percent.textContent = '100%';
+      if (intro && !intro.classList.contains('hidden')) {
+        intro.classList.add('hidden');
+        try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {}
+      }
+    }, duration);
   });
   byId('enterCosmos').addEventListener('click', enterApp);
   byId('skipCosmos').addEventListener('click', enterApp);
