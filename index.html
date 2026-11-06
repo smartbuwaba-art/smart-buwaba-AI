@@ -195,6 +195,8 @@
  .cosmicFooter{padding-top:24px}
 }
 
+
+.robotStage{isolation:isolate}#robotRenderer{position:absolute;inset:0;width:100%;height:100%;z-index:2;display:block}.robotHalo{z-index:0}.cosmicFooter{height:96px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px}.cosmicFooter::before{height:100px}.cosmicFooter span{position:relative;z-index:3}#earthRenderer{position:absolute;left:50%;bottom:-95px;translate:-50% 0;width:min(620px,100vw);height:180px;z-index:1;pointer-events:none}@media(max-width:520px){#earthRenderer{height:150px;bottom:-83px}.cosmicFooter{height:82px}}
 </style>
 </head>
 <body>
@@ -208,44 +210,12 @@
       <div class="planet sun"></div><div class="planet p1"></div><div class="planet p2"></div><div class="planet p3"></div>
       <div class="brainReveal" aria-label="A glowing human brain"><svg viewBox="0 0 100 100" role="img" aria-hidden="true"><defs><linearGradient id="brainGlow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5ffe9"/><stop offset="1" stop-color="#50d7b2"/></linearGradient></defs><path d="M48 18C42 8 28 12 26 23 15 23 11 35 17 43 8 51 14 63 22 66 20 78 31 85 41 78L48 72Z M52 18C58 8 72 12 74 23 85 23 89 35 83 43 92 51 86 63 78 66 80 78 69 85 59 78L52 72Z" fill="url(#brainGlow)" stroke="#d5fff0" stroke-width="2.5" stroke-linejoin="round"/><path d="M49 19V76 M31 24C40 25 42 34 36 40S27 49 35 55 M20 44C31 42 34 49 30 59 M31 69C40 67 43 73 41 79 M69 24C60 25 58 34 64 40S73 49 65 55 M80 44C69 42 66 49 70 59 M69 69C60 67 57 73 59 79" fill="none" stroke="#176c67" stroke-width="3.2" stroke-linecap="round"/></svg></div>
     </div>
-    <div class="robotStage" aria-hidden="true">
-      <div class="robotHalo"></div>
-      <svg class="buwabaRobot" viewBox="0 0 360 300">
-        <defs>
-          <linearGradient id="botWhite" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#b9d1ec"/><stop offset="1" stop-color="#526b91"/></linearGradient>
-          <linearGradient id="botGreen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5ff4d"/><stop offset="1" stop-color="#00b94e"/></linearGradient>
-          <linearGradient id="botGlass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#152e40"/><stop offset="1" stop-color="#020811"/></linearGradient>
-          <filter id="botGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <ellipse cx="183" cy="277" rx="100" ry="14" fill="#00ff6a" opacity=".22"/>
-        <path d="M117 204Q103 218 104 267L153 267 163 221M236 205Q254 222 258 267L211 267 202 222" fill="url(#botWhite)" stroke="#314c70" stroke-width="5"/>
-        <path d="M129 173Q178 149 230 174L251 257Q185 282 111 256Z" fill="url(#botWhite)" stroke="#d8ecff" stroke-width="5"/>
-        <path d="M155 190Q181 178 208 190L220 234Q183 250 143 234Z" fill="#101e2b" stroke="#6fffa2" stroke-width="4"/>
-        <path d="M166 206L183 197 201 207 197 228 179 235 160 225Z" fill="#142c25" stroke="#8bff50" stroke-width="3"/>
-        <text x="181" y="224" text-anchor="middle" font-size="24" font-weight="900" font-style="italic" fill="#8dff42">SB</text>
-        <path d="M123 91Q125 37 180 34Q238 34 242 91L236 151Q230 174 181 177Q132 174 126 151Z" fill="url(#botWhite)" stroke="#e9f6ff" stroke-width="6"/>
-        <rect x="137" y="68" width="88" height="83" rx="28" fill="url(#botGlass)" stroke="#8fa9c9" stroke-width="4"/>
-        <path d="M159 108Q171 91 184 108M195 108Q207 91 218 108" fill="none" stroke="#00ff65" stroke-width="7" stroke-linecap="round" filter="url(#botGlow)"/>
-        <path d="M166 126Q181 143 199 126" fill="none" stroke="#00ff65" stroke-width="6" stroke-linecap="round" filter="url(#botGlow)"/>
-        <path d="M123 86Q97 78 99 113L105 143Q116 158 133 144L137 92Z" fill="url(#botWhite)" stroke="#9bb9d8" stroke-width="5"/>
-        <path d="M230 86Q255 78 257 113L251 143Q240 158 222 144L220 92Z" fill="url(#botWhite)" stroke="#9bb9d8" stroke-width="5"/>
-        <path d="M104 99Q117 85 133 99L135 132Q119 147 105 130Z" fill="#142337" stroke="#65ff75" stroke-width="4"/>
-        <path d="M223 99Q239 85 252 99L251 130Q237 147 222 132Z" fill="#142337" stroke="#65ff75" stroke-width="4"/>
-        <path d="M130 38Q139 5 181 8Q223 5 233 38L218 48H145Z" fill="url(#botWhite)" stroke="#d9eaff" stroke-width="5"/>
-        <path d="M159 22Q181 13 204 22L198 35H164Z" fill="#18283d"/>
-        <path d="M124 184Q93 171 75 198L48 222Q38 233 48 244L62 251Q76 254 89 239L132 220" fill="url(#botWhite)" stroke="#b8d5f4" stroke-width="5"/>
-        <path d="M47 224Q25 209 12 223Q2 235 18 249L48 267Q66 276 78 261L83 246Z" fill="url(#botWhite)" stroke="#d6eaff" stroke-width="5"/>
-        <path d="M54 239L39 226M67 249L53 237M48 258L35 246" stroke="#718cac" stroke-width="4" stroke-linecap="round"/>
-        <path d="M231 186Q258 172 276 190L295 209" fill="none" stroke="#b7cce5" stroke-width="17" stroke-linecap="round"/>
-        <circle cx="278" cy="211" r="12" fill="url(#botGreen)" stroke="#eaffd0" stroke-width="3"/>
-      </svg>
-      <div class="robotBubble robotBubbleLeft">✳</div><div class="robotBubble robotBubbleRight">•••</div>
-    </div>
+    <div class="robotStage" aria-hidden="true"><div class="robotHalo"></div><canvas id="robotRenderer" aria-label="Animated 3D Chat Buwaba robot"></canvas><div class="robotBubble robotBubbleLeft">✳</div><div class="robotBubble robotBubbleRight">•••</div></div>
     <h2 class="cosmicTitle"><span class="titleTop">Chat</span><span class="titleBrand">Buwaba AI</span></h2>
     <p class="cosmicSub">Ask <i>•</i> Chat <i>•</i> Learn <i>•</i> Create</p>
     <div class="cosmicLoading" role="status" aria-label="Loading Chat Buwaba AI"><div class="cosmicLoadingTrack"><span id="cosmicLoadingBar"></span></div><div class="cosmicLoadingMeta"><span>INITIALIZING YOUR UNIVERSE</span><strong id="cosmicLoadingPercent">0%</strong></div></div>
     <div class="cosmicActions"><button class="primary" id="enterCosmos" type="button">Enter Chat Buwaba AI ↗</button><button class="cosmicSkip" id="skipCosmos" type="button">Skip intro</button></div>
-    <div class="cosmicFooter">Powered by <strong>SB</strong> Smart Buwaba</div>
+    <div class="cosmicFooter"><canvas id="earthRenderer" aria-label="Rotating Earth globe"></canvas><span>Powered by <strong>SB</strong> Smart Buwaba</span></div>
 
   </div>
 </div>
@@ -1715,7 +1685,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       }
       const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t;
     }
-    function orbit(rx,ry,z,tilt){const pts=[];for(let i=0;i<160;i++){const a=i/160*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*rx,Math.sin(a)*ry,z))}const m=new THREE.LineBasicMaterial({color:0x66baff,transparent:true,opacity:.25});const line=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts),m);line.rotation.x=tilt;world.add(line);fadeMats.push(m)}
+    function orbit(rx,ry,z,tilt){const pts=[];for(let i=0;i<160;i++){const a=i/160*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*rx,Math.sin(a)*ry,z))}const m=new THREE.LineBasicMaterial({color:0x21ff62,transparent:true,opacity:.72});const line=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts),m);line.rotation.x=tilt;world.add(line);fadeMats.push(m)}
     function planet(radius,kind,pos,atmosphere){
       const group=new THREE.Group();group.position.copy(pos);
       const tex=makeTexture(kind),mat=new THREE.MeshStandardMaterial({map:tex,roughness:kind==="sun"?.7:.85,metalness:.03,emissive:kind==="sun"?0x7b2b0d:0x000000,emissiveMap:kind==="sun"?tex:null,emissiveIntensity:kind==="sun"?1.15:0,transparent:true});
@@ -1779,6 +1749,36 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
       brain.visible=brainProgress>.012;brain.scale.setScalar(1.7*brainProgress);brain.rotation.y=Math.sin(frame*.55)*.13;brain.rotation.x=.12+Math.sin(frame*.3)*.045;brain.rotation.z=Math.sin(frame*.42)*.035;
       renderer.render(scene,camera);
     }
+
+    // 3D mascot made from real Three.js meshes.
+    function buildRobot(){
+      const cv=document.getElementById("robotRenderer");if(!cv)return;
+      const s=new THREE.Scene(),cam=new THREE.PerspectiveCamera(34,1,.1,40);cam.position.z=7.4;
+      const rr=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,powerPreference:"low-power"});rr.setPixelRatio(Math.min(devicePixelRatio||1,1.5));rr.setClearColor(0,0);rr.outputColorSpace=THREE.SRGBColorSpace;rr.toneMapping=THREE.ACESFilmicToneMapping;
+      s.add(new THREE.HemisphereLight(0xdff5ff,0x13231b,2));const dl=new THREE.DirectionalLight(0xffffff,3);dl.position.set(-3,4,6);s.add(dl);const gl=new THREE.PointLight(0x00ff58,35,9);gl.position.set(2,1,3);s.add(gl);
+      const g=new THREE.Group();s.add(g);
+      const w=new THREE.MeshPhysicalMaterial({color:0xeaf4ff,metalness:.38,roughness:.23,clearcoat:.8}),d=new THREE.MeshPhysicalMaterial({color:0x07111d,metalness:.55,roughness:.15}),e=new THREE.MeshStandardMaterial({color:0x637d9f,metalness:.7,roughness:.25}),n=new THREE.MeshStandardMaterial({color:0x24ff55,emissive:0x00ff42,emissiveIntensity:2.5}),ch=new THREE.MeshStandardMaterial({color:0x152536,metalness:.5,roughness:.25});
+      const ball=(p,m,pos,sc)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(1,36,28),m);o.position.set(...pos);o.scale.set(...sc);p.add(o);return o};
+      const bar=(p,m,a,b,r)=>{const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),v=B.clone().sub(A),o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,v.length(),20),m);o.position.copy(A).add(B).multiplyScalar(.5);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());p.add(o);ball(p,m,a,[r,r,r]);ball(p,m,b,[r,r,r])};
+      ball(g,w,[0,-.75,0],[.82,.85,.52]);ball(g,ch,[0,-.72,.48],[.53,.55,.12]);ball(g,d,[0,-.94,.58],[.34,.22,.06]);const badge=new THREE.Mesh(new THREE.TorusGeometry(.31,.025,10,48),n);badge.position.set(0,-.94,.62);g.add(badge);
+      ball(g,w,[0,.62,0],[.94,.9,.7]);ball(g,d,[0,.59,.59],[.76,.58,.19]);
+      [-.32,.32].forEach(x=>{const q=new THREE.QuadraticBezierCurve3(new THREE.Vector3(x-.14,.67,.77),new THREE.Vector3(x,.82,.79),new THREE.Vector3(x+.14,.67,.77));g.add(new THREE.Mesh(new THREE.TubeGeometry(q,24,.04,10,false),n))});
+      const sm=new THREE.QuadraticBezierCurve3(new THREE.Vector3(-.22,.39,.78),new THREE.Vector3(0,.25,.82),new THREE.Vector3(.22,.39,.78));g.add(new THREE.Mesh(new THREE.TubeGeometry(sm,24,.04,10,false),n));
+      [-1,1].forEach(x=>{ball(g,e,[x*.91,.62,.02],[.23,.42,.32]);ball(g,d,[x*1.03,.62,.1],[.16,.3,.25]);ball(g,n,[x*1.08,.62,.13],[.045,.18,.17]);bar(g,w,[x*.82,-.27,0],[x*1.12,-.8,.08],.17);ball(g,n,[x*1.12,-.82,.08],[.2,.2,.2]);bar(g,w,[x*1.12,-.82,.08],[x*1.25,-1.17,.15],.13)});
+      const band=new THREE.Mesh(new THREE.TorusGeometry(.77,.065,14,64,Math.PI),e);band.rotation.z=Math.PI;band.position.y=.74;g.add(band);
+      ball(g,w,[-1.28,-1.2,.3],[.28,.14,.3]);for(let i=0;i<4;i++){let x=-1.46+i*.14;bar(g,w,[x,-1.19,.32],[x-.07,-1.0-Math.sin(i/3*Math.PI)*.1,.34],.055)}bar(g,w,[-1.1,-1.22,.34],[-.96,-1.1,.36],.065);
+      const halo=new THREE.Mesh(new THREE.TorusGeometry(1.65,.014,8,128),n);halo.rotation.set(.8,.25,-.2);halo.position.y=-.1;g.add(halo);
+      function size(){let W=Math.max(1,cv.clientWidth),H=Math.max(1,cv.clientHeight);cam.aspect=W/H;cam.position.z=W/H<1.1?8.4:7.4;cam.updateProjectionMatrix();rr.setSize(W,H,false)}size();addEventListener("resize",size,{passive:true});
+      let t=0;function draw(){requestAnimationFrame(draw);if(document.hidden)return;t+=.012;g.position.y=Math.sin(t)*.05;g.rotation.y=-.1+Math.sin(t*.4)*.08;halo.rotation.z+=.003;rr.render(s,cam)}draw();
+    }
+    function buildEarth(){
+      const cv=document.getElementById("earthRenderer");if(!cv)return;
+      const s=new THREE.Scene(),cam=new THREE.PerspectiveCamera(35,1,.1,40);cam.position.set(0,1.2,6.2);
+      const rr=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,powerPreference:"low-power"});rr.setPixelRatio(Math.min(devicePixelRatio||1,1.4));rr.setClearColor(0,0);rr.outputColorSpace=THREE.SRGBColorSpace;s.add(new THREE.AmbientLight(0x9bbdff,1.3));const l=new THREE.DirectionalLight(0xffffff,3);l.position.set(-3,3,5);s.add(l);
+      const globe=new THREE.Mesh(new THREE.SphereGeometry(2.15,64,48),new THREE.MeshStandardMaterial({map:makeTexture("earth"),roughness:.9}));globe.position.y=-1.08;s.add(globe);const halo=new THREE.Mesh(new THREE.SphereGeometry(2.2,48,36),new THREE.MeshBasicMaterial({color:0x20aaff,transparent:true,opacity:.17,side:THREE.BackSide}));halo.position.copy(globe.position);s.add(halo);
+      function size(){let W=Math.max(1,cv.clientWidth),H=Math.max(1,cv.clientHeight);cam.aspect=W/H;cam.updateProjectionMatrix();rr.setSize(W,H,false)}size();addEventListener("resize",size,{passive:true});function draw(){requestAnimationFrame(draw);if(document.hidden)return;globe.rotation.y+=.0018;rr.render(s,cam)}draw();
+    }
+    buildRobot();buildEarth();
     animate();
   }).catch(error=>console.warn("3D intro unavailable; using the CSS planet fallback.",error));
 })();
