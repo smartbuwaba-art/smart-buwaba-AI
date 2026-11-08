@@ -197,6 +197,80 @@
 
 
 .robotStage{isolation:isolate}#robotRenderer{position:absolute;inset:0;width:100%;height:100%;z-index:2;display:block}.robotHalo{z-index:0}.cosmicFooter{height:96px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px}.cosmicFooter::before{height:100px}.cosmicFooter span{position:relative;z-index:3}#earthRenderer{position:absolute;left:50%;bottom:-95px;translate:-50% 0;width:min(620px,100vw);height:180px;z-index:1;pointer-events:none}@media(max-width:520px){#earthRenderer{height:150px;bottom:-83px}.cosmicFooter{height:82px}}
+
+/* Chat Buwaba neon-green mobile-first app redesign */
+:root{--bg:#020704;--panel:#06110a;--panel2:#0a1b10;--green:#62ff24;--cyan:#a4ff58;--muted:#a4b8a6;--line:#16451b}
+body{background:radial-gradient(ellipse at 50% 0%,#07310f 0,transparent 48%),#020704;color:#f6fff5}
+.app{background:transparent;min-height:100dvh}
+.sidebar{width:275px;background:linear-gradient(180deg,#031006,#020704);border-right:1px solid #1c5d20;padding:20px 15px}
+.brand{gap:11px;margin-bottom:25px}.logo{border-radius:50%;width:52px;height:52px;color:#fff;background:radial-gradient(circle at 30% 20%,#1d3815,#020503 70%);border:2px solid #69ff25;box-shadow:0 0 20px #42ff2a66;font-style:italic}
+.brand strong{font-size:16px;letter-spacing:-.3px}.brand small{color:#7dff5c}
+.new-chat{background:linear-gradient(110deg,#7dff22,#18c93a);color:#031006;border:0;border-radius:25px;font-weight:850}
+.side-label{color:#70c85a;letter-spacing:1.6px}.history-item{border-radius:12px;padding:11px;color:#e7f5e5;font-size:12px}.history-item.active,.history-item:hover{background:#0b3212;border-color:#38d92c;color:#aaff83}
+.side-link{border-radius:13px;color:#d9ebd5}.side-link.active{background:#0b3212;color:#8aff51}
+.profile{border-color:#174c1d}.avatar{background:#0b3b14;color:#8dff51;border:1px solid #49d82b}
+.main{background:transparent}.topbar{height:76px;padding:0 24px;border-bottom:1px solid #16451b;background:#020804eF;position:sticky;top:0;z-index:10;backdrop-filter:blur(16px)}
+.topbar>strong{font-size:16px;letter-spacing:-.3px}.top-actions{gap:8px}.status{color:#75ff47}
+.voice-toggle{border:1px solid #2d7926;background:#06170a;color:#eaffdf;border-radius:22px;padding:9px 12px}
+.content{width:min(920px,100%);padding:20px 24px 24px}
+.hero{padding:14px 0 10px;text-align:center}
+.welcome-robot{height:clamp(170px,26vh,250px);position:relative;display:grid;place-items:center;margin:0 auto 8px;isolation:isolate}
+.robot-glow{position:absolute;width:190px;height:150px;border-radius:50%;background:#20ff2e55;filter:blur(42px);z-index:-1}
+.robot-face{font-size:clamp(100px,18vw,155px);line-height:1;filter:drop-shadow(0 0 17px #39ff4d);animation:robotFloat 3.8s ease-in-out infinite}
+.robot-spark{position:absolute;right:24%;top:15%;color:#b7ff22;font-size:32px;text-shadow:0 0 18px #7dff32}
+.hero .eyebrow{color:#8bff58;letter-spacing:2px}
+h1{font-size:clamp(34px,6vw,52px);letter-spacing:-1.8px;margin:10px 0 9px}
+h1 span{background:linear-gradient(90deg,#fff,#73ff22);background-clip:text;color:transparent}
+.subtitle{color:#e4f5e2;font-size:clamp(13px,2vw,16px);line-height:1.6}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 24px}
+.card{min-height:74px;display:flex;align-items:center;gap:12px;padding:13px 15px;border:1.5px solid #3ecb28;border-radius:17px;background:linear-gradient(145deg,#071b0b,#020904);box-shadow:inset 0 0 16px #2bff1a0b,0 0 13px #2aff2010}
+.card:hover{border-color:#9bff51;background:#0b2910;transform:translateY(-2px)}
+.card .symbol{font-size:23px;margin:0;color:#7eff32;min-width:28px;text-align:center}
+.card strong{font-size:13px;color:#f3fff0}
+.card small{display:none}
+.messages{gap:14px}.message.ai{background:#06160a;border-color:#1b6120}.message.user{background:linear-gradient(135deg,#16451b,#092b12);border-color:#3ca52c}
+.composer-wrap{position:sticky;bottom:0;padding:12px 22px max(16px,env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,#020704 18%);z-index:8}
+.composer{border:1.5px solid #43df2d;background:#07150a;border-radius:28px;padding:7px 9px;box-shadow:0 0 20px #2dff201a}
+.composer:focus-within{border-color:#a3ff57;box-shadow:0 0 22px #49ff2c33}
+.composer textarea{color:#fff;padding:11px 4px}.composer textarea::placeholder{color:#9db29c}
+.icon-btn{border-radius:50%;border:1px solid #2b6e27;background:#0b2310;color:#eaffdf;width:42px;height:42px}
+.icon-btn.send{background:#64ff22;color:#031006;border:0}.icon-btn.mic{background:#64ff22;color:#031006;border:0}
+.footnote{color:#668266}.app-action{border-color:#2d7926;background:#071b0a;color:#cfffbc;border-radius:20px}
+@media(min-width:681px){.content{padding-top:24px}.hero{padding-top:10px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){
+ .app{min-height:100dvh;padding-bottom:72px}
+ .sidebar{display:flex;position:fixed;left:0;right:0;top:0;width:auto;height:auto;max-height:68px;padding:8px 14px;border-right:0;border-bottom:1px solid #1c5d20;z-index:20;flex-direction:row;align-items:center;gap:12px;background:#020904f5}
+ .brand{margin:0;min-width:0;flex:1}.brand .logo{width:43px;height:43px;font-size:19px}.brand strong{font-size:14px}.brand small{font-size:9px}
+ .sidebar .new-chat{padding:10px 13px;font-size:11px;white-space:nowrap}
+ .sidebar .side-label,.sidebar .chat-history,.sidebar .profile,.sidebar .side-link{display:none}
+ .main{padding-top:68px;min-height:calc(100dvh - 68px)}
+ .topbar{height:52px;padding:0 12px;position:relative}.topbar>strong{font-size:13px}
+ .top-actions{gap:5px}.top-actions .status,.top-actions #floatingButton,.top-actions #voiceToggle{display:none}
+ .voice-toggle{padding:7px 10px;font-size:11px}
+ .content{padding:10px 13px 12px}
+ .hero{padding:5px 0 4px}
+ .welcome-robot{height:clamp(145px,23vh,205px);margin-bottom:0}
+ .robot-face{font-size:clamp(105px,32vw,145px)}
+ .robot-spark{right:19%;top:12%}
+ .hero .eyebrow{font-size:9px;letter-spacing:1.7px}
+ h1{font-size:clamp(32px,9vw,42px);margin:8px 0}
+ .subtitle{font-size:13px;line-height:1.5;margin:0 auto;max-width:330px}
+ .hero .app-actions{display:none}
+ .cards{gap:9px;margin:14px 0 17px}
+ .card{min-height:62px;padding:10px 11px;border-radius:15px;gap:8px}
+ .card .symbol{font-size:20px;min-width:24px}
+ .card strong{font-size:11px;line-height:1.25}
+ .composer-wrap{position:fixed;bottom:70px;left:0;right:0;padding:8px 10px;background:linear-gradient(180deg,transparent,#020704 12%);z-index:12}
+ .composer{gap:5px;padding:5px 7px}
+ .composer textarea{font-size:13px;min-height:38px;padding:9px 2px}
+ .icon-btn{width:37px;height:37px}
+ .footnote{display:none}
+ .messages{padding-bottom:12px}.message{max-width:96%;font-size:13px}
+}
+@media(max-width:380px){.brand small{display:none}.sidebar .new-chat{padding:9px 10px}.cards{gap:7px}.card{padding:9px}.card strong{font-size:10px}}
+@media(max-height:700px) and (max-width:680px){.welcome-robot{height:135px}.robot-face{font-size:105px}.cards{margin:9px 0 12px}.card{min-height:55px}}
+@media(prefers-reduced-motion:reduce){.robot-face{animation:none}}
+
 </style>
 </head>
 <body>
@@ -282,12 +356,20 @@
   <main class="main">
     <header class="topbar"><strong>Chat Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="bMenuButton" type="button" aria-expanded="false" aria-controls="bMenu">B ▾</button><button class="voice-toggle" id="floatingButton" type="button" aria-pressed="false">⭕ Floating B: Off</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
-      <div class="hero" id="hero"><div class="orb">✳</div><div class="eyebrow">YOUR WORLD. YOUR COMMAND.</div><h1>Think beyond.<br><span>Speak naturally.</span></h1><p class="subtitle">Your personal assistant, designed around you.<br>What shall we make possible today?</p><div class="app-actions" aria-label="Get Chat Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div></div>
-      <div class="cards" id="cards">
-        <button class="card" data-prompt="Help me write something creative"><div class="symbol">✧</div><strong>Creative Studio</strong><small>Ideas, writing, music concepts and inspiration.</small></button>
-        <button class="card" data-prompt="Help me with technology and coding"><div class="symbol">⌘</div><strong>Smart Solutions</strong><small>Explore technology, code and new possibilities.</small></button>
-        <button class="card" data-prompt="Help me plan my day"><div class="symbol">◷</div><strong>Daily Companion</strong><small>Organize tasks and plan your next move.</small></button>
-        <button class="card" id="voiceCard"><div class="symbol">〰</div><strong>Voice Experience</strong><small>Talk to your assistant and hear replies aloud.</small></button>
+      <div class="hero" id="hero">
+        <div class="welcome-robot"><span class="robot-glow"></span><div class="robot-face">🤖</div><span class="robot-spark">✦</span></div>
+        <div class="eyebrow">✦ YOUR SMART AI ASSISTANT ✦</div>
+        <h1>Chat <span>Buwaba AI</span></h1>
+        <p class="subtitle">Ask • Chat • Learn • Create<br>I am your Smart AI Assistant. How can I help you today? 😊</p>
+        <div class="app-actions" aria-label="Get Chat Buwaba"><button class="app-action" id="installAppButtonTop" type="button">⬇ Install app</button><button class="app-action" id="shareAppButtonTop" type="button">↗ Share app</button></div>
+      </div>
+      <div class="cards" id="cards" aria-label="Quick actions">
+        <button class="card quick-card" data-prompt="Answer my question: "><div class="symbol">✨</div><strong>Ask Anything</strong></button>
+        <button class="card quick-card" data-prompt="Help me write and explain code: "><div class="symbol code-symbol">‹/›</div><strong>Write Code</strong></button>
+        <button class="card quick-card" data-prompt="Give me creative ideas about: "><div class="symbol">💡</div><strong>Get Ideas</strong></button>
+        <button class="card quick-card" data-prompt="Help me create an image about: "><div class="symbol">▧</div><strong>Make Image</strong></button>
+        <button class="card quick-card" data-prompt="Help me learn English. Start with a simple lesson: "><div class="symbol">▶</div><strong>Watch & Learn</strong></button>
+        <button class="card quick-card" id="voiceCard"><div class="symbol">🎓</div><strong>Learn English by Voice</strong></button>
       </div>
       <div class="messages" id="messages" aria-live="polite"></div>
     </section>
