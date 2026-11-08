@@ -271,6 +271,17 @@ h1 span{background:linear-gradient(90deg,#fff,#73ff22);background-clip:text;colo
 @media(max-height:700px) and (max-width:680px){.welcome-robot{height:135px}.robot-face{font-size:105px}.cards{margin:9px 0 12px}.card{min-height:55px}}
 @media(prefers-reduced-motion:reduce){.robot-face{animation:none}}
 
+
+.mobile-nav{display:none}
+@media(max-width:680px){
+ .mobile-nav{position:fixed;display:flex;align-items:center;justify-content:space-around;gap:2px;left:0;right:0;bottom:0;height:66px;padding:5px 8px max(5px,env(safe-area-inset-bottom));background:#020904f7;border-top:1px solid #236b20;z-index:30;backdrop-filter:blur(18px)}
+ .mobile-nav-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:transparent;color:#a7b7a5;padding:4px;border-radius:12px}
+ .mobile-nav-item span{font-size:21px;line-height:1.1}.mobile-nav-item small{font-size:9px}
+ .mobile-nav-item.active{color:#76ff35;text-shadow:0 0 12px #62ff2466}
+ .mobile-nav-add{width:56px;height:56px;flex:0 0 56px;border:0;border-radius:50%;background:linear-gradient(145deg,#8dff38,#13d735);color:#041006;font-size:34px;line-height:1;box-shadow:0 0 20px #48ff3277}
+ .composer-wrap{bottom:66px}
+ .app{padding-bottom:66px}
+}
 </style>
 </head>
 <body>
@@ -375,6 +386,13 @@ h1 span{background:linear-gradient(90deg,#fff,#73ff22);background-clip:text;colo
     </section>
     <footer class="composer-wrap"><form class="composer" id="chatForm"><button class="icon-btn mic" id="mic" type="button" aria-label="Use microphone" title="Speak">♩</button><button class="icon-btn image-btn" id="imageButton" type="button" aria-label="Generate image" title="Pangani chithunzi">▧</button><textarea id="prompt" rows="1" placeholder="Message Chat Buwaba..." aria-label="Message Chat Buwaba"></textarea><button class="icon-btn send" id="sendButton" type="submit" aria-label="Send message">↑</button></form><div class="footnote">Chat Buwaba AI · BUILT FOR YOUR WORLD<div class="app-actions" aria-label="Install or share Chat Buwaba"><button class="app-action" id="installAppButton" type="button">⬇ Install app</button><button class="app-action" id="shareAppButton" type="button">↗ Share app</button></div></div></footer>
   </main>
+  <nav class="mobile-nav" aria-label="Main navigation">
+    <button type="button" class="mobile-nav-item active" id="mobileHome"><span>⌂</span><small>Home</small></button>
+    <button type="button" class="mobile-nav-item" id="mobileChats"><span>▤</span><small>Chats</small></button>
+    <button type="button" class="mobile-nav-add" id="mobileNewChat" aria-label="New chat">＋</button>
+    <button type="button" class="mobile-nav-item" id="mobileVoice"><span>🎙</span><small>Voice</small></button>
+    <button type="button" class="mobile-nav-item" id="mobileAccount"><span>♙</span><small>Account</small></button>
+  </nav>
 </div>
 
 <script type="module">
@@ -1911,5 +1929,18 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 })();
 </script>
 
+
+<script>
+(()=>{
+ const $=id=>document.getElementById(id);
+ const nav=[...document.querySelectorAll('.mobile-nav-item')];
+ const activate=id=>nav.forEach(b=>b.classList.toggle('active',b.id===id));
+ $('mobileHome')?.addEventListener('click',()=>{activate('mobileHome');$('hero')?.classList.remove('hidden');$('cards')?.classList.remove('hidden');$('hero')?.scrollIntoView({behavior:'smooth',block:'start'});});
+ $('mobileChats')?.addEventListener('click',()=>{activate('mobileChats');$('messages')?.scrollIntoView({behavior:'smooth',block:'end'});$('prompt')?.focus();});
+ $('mobileNewChat')?.addEventListener('click',()=>{$('newChat')?.click();activate('mobileHome');});
+ $('mobileVoice')?.addEventListener('click',()=>{activate('mobileVoice');$('voiceStudioButton')?.click();});
+ $('mobileAccount')?.addEventListener('click',()=>{activate('mobileAccount');const signout=$('signOutButton');if(signout&&!signout.classList.contains('hidden'))signout.click();else showToast('Muli mu Guest mode. Lowani kapena pangani account kuchokera pa sign-in screen.');});
+})();
+</script>
 </body>
 </html>
