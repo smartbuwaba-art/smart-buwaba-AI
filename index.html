@@ -282,6 +282,23 @@ h1 span{background:linear-gradient(90deg,#fff,#73ff22);background-clip:text;colo
  .composer-wrap{bottom:66px}
  .app{padding-bottom:66px}
 }
+
+/* Chat Buwaba wallpaper */
+.messages{
+  background-image:
+    linear-gradient(rgba(2,8,4,.28),rgba(2,8,4,.28)),
+    url('/chat-buwaba-wallpaper%20(4).jpg');
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-attachment:scroll;
+  border-radius:18px;
+}
+.message.ai{background:rgba(4,20,8,.92);backdrop-filter:blur(5px)}
+.message.user{background:rgba(15,65,24,.94);backdrop-filter:blur(5px)}
+@media(max-width:680px){
+  .messages{background-position:center;background-size:cover;border-radius:14px}
+}
 </style>
 </head>
 <body>
