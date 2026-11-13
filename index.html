@@ -163,6 +163,19 @@ html,body{height:100%;overflow:hidden}
     scrollbar-width:none;padding-bottom:2px;
   }
   .top-actions::-webkit-scrollbar{display:none}
+  .top-actions{overflow:visible;justify-content:flex-end}
+  .top-actions .status{display:none}
+  .top-actions #floatingButton,.top-actions #voiceToggle{
+    width:32px;min-width:32px;height:32px;padding:0;
+    display:grid;place-items:center;font-size:0
+  }
+  .top-actions #floatingButton::before{content:"⭕";font-size:14px}
+  .top-actions #floatingButton[aria-pressed="true"]::before{content:"🟢"}
+  .top-actions #voiceToggle::before{content:"🔊";font-size:14px}
+  .top-actions #voiceToggle[aria-pressed="false"]::before{content:"🔇"}
+  .top-actions #bMenuButton{width:32px;padding:5px 0}
+  .top-actions #voiceStudioButton{padding:6px 8px}
+  .top-actions .language-select{min-width:76px;max-width:82px}
   .top-actions>*{flex:0 0 auto}
   .status{font-size:8px}
   .language-select{min-width:78px;max-width:88px;font-size:10px}
