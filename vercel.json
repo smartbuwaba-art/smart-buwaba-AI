@@ -6,6 +6,9 @@
     },
     "api/transcribe.js": {
       "maxDuration": 60
+    },
+    "api/search.js": {
+      "maxDuration": 20
     }
   }
 }
