@@ -477,7 +477,7 @@ async function requestSmartBuwabaAI(message){
   let lastError;
   for(let attempt=0;attempt<2;attempt++){
     const controller=new AbortController();
-    const timeout=setTimeout(()=>controller.abort(),20000);
+    const timeout=setTimeout(()=>controller.abort(),55000);
     try{
       const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,history}),signal:controller.signal,cache:'no-store'});
       let data={};try{data=await response.json()}catch(e){}
