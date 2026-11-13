@@ -33,171 +33,6 @@
 @media(max-width:680px){.sidebar{display:none}.topbar{height:59px;padding:0 15px}.content{padding:13px 16px}.hero{padding:32px 0 15px}.orb{width:75px;height:75px}.cards{gap:9px}.card{padding:14px}.composer-wrap{padding:10px 12px 17px}.message{max-width:95%}.entry-card{padding:24px 19px}.lamp-stage{height:240px}.lamp-assembly{top:72px}.top-actions{gap:6px}.status{font-size:9px}.voice-toggle{padding:7px}.language-select{max-width:94px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
-/* Cosmic welcome intro */
-#cosmicIntro{position:fixed;inset:0;z-index:200;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#172c56 0,#080b16 48%,#02040b 100%);text-align:center;padding:24px;isolation:isolate}
-#cosmicIntro::before,#cosmicIntro::after{content:"";position:absolute;border-radius:50%;filter:blur(45px);pointer-events:none;z-index:-1}
-#cosmicIntro::before{width:300px;height:300px;background:#1a77c755;top:5%;left:-90px;animation:cosmicGlow 7s ease-in-out infinite alternate}
-#cosmicIntro::after{width:270px;height:270px;background:#8df7c233;bottom:-80px;right:-50px;animation:cosmicGlow 6s ease-in-out infinite alternate-reverse}
-.cosmicStars{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 15% 25%,#fff9 40%,transparent 100%),radial-gradient(1px 1px at 80% 18%,#fff9 40%,transparent 100%),radial-gradient(2px 2px at 73% 72%,#80e8ffb0 40%,transparent 100%),radial-gradient(1px 1px at 25% 80%,#fff9 40%,transparent 100%),radial-gradient(1px 1px at 90% 49%,#8df7c2 40%,transparent 100%),radial-gradient(1px 1px at 44% 13%,#fff9 40%,transparent 100%);opacity:.8}
-.cosmic-content{position:relative;width:min(540px,100%);display:flex;flex-direction:column;align-items:center}
-.planetSystem{position:relative;width:310px;height:270px;margin:0 auto 7px;animation:systemFloat 4s ease-in-out infinite}
-.planetOrbit{position:absolute;border:1px solid #7bbaff45;border-radius:50%;left:50%;top:48%;transform:translate(-50%,-50%) rotate(-22deg)}
-.planetOrbit.one{width:245px;height:100px;animation:orbitSpin 8s linear infinite}
-.planetOrbit.two{width:200px;height:165px;transform:translate(-50%,-50%) rotate(56deg);animation:orbitSpin 12s linear infinite reverse}
-.planetOrbit.three{width:275px;height:205px;transform:translate(-50%,-50%) rotate(72deg);animation:orbitSpin 16s linear infinite}
-.planet{position:absolute;border-radius:50%;box-shadow:inset -8px -8px 16px #0008,0 0 20px #80e8ff40}
-.planet.p1{width:34px;height:34px;background:radial-gradient(circle at 28% 25%,#e0fff0 0,#8df7c2 20%,#169a9b 68%,#07505c 100%);top:15%;left:18%;box-shadow:inset -9px -7px 12px #001b28aa,0 0 20px #8df7c280}
-.planet.p2{width:25px;height:25px;background:radial-gradient(circle at 28% 25%,#fff2d1,#ffb17c 40%,#bd4d68 100%);right:7%;top:52%;box-shadow:inset -7px -5px 10px #40152caa,0 0 16px #ffb17c66}
-.planet.p2::after{content:"";position:absolute;width:39px;height:12px;left:-8px;top:6px;border:2px solid #f7d8a9;border-left-color:#f7d8a955;border-right-color:#f7d8a955;border-radius:50%;transform:rotate(-22deg)}
-.planet.p3{width:19px;height:19px;background:radial-gradient(circle at 28% 25%,#e4e8ff,#8b9aff 45%,#4338a5 100%);bottom:10%;left:14%;box-shadow:inset -5px -4px 7px #100b44aa,0 0 13px #a5b4fc88}
-.planet.sun{width:80px;height:80px;left:50%;top:48%;transform:translate(-50%,-50%);background:radial-gradient(circle at 32% 27%,#fff,#a5f5ff 18%,#37b9d4 47%,#2354a6 78%);box-shadow:0 0 35px #80e8ff8c,0 0 90px #3189f34d;animation:sunPulse 3s ease-in-out infinite}
-.brainReveal{position:absolute;left:50%;top:48%;width:105px;height:105px;transform:translate(-50%,-50%) scale(.25);opacity:0;filter:drop-shadow(0 0 24px #8df7c2);transition:opacity .9s,transform .9s;z-index:3}.brainReveal svg{width:100%;height:100%;overflow:visible}
-#cosmicIntro.brain-stage .planetSystem{transform:scale(.83);opacity:.28;transition:transform 1s,opacity 1s}
-#cosmicIntro.brain-stage .brainReveal{opacity:1;transform:translate(-50%,-50%) scale(1);animation:brainBeat 2s ease-in-out infinite}
-.cosmicKicker{font-size:10px;letter-spacing:5px;color:var(--green);font-weight:850;margin:0 0 12px}
-.cosmicTitle{font-size:clamp(28px,7vw,43px);line-height:1.08;letter-spacing:-1.5px;margin:0;color:#f5fbff;opacity:0;transform:translateY(12px);transition:opacity .8s,transform .8s}
-.cosmicTitle span{display:block;color:var(--green);margin-top:6px}
-#cosmicIntro.brain-stage .cosmicTitle{opacity:1;transform:translateY(0)}
-.cosmicSub{color:#a5b5cf;font-size:12px;line-height:1.8;max-width:340px;margin:14px auto 20px;opacity:0;transition:opacity .8s .25s}
-#cosmicIntro.brain-stage .cosmicSub{opacity:1}
-.cosmicActions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;opacity:0;transform:translateY(8px);transition:opacity .7s .4s,transform .7s .4s}
-#cosmicIntro.ready .cosmicActions{opacity:1;transform:translateY(0)}
-.cosmicSkip{border:1px solid #334866;background:#111c31;color:#c6d6f0;border-radius:12px;padding:12px 15px;font-weight:700}
-@keyframes orbitSpin{from{rotate:0deg}to{rotate:360deg}}@keyframes systemFloat{50%{translate:0 -8px}}@keyframes sunPulse{50%{box-shadow:0 0 50px #80e8ffb0,0 0 110px #3189f36b;scale:1.04}}@keyframes brainBeat{50%{filter:drop-shadow(0 0 35px #8df7c2);scale:1.07}}@keyframes cosmicGlow{to{transform:scale(1.3);opacity:.5}}
-/* Hands-free voice conversation */
-#voiceStudio{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:auto;padding:22px;background:radial-gradient(ellipse at 50% 35%,#173453 0,#090e1e 48%,#050810 100%);text-align:center}
-.voiceClose{position:absolute;top:20px;right:20px;border:1px solid #344664;background:#121c31;color:#e7f0ff;border-radius:12px;width:42px;height:42px;font-size:20px}
-.voiceBrand{font-size:11px;letter-spacing:4px;font-weight:850;color:#dce9ff}.voiceBrand span{color:var(--green)}
-.voiceOrbWrap{width:245px;height:245px;display:grid;place-items:center;position:relative;margin:25px auto 10px}
-.voiceRing{position:absolute;inset:5px;border:1px solid #80e8ff4c;border-radius:50%;animation:voiceRing 4s linear infinite}
-.voiceRing.r2{inset:25px;border-color:#8df7c255;animation-duration:6s;animation-direction:reverse}
-.voiceRing.r3{inset:47px;border-style:dashed;border-color:#80e8ff45;animation-duration:11s}
-.voiceCore{width:122px;height:122px;display:grid;place-items:center;border-radius:38px;background:radial-gradient(circle at 30% 20%,#375a79,#142440 70%);border:1px solid #6ed8d8a0;box-shadow:0 0 45px #80e8ff2a,inset 0 0 30px #8df7c21b;transition:.3s}.voiceCore svg{width:76px;height:76px;filter:drop-shadow(0 0 12px #8df7c2)}
-#voiceStudio.listening .voiceCore{box-shadow:0 0 60px #8df7c26b,inset 0 0 35px #8df7c240;border-color:var(--green);animation:voicePulse 1.4s ease-in-out infinite}
-#voiceStudio.speaking .voiceCore{box-shadow:0 0 60px #80e8ff80;border-color:var(--cyan);animation:voicePulse .7s ease-in-out infinite}
-.voiceWave{display:flex;justify-content:center;align-items:center;gap:5px;height:35px;margin:10px auto}
-.voiceWave i{width:4px;height:10px;border-radius:5px;background:var(--green);opacity:.55}
-#voiceStudio.listening .voiceWave i,#voiceStudio.speaking .voiceWave i{animation:waveBars .65s ease-in-out infinite alternate;opacity:1}
-.voiceWave i:nth-child(2n){animation-delay:.12s!important}.voiceWave i:nth-child(3n){animation-delay:.25s!important}.voiceWave i:nth-child(4n){animation-delay:.34s!important}
-.voiceTitle{font-size:clamp(25px,6vw,38px);letter-spacing:-1px;margin:3px 0 8px}.voiceStatus{color:var(--green);font-size:11px;letter-spacing:2px;font-weight:800;text-transform:uppercase}.voiceTranscript{min-height:48px;max-width:480px;color:#b7c5dc;font-size:13px;line-height:1.8;margin:10px auto 17px}
-.voiceActions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.voiceStart{min-width:165px}.voiceHint{font-size:11px;color:#778aa8;line-height:1.8;max-width:390px;margin:19px auto 0}
-@keyframes voiceRing{to{transform:rotate(360deg)}}@keyframes voicePulse{50%{transform:scale(1.04)}}@keyframes waveBars{to{height:28px;box-shadow:0 0 10px #8df7c270}}
-@media(max-width:520px){.planetSystem{transform:scale(.85);margin-top:-10px;margin-bottom:-10px}.voiceOrbWrap{transform:scale(.86);margin:6px auto -5px}}
-@media(prefers-reduced-motion:reduce){.planetOrbit,.planetSystem,.planet.sun,.voiceRing,.voiceCore,.voiceWave i{animation:none!important}}
-
-
-/* Cinematic, large-screen 3D intro */
-#cosmicIntro{background:radial-gradient(ellipse at 50% 42%,#19396a 0,#080b16 54%,#010208 100%)}
-.cosmic-content{width:min(600px,100%);z-index:2}
-.planetSystem{width:min(470px,98vw);height:clamp(300px,42vw,390px);margin:0 auto 4px;perspective:1100px;transform-style:preserve-3d}
-#cosmicRenderer{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
-.planetSystem.webgl-ready>.planetOrbit,.planetSystem.webgl-ready>.planet:not(.brainReveal){opacity:0!important;visibility:hidden}
-.planetSystem.webgl-ready .brainReveal{visibility:hidden}
-.planet.sun{width:108px;height:108px;background:radial-gradient(circle at 35% 27%,#fff8d6 0,#ffeaa0 16%,#ff9d44 42%,#b83b65 76%,#32164e 100%);box-shadow:0 0 35px #ffe29a,0 0 85px #ff8a416b}
-.planet.p1{width:53px;height:53px}.planet.p2{width:42px;height:42px}.planet.p2::after{width:67px;height:21px;left:-13px;top:10px;border-width:3px}.planet.p3{width:30px;height:30px}
-.brainReveal{width:clamp(170px,42vw,205px);height:clamp(170px,42vw,205px);filter:drop-shadow(0 0 32px #8df7c2aa);z-index:4}
-#cosmicIntro.brain-stage .planetSystem{transform:scale(1);opacity:1;transition:transform 1.1s,opacity 1.1s}
-#cosmicIntro.brain-stage .brainReveal{width:clamp(180px,46vw,220px);height:clamp(180px,46vw,220px);filter:drop-shadow(0 0 42px #8df7c2cc)}
-.cosmicKicker{letter-spacing:4px;text-shadow:0 0 16px #8df7c288}
-.cosmicTitle{text-shadow:0 0 32px #8df7c21a}
-@media(max-width:520px){.planetSystem{width:min(410px,100vw);height:clamp(285px,78vw,335px)}.cosmicKicker{letter-spacing:2.8px;font-size:9px}.cosmicTitle{font-size:clamp(25px,7.4vw,36px);letter-spacing:-.8px}.cosmicSub{max-width:300px}}
-@media(max-height:650px){.planetSystem{height:255px;width:min(380px,95vw)}.cosmicKicker{margin-bottom:5px}.cosmicSub{margin:8px auto 12px}}
-
-
-/* Buwaba quick-action menu and Chichewa dictation state */
-.b-menu{position:fixed;z-index:180;top:78px;right:18px;width:min(310px,calc(100vw - 28px));padding:14px;border:1px solid #3a506e;border-radius:18px;background:linear-gradient(150deg,#17243d,#0b1222);box-shadow:0 22px 70px #000b;display:grid;gap:8px}
-.b-menu-title{display:flex;align-items:center;justify-content:space-between;padding:3px 4px 8px;color:#8df7c2;font-size:12px;font-weight:850;letter-spacing:1.5px}
-.b-menu button{width:100%;text-align:left;border:1px solid #30415e;border-radius:11px;background:#17233b;color:#eaf3ff;padding:11px 12px;font-size:12px;font-weight:650}
-.b-menu button:hover{border-color:#8df7c2;background:#1b3043}
-#bMenuButton{font-weight:900;color:#08151b;background:linear-gradient(120deg,var(--green),var(--cyan));border:0}
-#mic.recording{background:#5a2435;color:#fff;border-color:#ff9eb8;box-shadow:0 0 22px #ff9eb855;animation:orbPulse 1s infinite}
-@media(max-width:680px){.b-menu{top:68px;right:10px}}
-
-
-/* Final cosmic intro and matching sign-in screen */
-.cosmicLoading{width:min(300px,82vw);margin:0 auto 22px;opacity:0;animation:cosmicLoadReveal .6s ease 1s forwards}
-.cosmicLoadingTrack{height:5px;border-radius:99px;background:#ffffff1a;overflow:hidden;box-shadow:0 0 18px #80e8ff18}
-.cosmicLoadingTrack span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8df7c2,#80e8ff,#b7a6ff);box-shadow:0 0 18px #80e8ff;transition:width .12s linear}
-.cosmicLoadingMeta{display:flex;justify-content:space-between;gap:12px;margin-top:9px;color:#91a6c7;font-size:9px;letter-spacing:1.7px}
-.cosmicLoadingMeta strong{color:#bdf9e0;font-size:10px;letter-spacing:1px;font-variant-numeric:tabular-nums}
-@keyframes cosmicLoadReveal{to{opacity:1}}
-#cosmicIntro{background:radial-gradient(ellipse at 50% 45%,#19396a 0,#080d1d 49%,#02040b 100%)}
-.cosmicActions{margin-top:2px}
-.lamp-screen{background:radial-gradient(ellipse at 50% 18%,#1a3761 0,transparent 48%),radial-gradient(ellipse at 50% 100%,#0b3a43 0,transparent 45%),#050914}
-.lamp-screen::before{background:#4edfc4;opacity:.1}
-.entry-card{width:min(440px,100%);padding:30px 28px 25px;border:1px solid #5a789b80;border-radius:26px;background:linear-gradient(155deg,#14223bed,#091426f5);box-shadow:0 28px 100px #000a,0 0 55px #54d9d31c}
-.entry-brand{font-size:11px;letter-spacing:4px;color:#d8e9ff}
-.entry-brand span{color:var(--green)}
-.lamp-stage,.pull-button{display:none!important}
-.entry-title{font-size:clamp(25px,6vw,34px);margin:4px 0 9px}
-.entry-copy{font-size:12px;margin:0 auto 16px}
-.entry-form{display:block!important;margin-top:18px}
-.entry-form h2{font-size:20px}
-.entry-form .form-hint{font-size:12px}
-.field input{background:#080f20;border-color:#344c6c}
-.entry-foot{margin-top:17px}
-@media(max-width:520px){.cosmicLoading{margin-bottom:16px}.cosmicLoadingMeta{font-size:8px;letter-spacing:1.2px}.entry-card{padding:24px 18px 20px}}
-
-
-/* Full-screen illustrated welcome inspired by the supplied concept */
-#cosmicIntro{padding:10px 14px 0;background:radial-gradient(ellipse at 50% 30%,#064b35 0,#061b1b 38%,#02050c 76%,#010208 100%);overflow:hidden;align-items:center}
-#cosmicIntro::before{width:75vw;height:75vw;max-width:700px;max-height:700px;top:-24%;left:12%;background:#00ff6a35;filter:blur(65px)}
-#cosmicIntro::after{width:60vw;height:60vw;max-width:600px;max-height:600px;bottom:-35%;right:10%;background:#008cff36;filter:blur(65px)}
-.cosmicStars{opacity:1;background-image:radial-gradient(2px 2px at 10% 18%,#fff 35%,transparent 100%),radial-gradient(2px 2px at 84% 15%,#8df7ff 35%,transparent 100%),radial-gradient(1px 1px at 70% 38%,#fff 35%,transparent 100%),radial-gradient(2px 2px at 22% 62%,#6affb5 35%,transparent 100%),radial-gradient(1px 1px at 92% 72%,#fff 35%,transparent 100%),radial-gradient(1px 1px at 48% 9%,#fff 35%,transparent 100%),radial-gradient(2px 2px at 5% 82%,#a5eaff 35%,transparent 100%),radial-gradient(1px 1px at 60% 87%,#fff 35%,transparent 100%)}
-.cosmic-content{width:min(780px,100%);height:100%;max-height:100dvh;justify-content:flex-start;gap:0;padding:6px 0 20px;overflow:visible}
-.cosmicKicker{font-size:9px;letter-spacing:3px;margin:0 0 -3px;color:#b8ff9a;text-shadow:0 0 16px #00ff6a}
-.planetSystem{position:absolute;top:3%;left:50%;translate:-50% 0;width:min(95vw,760px);height:clamp(250px,47vh,440px);margin:0;opacity:.95;z-index:0;pointer-events:none}
-#cosmicRenderer{opacity:.92}
-.planetOrbit{border-color:#27ff765e;box-shadow:0 0 12px #00ff6540}
-.planetOrbit.one{width:92%;height:33%;border-width:2px}
-.planetOrbit.two{width:72%;height:54%;border-color:#00eaff66}
-.planetOrbit.three{width:100%;height:68%;border-color:#80ffbd55}
-.robotStage{position:relative;z-index:3;width:min(470px,95vw);height:clamp(205px,34vh,315px);margin:clamp(25px,5vh,55px) auto -4px;display:grid;place-items:center}
-.robotHalo{position:absolute;width:68%;height:85%;border-radius:50%;background:#00ff6650;filter:blur(44px);animation:robotHaloPulse 2.8s ease-in-out infinite}
-.buwabaRobot{position:relative;z-index:2;width:min(100%,430px);height:100%;overflow:visible;filter:drop-shadow(0 0 17px #00ff6666);animation:robotFloat 3.8s ease-in-out infinite}
-.robotBubble{position:absolute;z-index:4;display:grid;place-items:center;border:2px solid #7dff8d;border-radius:16px;background:linear-gradient(145deg,#20ef70,#008d49);color:white;box-shadow:0 0 22px #00ff6a70;font-weight:900}
-.robotBubbleLeft{width:47px;height:43px;left:8%;top:47%;font-size:24px}
-.robotBubbleRight{width:54px;height:39px;right:5%;top:55%;font-size:17px;letter-spacing:3px}
-.cosmicTitle{position:relative;z-index:5;font-size:clamp(49px,10vw,82px);line-height:.82;letter-spacing:-3px;font-weight:1000;text-transform:none;text-shadow:4px 5px 0 #050609,0 0 25px #00ff5c60;opacity:0;transform:translateY(12px);transition:opacity .8s,transform .8s}
-.cosmicTitle .titleTop{display:block;color:#fff;font-style:italic;-webkit-text-stroke:1px #050609;text-shadow:4px 5px 0 #050609,0 0 18px #fff5}
-.cosmicTitle .titleBrand{display:block;margin-top:8px;color:#9dff00;font-style:italic;-webkit-text-stroke:1px #063a10;text-shadow:3px 4px 0 #003d15,0 0 18px #48ff3c}
-#cosmicIntro.brain-stage .cosmicTitle{opacity:1;transform:translateY(0)}
-.cosmicSub{position:relative;z-index:5;margin:13px auto 10px;color:#fff;font-size:clamp(13px,3vw,20px);font-style:italic;font-weight:850;letter-spacing:.4px;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .8s .25s}
-.cosmicSub i{color:#7dff18;font-style:normal}
-#cosmicIntro.brain-stage .cosmicSub{opacity:1}
-.cosmicLoading{position:relative;z-index:6;width:min(520px,84vw);margin:3px auto 8px;padding:5px;border:2px solid #70ff31;border-radius:99px;background:#02080b;box-shadow:0 0 10px #00ff5c,0 0 25px #00ff5c70;opacity:0;animation:cosmicLoadReveal .6s ease 1s forwards}
-.cosmicLoadingTrack{height:clamp(17px,3.2vh,28px);border-radius:99px;background:#010507;overflow:hidden;box-shadow:inset 0 2px 7px #000}
-.cosmicLoadingTrack span{background:linear-gradient(90deg,#70ff00,#b6ff1b,#00e64d);box-shadow:0 0 16px #6fff00}
-.cosmicLoadingMeta{justify-content:center;margin-top:8px;color:#fff;font-size:clamp(12px,2.7vw,18px);letter-spacing:.1px;text-shadow:0 2px 5px #000}
-.cosmicLoadingMeta strong{display:none}
-.cosmicLoadingMeta span{font-size:inherit;letter-spacing:inherit}
-.cosmicActions{display:none}
-.cosmicFooter{position:relative;z-index:4;margin-top:auto;width:100%;padding-top:35px;color:#fff;font-size:11px;font-style:italic;font-weight:750;text-shadow:0 1px 5px #000}
-.cosmicFooter::before{content:"";position:absolute;left:-10vw;right:-10vw;top:0;height:80px;border-top:4px solid #29caff;border-radius:50% 50% 0 0/42% 42% 0 0;background:linear-gradient(180deg,#0868a955,#001326 65%);box-shadow:0 -5px 22px #00cfff9c;z-index:-1}
-.cosmicFooter strong{color:#7eff27;font-size:18px;font-style:italic}
-@keyframes robotFloat{50%{transform:translateY(-7px) rotate(-.5deg)}}
-@keyframes robotHaloPulse{50%{opacity:.55;transform:scale(1.13)}}
-@media(max-width:520px){
- .cosmic-content{padding-top:5px;padding-bottom:16px}
- .planetSystem{top:4%;height:clamp(245px,43vh,330px)}
- .robotStage{height:clamp(190px,29vh,245px);margin-top:clamp(22px,5vh,42px);width:min(410px,98vw)}
- .cosmicTitle{font-size:clamp(48px,13vw,68px);letter-spacing:-2px}
- .robotBubbleLeft{left:2%;top:48%}.robotBubbleRight{right:1%;top:55%}
- .cosmicLoading{width:84vw}
- .cosmicFooter{font-size:10px;padding-top:30px}
-}
-@media(max-height:680px){
- .cosmic-content{padding-top:0;padding-bottom:8px}
- .cosmicKicker{font-size:8px;margin-bottom:-8px}
- .robotStage{height:clamp(150px,27vh,220px);margin-top:15px}
- .planetSystem{height:240px;top:1%}
- .cosmicSub{margin:8px auto 6px}
- .cosmicFooter{padding-top:24px}
-}
-
-
-.robotStage{isolation:isolate}#robotRenderer{position:absolute;inset:0;width:100%;height:100%;z-index:2;display:block}.robotHalo{z-index:0}.cosmicFooter{height:96px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px}.cosmicFooter::before{height:100px}.cosmicFooter span{position:relative;z-index:3}#earthRenderer{position:absolute;left:50%;bottom:-95px;translate:-50% 0;width:min(620px,100vw);height:180px;z-index:1;pointer-events:none}@media(max-width:520px){#earthRenderer{height:150px;bottom:-83px}.cosmicFooter{height:82px}}
-
 /* Chat Buwaba neon-green mobile-first app redesign */
 :root{--bg:#020704;--panel:#06110a;--panel2:#0a1b10;--green:#62ff24;--cyan:#a4ff58;--muted:#a4b8a6;--line:#16451b}
 body{background:radial-gradient(ellipse at 50% 0%,#07310f 0,transparent 48%),#020704;color:#f6fff5}
@@ -314,28 +149,53 @@ html,body{height:100%;overflow:hidden}
 @media(max-width:680px){
   .messages{background-position:center;background-size:cover;border-radius:14px}
 }
+
+/* Mobile phone layout refinements */
+@media(max-width:680px){
+  .topbar{
+    height:auto;min-height:58px;padding:8px 10px;
+    align-items:flex-start;flex-wrap:wrap;gap:6px;
+  }
+  .topbar>strong{flex:0 0 100%;font-size:12px;line-height:1.25}
+  .top-actions{
+    width:100%;min-width:0;display:flex;align-items:center;gap:5px;
+    flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;
+    scrollbar-width:none;padding-bottom:2px;
+  }
+  .top-actions::-webkit-scrollbar{display:none}
+  .top-actions>*{flex:0 0 auto}
+  .status{font-size:8px}
+  .language-select{min-width:78px;max-width:88px;font-size:10px}
+  .top-actions .voice-toggle{font-size:10px;padding:6px 7px;white-space:nowrap}
+  .content{width:100%;padding:10px 10px 8px}
+  .hero{padding:15px 0 10px}
+  .hero h1{font-size:clamp(27px,8vw,38px);letter-spacing:-1px}
+  .subtitle{font-size:12px;line-height:1.6}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+  .card{min-width:0;min-height:64px;padding:11px}
+  .card strong{font-size:12px;line-height:1.3}
+  .messages{min-width:0;width:100%;border-radius:12px}
+  .message{max-width:94%;padding:11px 12px;font-size:13px;line-height:1.65}
+  .composer-wrap{left:0;right:0;bottom:66px;padding:7px 9px max(9px,env(safe-area-inset-bottom))}
+  .composer{gap:5px;padding:5px 6px;border-radius:22px}
+  .composer textarea{min-width:0;font-size:14px;min-height:40px;max-height:110px}
+  .composer .icon-btn{width:38px;height:38px;min-width:38px;flex:0 0 38px}
+  .mobile-nav{height:66px}
+}
+@media(max-width:380px){
+  .topbar{padding-left:8px;padding-right:8px}
+  .top-actions{gap:4px}
+  .top-actions .voice-toggle{padding:5px 6px;font-size:9px}
+  .language-select{min-width:72px;max-width:78px}
+  .content{padding-left:8px;padding-right:8px}
+  .card{padding:9px;min-height:60px}
+  .card strong{font-size:11px}
+}
+
 </style>
 </head>
 <body>
 
-<div id="cosmicIntro" role="dialog" aria-modal="true" aria-label="Welcome to Chat Buwaba AI">
-  <div class="cosmicStars"></div>
-  <div class="cosmic-content">
-    <div class="cosmicKicker">✦ POWERED BY SMART BUWABA ✦</div>
-    <div class="planetSystem" aria-hidden="true"><canvas id="cosmicRenderer" aria-label="Animated realistic 3D planets" role="img"></canvas>
-      <div class="planetOrbit one"></div><div class="planetOrbit two"></div><div class="planetOrbit three"></div>
-      <div class="planet sun"></div><div class="planet p1"></div><div class="planet p2"></div><div class="planet p3"></div>
-      <div class="brainReveal" aria-label="A glowing human brain"><svg viewBox="0 0 100 100" role="img" aria-hidden="true"><defs><linearGradient id="brainGlow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5ffe9"/><stop offset="1" stop-color="#50d7b2"/></linearGradient></defs><path d="M48 18C42 8 28 12 26 23 15 23 11 35 17 43 8 51 14 63 22 66 20 78 31 85 41 78L48 72Z M52 18C58 8 72 12 74 23 85 23 89 35 83 43 92 51 86 63 78 66 80 78 69 85 59 78L52 72Z" fill="url(#brainGlow)" stroke="#d5fff0" stroke-width="2.5" stroke-linejoin="round"/><path d="M49 19V76 M31 24C40 25 42 34 36 40S27 49 35 55 M20 44C31 42 34 49 30 59 M31 69C40 67 43 73 41 79 M69 24C60 25 58 34 64 40S73 49 65 55 M80 44C69 42 66 49 70 59 M69 69C60 67 57 73 59 79" fill="none" stroke="#176c67" stroke-width="3.2" stroke-linecap="round"/></svg></div>
-    </div>
-    <div class="robotStage" aria-hidden="true"><div class="robotHalo"></div><canvas id="robotRenderer" aria-label="Animated 3D Chat Buwaba robot"></canvas><div class="robotBubble robotBubbleLeft">✳</div><div class="robotBubble robotBubbleRight">•••</div></div>
-    <h2 class="cosmicTitle"><span class="titleTop">Chat</span><span class="titleBrand">Buwaba AI</span></h2>
-    <p class="cosmicSub">Ask <i>•</i> Chat <i>•</i> Learn <i>•</i> Create</p>
-    <div class="cosmicLoading" role="status" aria-label="Loading Chat Buwaba AI"><div class="cosmicLoadingTrack"><span id="cosmicLoadingBar"></span></div><div class="cosmicLoadingMeta"><span>INITIALIZING YOUR UNIVERSE</span><strong id="cosmicLoadingPercent">0%</strong></div></div>
-    <div class="cosmicActions"><button class="primary" id="enterCosmos" type="button">Enter Chat Buwaba AI ↗</button><button class="cosmicSkip" id="skipCosmos" type="button">Skip intro</button></div>
-    <div class="cosmicFooter"><canvas id="earthRenderer" aria-label="Rotating Earth globe"></canvas><span>Powered by <strong>SB</strong> Smart Buwaba</span></div>
-
-  </div>
-</div>
 <section class="lamp-screen" id="lampScreen" aria-label="Welcome to Chat Buwaba">
   <div class="entry-card">
     <div class="entry-brand">SMART <span>BUWABA</span> AI</div>
@@ -842,68 +702,6 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 <script>
 (() => {
   const byId = id => document.getElementById(id);
-  const intro = byId('cosmicIntro');
-  let introAlreadySeen = false;
-  try { introAlreadySeen = sessionStorage.getItem('sbai-intro-seen') === '1'; } catch(e) {}
-  if (introAlreadySeen) intro?.classList.add('hidden');
-  let introToneCtx = null;
-  function playCosmicSound() {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      introToneCtx = introToneCtx || new AudioCtx();
-      if (introToneCtx.state === 'suspended') introToneCtx.resume();
-      const ctx = introToneCtx, now = ctx.currentTime;
-      [[220,.00,.16],[330,.18,.18],[440,.36,.2],[660,.58,.34]].forEach(([hz,delay,duration]) => {
-        const osc = ctx.createOscillator(), gain = ctx.createGain();
-        osc.type = 'sine'; osc.frequency.setValueAtTime(hz, now + delay);
-        gain.gain.setValueAtTime(.0001, now + delay);
-        gain.gain.exponentialRampToValueAtTime(.07, now + delay + .035);
-        gain.gain.exponentialRampToValueAtTime(.0001, now + delay + duration);
-        osc.connect(gain); gain.connect(ctx.destination); osc.start(now + delay); osc.stop(now + delay + duration + .02);
-      });
-    } catch (e) {}
-  }
-  function enterApp() {
-    playCosmicSound();
-    if (intro.dataset.entering === '1') return;
-    intro.dataset.entering = '1';
-    byId('enterCosmos').disabled = true;
-    byId('skipCosmos').disabled = true;
-    window.setTimeout(() => {
-      intro.classList.add('hidden');
-      try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {}
-    }, 850);
-  }
-  window.addEventListener('load', () => {
-    if (introAlreadySeen) { intro?.classList.add('hidden'); return; }
-    const bar = byId('cosmicLoadingBar');
-    const percent = byId('cosmicLoadingPercent');
-    const duration = 5200;
-    const started = performance.now();
-    let raf = 0;
-    const updateProgress = now => {
-      const progress = Math.min(100, Math.round(((now - started) / duration) * 100));
-      if (bar) bar.style.width = progress + '%';
-      if (percent) percent.textContent = progress + '%';
-      if (progress < 100) raf = requestAnimationFrame(updateProgress);
-    };
-    raf = requestAnimationFrame(updateProgress);
-    window.setTimeout(() => intro?.classList.add('brain-stage'), 1700);
-    window.setTimeout(() => intro?.classList.add('ready'), 3000);
-    window.setTimeout(() => {
-      cancelAnimationFrame(raf);
-      if (bar) bar.style.width = '100%';
-      if (percent) percent.textContent = '100%';
-      if (intro && !intro.classList.contains('hidden')) {
-        intro.classList.add('hidden');
-        try { sessionStorage.setItem('sbai-intro-seen','1'); } catch(e) {}
-      }
-    }, duration);
-  });
-  byId('enterCosmos').addEventListener('click', enterApp);
-  byId('skipCosmos').addEventListener('click', enterApp);
-
   const studio = byId('voiceStudio');
   let voiceSession = false, wakeArmed = false, voiceRecognition = null, processingVoice = false, restartTimer = null;
   let liveSocket = null, liveStream = null, liveAudioContext = null, liveProcessor = null;
@@ -1775,146 +1573,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.ser
 </script>
 
 
-<script type="module">
-(() => {
-  const canvas=document.getElementById("cosmicRenderer"), intro=document.getElementById("cosmicIntro");
-  if(!canvas||!intro)return;
-  import("https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js").then(THREE=>{
-    const root=canvas.parentElement,scene=new THREE.Scene();
-    const camera=new THREE.PerspectiveCamera(38,1,.1,80);camera.position.z=8.6;
-    const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));
-    renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
-    scene.add(new THREE.HemisphereLight(0xc8e7ff,0x101528,1.65));
-    const key=new THREE.PointLight(0xffe4bd,100,18,2);key.position.set(-2.5,3.2,5);scene.add(key);
-    const rim=new THREE.PointLight(0x63e9df,55,16,2);rim.position.set(3,-2,-1);scene.add(rim);
-    const world=new THREE.Group();scene.add(world);const fadeMats=[];
 
-    function makeTexture(kind){
-      const c=document.createElement("canvas");c.width=1024;c.height=512;const x=c.getContext("2d"),w=c.width,h=c.height;
-      const g=x.createLinearGradient(0,0,w,h);
-      if(kind==="earth"){g.addColorStop(0,"#061a45");g.addColorStop(.5,"#1265a0");g.addColorStop(1,"#03152f")}
-      else if(kind==="saturn"){g.addColorStop(0,"#70432c");g.addColorStop(.25,"#e7c18b");g.addColorStop(.5,"#a76a49");g.addColorStop(.75,"#f3d9a5");g.addColorStop(1,"#6c3f33")}
-      else if(kind==="mars"){g.addColorStop(0,"#421c24");g.addColorStop(.5,"#d66c4a");g.addColorStop(1,"#5e2934")}
-      else if(kind==="ice"){g.addColorStop(0,"#082d67");g.addColorStop(.4,"#1a93bd");g.addColorStop(.7,"#56d5da");g.addColorStop(1,"#0a2f78")}
-      else {g.addColorStop(0,"#160e2d");g.addColorStop(.35,"#e96927");g.addColorStop(.63,"#ffcc65");g.addColorStop(1,"#5d234d")}
-      x.fillStyle=g;x.fillRect(0,0,w,h);
-      if(kind==="earth"){
-        const continents=[
-          [[.06,.21],[.11,.16],[.17,.19],[.2,.24],[.24,.27],[.22,.33],[.18,.37],[.17,.43],[.13,.46],[.1,.39],[.08,.31]],
-          [[.21,.45],[.25,.47],[.28,.53],[.27,.62],[.25,.71],[.23,.79],[.2,.68],[.19,.57]],
-          [[.39,.22],[.44,.17],[.51,.19],[.56,.16],[.63,.21],[.68,.24],[.75,.25],[.82,.31],[.79,.36],[.72,.39],[.66,.35],[.61,.42],[.56,.39],[.53,.34],[.47,.35],[.43,.29]],
-          [[.46,.38],[.51,.37],[.55,.44],[.56,.53],[.53,.62],[.51,.72],[.48,.68],[.46,.57],[.43,.47]],
-          [[.75,.6],[.81,.59],[.86,.63],[.86,.69],[.82,.73],[.77,.7],[.74,.65]]
-        ];
-        continents.forEach((poly,i)=>{x.beginPath();poly.forEach((p,j)=>j?x.lineTo(p[0]*w,p[1]*h):x.moveTo(p[0]*w,p[1]*h));x.closePath();const lg=x.createLinearGradient(0,100,w*.25,h);lg.addColorStop(0,"#b4c879");lg.addColorStop(.5,i%2?"#508859":"#3b865d");lg.addColorStop(1,"#244d46");x.fillStyle=lg;x.fill();x.strokeStyle="#bde5a45a";x.lineWidth=2;x.stroke()});
-        for(let i=0;i<42;i++){x.strokeStyle="#ffffff";x.globalAlpha=.09+Math.random()*.16;x.lineWidth=2+Math.random()*6;const y=Math.random()*h;x.beginPath();x.moveTo(0,y);x.bezierCurveTo(w*.32,y-14,w*.64,y+20,w,y-5);x.stroke()}x.globalAlpha=1;
-      } else if(kind==="saturn"||kind==="ice"||kind==="sun"){
-        for(let i=0;i<42;i++){x.strokeStyle=kind==="saturn"?(i%2?"#fff0c355":"#66392f55"):(i%2?"#fff2b077":"#173d9d88");x.lineWidth=2+Math.random()*(kind==="sun"?16:11);const y=Math.random()*h;x.beginPath();x.moveTo(0,y);x.bezierCurveTo(w*.3,y-24,w*.7,y+26,w,y-5);x.stroke()}
-      } else {
-        for(let i=0;i<105;i++){const px=Math.random()*w,py=Math.random()*h,r=4+Math.random()*22;x.beginPath();x.ellipse(px,py,r,r*(.25+Math.random()*.4),Math.random(),0,Math.PI*2);x.fillStyle=i%2?"#7c3438":"#f2a174";x.globalAlpha=.15+Math.random()*.3;x.fill();x.strokeStyle="#32192388";x.lineWidth=2;x.stroke()}x.globalAlpha=1;
-      }
-      const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t;
-    }
-    function orbit(rx,ry,z,tilt){const pts=[];for(let i=0;i<160;i++){const a=i/160*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*rx,Math.sin(a)*ry,z))}const m=new THREE.LineBasicMaterial({color:0x21ff62,transparent:true,opacity:.72});const line=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts),m);line.rotation.x=tilt;world.add(line);fadeMats.push(m)}
-    function planet(radius,kind,pos,atmosphere){
-      const group=new THREE.Group();group.position.copy(pos);
-      const tex=makeTexture(kind),mat=new THREE.MeshStandardMaterial({map:tex,roughness:kind==="sun"?.7:.85,metalness:.03,emissive:kind==="sun"?0x7b2b0d:0x000000,emissiveMap:kind==="sun"?tex:null,emissiveIntensity:kind==="sun"?1.15:0,transparent:true});
-      group.add(new THREE.Mesh(new THREE.SphereGeometry(radius,56,40),mat));fadeMats.push(mat);
-      if(atmosphere){const am=new THREE.MeshBasicMaterial({color:atmosphere,transparent:true,opacity:.16,side:THREE.BackSide,depthWrite:false});group.add(new THREE.Mesh(new THREE.SphereGeometry(radius*1.08,44,32),am));fadeMats.push(am)}
-      return {group,mat};
-    }
-
-    orbit(1.65,1.02,0,.26);orbit(2.28,1.57,-.15,.5);orbit(2.67,1.94,-.25,.77);
-    const sun=planet(.59,"sun",new THREE.Vector3(0,0,.06),0xff8b49);world.add(sun.group);
-    const sunGlow=new THREE.Mesh(new THREE.SphereGeometry(.78,40,32),new THREE.MeshBasicMaterial({color:0xff883c,transparent:true,opacity:.13,side:THREE.BackSide,depthWrite:false}));sun.group.add(sunGlow);fadeMats.push(sunGlow.material);
-
-    const earthOrbit=new THREE.Group();earthOrbit.rotation.z=.18;earthOrbit.rotation.x=.22;world.add(earthOrbit);
-    const earth=planet(.39,"earth",new THREE.Vector3(-1.55,.42,.16),0x59c8ff);earthOrbit.add(earth.group);
-    const clouds=document.createElement("canvas");clouds.width=512;clouds.height=256;const cx=clouds.getContext("2d");
-    for(let i=0;i<80;i++){cx.strokeStyle="#fff";cx.globalAlpha=.08+Math.random()*.22;cx.lineWidth=2+Math.random()*5;const y=Math.random()*256;cx.beginPath();cx.moveTo(0,y);cx.bezierCurveTo(140,y-10,330,y+14,512,y-4);cx.stroke()}cx.globalAlpha=1;
-    const cloudTex=new THREE.CanvasTexture(clouds);const cloudMat=new THREE.MeshStandardMaterial({map:cloudTex,transparent:true,opacity:.5,roughness:1,depthWrite:false});earth.group.add(new THREE.Mesh(new THREE.SphereGeometry(.405,48,32),cloudMat));fadeMats.push(cloudMat);
-
-    const saturnOrbit=new THREE.Group();saturnOrbit.rotation.z=-.1;saturnOrbit.rotation.x=.45;world.add(saturnOrbit);
-    const saturn=planet(.42,"saturn",new THREE.Vector3(1.7,-.1,-.12),0xdcb98d);
-    const ringMat=new THREE.MeshStandardMaterial({color:0xe9c89b,roughness:.9,side:THREE.DoubleSide,transparent:true,opacity:.82,depthWrite:false});
-    const ring=new THREE.Mesh(new THREE.RingGeometry(.56,.9,128),ringMat);ring.rotation.x=.62;ring.rotation.y=-.16;saturn.group.add(ring);fadeMats.push(ringMat);saturnOrbit.add(saturn.group);
-    const marsOrbit=new THREE.Group();marsOrbit.rotation.x=.36;marsOrbit.rotation.z=.4;world.add(marsOrbit);const mars=planet(.245,"mars",new THREE.Vector3(-.83,-1.12,.2),0xec8060);marsOrbit.add(mars.group);
-    const iceOrbit=new THREE.Group();iceOrbit.rotation.x=.58;iceOrbit.rotation.z=-.32;world.add(iceOrbit);const ice=planet(.255,"ice",new THREE.Vector3(1.02,1.12,-.5),0x6addff);iceOrbit.add(ice.group);
-
-    const positions=[];for(let i=0;i<650;i++)positions.push((Math.random()-.5)*17,(Math.random()-.5)*10,(Math.random()-.5)*7-2);
-    const starGeom=new THREE.BufferGeometry();starGeom.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));
-    const stars=new THREE.Points(starGeom,new THREE.PointsMaterial({color:0xd9f2ff,size:.018,transparent:true,opacity:.83}));scene.add(stars);
-
-    const brain=new THREE.Group();scene.add(brain);const brainMats=[];
-    function addLobe(side){
-      const hemi=new THREE.Group();hemi.position.x=side*.32;hemi.scale.set(.86,1,.82);
-      const base=new THREE.MeshStandardMaterial({color:side<0?0x79dac2:0x8cebd0,roughness:.43,metalness:.04,emissive:0x134d54,emissiveIntensity:.22,transparent:true});
-      const sphere=new THREE.Mesh(new THREE.SphereGeometry(.66,56,44),base);sphere.scale.set(.85,1,.84);hemi.add(sphere);brainMats.push(base);
-      const groove=new THREE.MeshStandardMaterial({color:0x1c6b70,roughness:.72,emissive:0x071e36,emissiveIntensity:.22,transparent:true});
-      const highlight=new THREE.MeshStandardMaterial({color:0xd2fff0,roughness:.4,emissive:0x367e7b,emissiveIntensity:.18,transparent:true});
-      const paths=[
-        [[-.42,.24,.30],[-.31,.42,.34],[-.10,.40,.42],[.06,.29,.49],[.12,.14,.51]],
-        [[-.46,.03,.30],[-.30,.12,.44],[-.15,.02,.52],[.03,-.02,.53],[.10,-.17,.48]],
-        [[-.36,-.24,.33],[-.21,-.34,.40],[-.04,-.25,.51],[.08,-.31,.43]],
-        [[-.26,.46,.22],[-.13,.50,.32],[.02,.43,.43],[.18,.37,.44]],
-        [[-.43,-.10,.26],[-.35,-.20,.37],[-.24,-.12,.46],[-.14,-.22,.48]]
-      ];
-      paths.forEach((path,i)=>{const pts=path.map(p=>new THREE.Vector3(side<0?p[0]:-p[0],p[1],p[2]));const curve=new THREE.CatmullRomCurve3(pts);hemi.add(new THREE.Mesh(new THREE.TubeGeometry(curve,32,.021,8,false),i%2?groove:highlight))});
-      brainMats.push(groove,highlight);brain.add(hemi);
-    }
-    addLobe(-1);addLobe(1);
-    const seam=new THREE.CatmullRomCurve3([new THREE.Vector3(0,.66,.12),new THREE.Vector3(0,.35,.43),new THREE.Vector3(0,0,.56),new THREE.Vector3(0,-.35,.43),new THREE.Vector3(0,-.57,.2)]);
-    const seamMat=new THREE.MeshStandardMaterial({color:0x17636c,roughness:.6,transparent:true});brain.add(new THREE.Mesh(new THREE.TubeGeometry(seam,48,.026,10,false),seamMat));brainMats.push(seamMat);
-
-    root.classList.add("webgl-ready");
-    function resize(){const w=Math.max(1,root.clientWidth),h=Math.max(1,root.clientHeight),aspect=w/h;camera.aspect=aspect;camera.position.z=aspect<1.08?10:8.6;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
-    resize();window.addEventListener("resize",resize,{passive:true});
-    let brainProgress=0,frame=0;
-    function animate(){
-      requestAnimationFrame(animate);if(document.hidden)return;frame+=.008;
-      const target=intro.classList.contains("brain-stage")?1:0;brainProgress+=(target-brainProgress)*.035;
-      earth.group.rotation.y+=.008;saturn.group.rotation.y+=.005;mars.group.rotation.y+=.009;ice.group.rotation.y+=.006;
-      earthOrbit.rotation.y+=.0035;saturnOrbit.rotation.y-=.0022;marsOrbit.rotation.y+=.004;iceOrbit.rotation.y-=.0028;sun.group.rotation.y+=.0018;stars.rotation.y=Math.sin(frame*.1)*.014;
-      fadeMats.forEach(m=>{m.opacity=1-brainProgress*.76;m.transparent=true});
-      brain.visible=brainProgress>.012;brain.scale.setScalar(1.7*brainProgress);brain.rotation.y=Math.sin(frame*.55)*.13;brain.rotation.x=.12+Math.sin(frame*.3)*.045;brain.rotation.z=Math.sin(frame*.42)*.035;
-      renderer.render(scene,camera);
-    }
-
-    // 3D mascot made from real Three.js meshes.
-    function buildRobot(){
-      const cv=document.getElementById("robotRenderer");if(!cv)return;
-      const s=new THREE.Scene(),cam=new THREE.PerspectiveCamera(34,1,.1,40);cam.position.z=7.4;
-      const rr=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,powerPreference:"low-power"});rr.setPixelRatio(Math.min(devicePixelRatio||1,1.5));rr.setClearColor(0,0);rr.outputColorSpace=THREE.SRGBColorSpace;rr.toneMapping=THREE.ACESFilmicToneMapping;
-      s.add(new THREE.HemisphereLight(0xdff5ff,0x13231b,2));const dl=new THREE.DirectionalLight(0xffffff,3);dl.position.set(-3,4,6);s.add(dl);const gl=new THREE.PointLight(0x00ff58,35,9);gl.position.set(2,1,3);s.add(gl);
-      const g=new THREE.Group();s.add(g);
-      const w=new THREE.MeshPhysicalMaterial({color:0xeaf4ff,metalness:.38,roughness:.23,clearcoat:.8}),d=new THREE.MeshPhysicalMaterial({color:0x07111d,metalness:.55,roughness:.15}),e=new THREE.MeshStandardMaterial({color:0x637d9f,metalness:.7,roughness:.25}),n=new THREE.MeshStandardMaterial({color:0x24ff55,emissive:0x00ff42,emissiveIntensity:2.5}),ch=new THREE.MeshStandardMaterial({color:0x152536,metalness:.5,roughness:.25});
-      const ball=(p,m,pos,sc)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(1,36,28),m);o.position.set(...pos);o.scale.set(...sc);p.add(o);return o};
-      const bar=(p,m,a,b,r)=>{const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),v=B.clone().sub(A),o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,v.length(),20),m);o.position.copy(A).add(B).multiplyScalar(.5);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());p.add(o);ball(p,m,a,[r,r,r]);ball(p,m,b,[r,r,r])};
-      ball(g,w,[0,-.75,0],[.82,.85,.52]);ball(g,ch,[0,-.72,.48],[.53,.55,.12]);ball(g,d,[0,-.94,.58],[.34,.22,.06]);const badge=new THREE.Mesh(new THREE.TorusGeometry(.31,.025,10,48),n);badge.position.set(0,-.94,.62);g.add(badge);
-      ball(g,w,[0,.62,0],[.94,.9,.7]);ball(g,d,[0,.59,.59],[.76,.58,.19]);
-      [-.32,.32].forEach(x=>{const q=new THREE.QuadraticBezierCurve3(new THREE.Vector3(x-.14,.67,.77),new THREE.Vector3(x,.82,.79),new THREE.Vector3(x+.14,.67,.77));g.add(new THREE.Mesh(new THREE.TubeGeometry(q,24,.04,10,false),n))});
-      const sm=new THREE.QuadraticBezierCurve3(new THREE.Vector3(-.22,.39,.78),new THREE.Vector3(0,.25,.82),new THREE.Vector3(.22,.39,.78));g.add(new THREE.Mesh(new THREE.TubeGeometry(sm,24,.04,10,false),n));
-      [-1,1].forEach(x=>{ball(g,e,[x*.91,.62,.02],[.23,.42,.32]);ball(g,d,[x*1.03,.62,.1],[.16,.3,.25]);ball(g,n,[x*1.08,.62,.13],[.045,.18,.17]);bar(g,w,[x*.82,-.27,0],[x*1.12,-.8,.08],.17);ball(g,n,[x*1.12,-.82,.08],[.2,.2,.2]);bar(g,w,[x*1.12,-.82,.08],[x*1.25,-1.17,.15],.13)});
-      const band=new THREE.Mesh(new THREE.TorusGeometry(.77,.065,14,64,Math.PI),e);band.rotation.z=Math.PI;band.position.y=.74;g.add(band);
-      ball(g,w,[-1.28,-1.2,.3],[.28,.14,.3]);for(let i=0;i<4;i++){let x=-1.46+i*.14;bar(g,w,[x,-1.19,.32],[x-.07,-1.0-Math.sin(i/3*Math.PI)*.1,.34],.055)}bar(g,w,[-1.1,-1.22,.34],[-.96,-1.1,.36],.065);
-      const halo=new THREE.Mesh(new THREE.TorusGeometry(1.65,.014,8,128),n);halo.rotation.set(.8,.25,-.2);halo.position.y=-.1;g.add(halo);
-      function size(){let W=Math.max(1,cv.clientWidth),H=Math.max(1,cv.clientHeight);cam.aspect=W/H;cam.position.z=W/H<1.1?8.4:7.4;cam.updateProjectionMatrix();rr.setSize(W,H,false)}size();addEventListener("resize",size,{passive:true});
-      let t=0;function draw(){requestAnimationFrame(draw);if(document.hidden)return;t+=.012;g.position.y=Math.sin(t)*.05;g.rotation.y=-.1+Math.sin(t*.4)*.08;halo.rotation.z+=.003;rr.render(s,cam)}draw();
-    }
-    function buildEarth(){
-      const cv=document.getElementById("earthRenderer");if(!cv)return;
-      const s=new THREE.Scene(),cam=new THREE.PerspectiveCamera(35,1,.1,40);cam.position.set(0,1.2,6.2);
-      const rr=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,powerPreference:"low-power"});rr.setPixelRatio(Math.min(devicePixelRatio||1,1.4));rr.setClearColor(0,0);rr.outputColorSpace=THREE.SRGBColorSpace;s.add(new THREE.AmbientLight(0x9bbdff,1.3));const l=new THREE.DirectionalLight(0xffffff,3);l.position.set(-3,3,5);s.add(l);
-      const globe=new THREE.Mesh(new THREE.SphereGeometry(2.15,64,48),new THREE.MeshStandardMaterial({map:makeTexture("earth"),roughness:.9}));globe.position.y=-1.08;s.add(globe);const halo=new THREE.Mesh(new THREE.SphereGeometry(2.2,48,36),new THREE.MeshBasicMaterial({color:0x20aaff,transparent:true,opacity:.17,side:THREE.BackSide}));halo.position.copy(globe.position);s.add(halo);
-      function size(){let W=Math.max(1,cv.clientWidth),H=Math.max(1,cv.clientHeight);cam.aspect=W/H;cam.updateProjectionMatrix();rr.setSize(W,H,false)}size();addEventListener("resize",size,{passive:true});function draw(){requestAnimationFrame(draw);if(document.hidden)return;globe.rotation.y+=.0018;rr.render(s,cam)}draw();
-    }
-    buildRobot();buildEarth();
-    animate();
-  }).catch(error=>console.warn("3D intro unavailable; using the CSS planet fallback.",error));
-})();
-</script>
 
 <script>
 (() => {
