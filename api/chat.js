@@ -85,11 +85,11 @@ export default async function handler(req, res) {
   const maxOutputTokens = isLongCreativeRequest ? 1200 : (voiceMode ? 140 : 320);
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  // Start with the lightweight model so normal chat does not wait on a slower model first.
+  // Current Gemini Developer API models, fastest first.
   const models = [...new Set([
-    "gemini-2.5-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-3.5-flash-lite",
     process.env.GEMINI_MODEL,
-    "gemini-2.5-flash",
   ].filter(Boolean))];
 
   // Voice Studio streams the answer so it can begin speaking before generation finishes.
