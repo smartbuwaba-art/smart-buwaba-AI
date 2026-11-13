@@ -65,7 +65,7 @@ export default async function handler(req, res) {
   // Keep a short, alternating conversation history so follow-up requests make sense.
   const contents = [];
   if (Array.isArray(history)) {
-    for (const item of history.slice(-12)) {
+    for (const item of history.slice(-8)) {
       const role = item?.role === "assistant" || item?.role === "model"
         ? "model" : item?.role === "user" ? "user" : null;
       const text = typeof item?.content === "string" ? item.content.trim().slice(0, 1800) : "";
@@ -75,21 +75,22 @@ export default async function handler(req, res) {
       else contents.push({ role, parts: [{ text }] });
     }
   }
-  const currentMessage = message.trim().slice(0, 4000);
+  const currentMessage = message.trim().slice(0, 3000);
   const lastTurn = contents[contents.length - 1];
   if (lastTurn?.role === "user") lastTurn.parts[0].text += "\n" + currentMessage;
   else contents.push({ role: "user", parts: [{ text: currentMessage }] });
 
   const conversationText = (Array.isArray(history) ? history.map(item => typeof item?.content === "string" ? item.content : "").join(" ") : "") + " " + currentMessage;
   const isLongCreativeRequest = /\b(song|songs|songwriting|lyrics|lyric|nyimbo|ndakatulo|poem|poetry|chorus|verse|rap|ballad)\b/i.test(conversationText);
-  const maxOutputTokens = isLongCreativeRequest ? 1400 : (voiceMode ? 180 : 500);
+  const maxOutputTokens = isLongCreativeRequest ? 1200 : (voiceMode ? 140 : 320);
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  // Start with the lightweight model so normal chat does not wait on a slower model first.
   const models = [...new Set([
-    process.env.GEMINI_MODEL || "gemini-3.8-flash",
-    "gemini-3.5-flash-lite",
-    "gemini-3.6-flash",
-  ])];
+    "gemini-2.5-flash-lite",
+    process.env.GEMINI_MODEL,
+    "gemini-2.5-flash",
+  ].filter(Boolean))];
 
   // Voice Studio streams the answer so it can begin speaking before generation finishes.
   if (stream === true && voiceMode === true) {
