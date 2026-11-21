@@ -207,6 +207,64 @@ html,body{height:100%;overflow:hidden}
 
 
 .search-results{display:grid;gap:10px;margin-top:12px}.search-result{padding:10px;border:1px solid #30415e;border-radius:12px;background:#0b1424}.search-result a{color:#a8f5c9;text-decoration:none;font-weight:700}.search-result p{margin:5px 0;color:#b9c5dc;font-size:11px;line-height:1.5}.search-result small{display:block;color:#8192ad;margin-top:5px}.search-play{margin-top:8px;border:1px solid #3c8b68;border-radius:8px;background:#123323;color:#d9ffe8;padding:6px 10px}.search-player{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;margin-top:9px}
+
+/* Reliable phone viewport and independent chat scrolling */
+@supports (height: 100dvh) {
+  html, body { height: 100%; min-height: 100%; }
+  .app { min-height: 0; }
+}
+.messages { scrollbar-width: thin; scrollbar-color: #3b8f35 transparent; }
+.messages > * { flex-shrink: 0; }
+@media (max-width: 680px) {
+  html, body { width: 100%; height: 100%; min-height: 100%; overflow: hidden; }
+  body { overscroll-behavior: none; }
+  .app {
+    width: 100%; height: 100vh; height: 100dvh; min-height: 0;
+    overflow: hidden; padding-bottom: 0;
+  }
+  .main {
+    width: 100%; min-width: 0; height: 100%; min-height: 0;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .topbar { position: relative; flex: 0 0 auto; }
+  .content {
+    width: 100%; min-width: 0; min-height: 0; height: 0;
+    flex: 1 1 0; display: flex; flex-direction: column;
+    overflow: hidden; padding-bottom: 8px;
+  }
+  .hero, .cards { flex: 0 0 auto; }
+  .messages {
+    display: flex; flex: 1 1 0; min-width: 0; min-height: 0;
+    max-height: none; overflow-x: hidden; overflow-y: auto;
+    -webkit-overflow-scrolling: touch; touch-action: pan-y;
+    overscroll-behavior-y: contain;
+    padding: 0 2px calc(145px + env(safe-area-inset-bottom));
+    scroll-padding-bottom: calc(145px + env(safe-area-inset-bottom));
+  }
+  .message { flex: 0 0 auto; width: fit-content; max-width: 96%; overflow-wrap: anywhere; }
+  .composer-wrap {
+    position: fixed; left: 0; right: 0;
+    bottom: calc(66px + env(safe-area-inset-bottom));
+    width: 100%; z-index: 25;
+    padding: 7px 9px 8px;
+  }
+  .composer { width: 100%; max-width: 820px; }
+  .mobile-nav {
+    height: calc(66px + env(safe-area-inset-bottom));
+    padding-bottom: max(5px, env(safe-area-inset-bottom));
+  }
+  .mobile-nav-item, .mobile-nav-add { touch-action: manipulation; }
+}
+@media (max-width: 380px) {
+  .message { max-width: 98%; padding: 10px; font-size: 12px; }
+  .composer-wrap { padding-left: 6px; padding-right: 6px; }
+}
+
+
+.search-fallback{display:inline-block;margin:8px 9px 2px 0;color:#9cff77!important;font-size:12px;font-weight:700;text-decoration:underline!important}
+.search-player{display:block;width:100%;max-width:100%;aspect-ratio:16/9;height:auto;min-height:180px;border:0;border-radius:10px;margin-top:9px;background:#000}
+@media(max-width:680px){.search-player{min-height:190px}.search-results,.search-result{min-width:0;max-width:100%;overflow-wrap:anywhere}}
+
 </style>
 </head>
 <body>
@@ -647,8 +705,43 @@ async function generateImageFromPrompt(){
 }
 
 async function searchBuwabaWeb(query){const r=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query}),cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'SEARCH_FAILED');return d.results||[]}
-function addSearchResults(results){const wrap=document.createElement('div');wrap.className='search-results';if(!results.length){const p=document.createElement('p');p.textContent='Sindinapeze zotsatira zokwanira. Yesani dzina lina.';wrap.appendChild(p)}results.forEach(item=>{const card=document.createElement('div');card.className='search-result';const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.title||'Tsegulani zotsatira';card.appendChild(a);const p=document.createElement('p');p.textContent=item.snippet||'';card.appendChild(p);const small=document.createElement('small');try{small.textContent=new URL(item.url).hostname}catch(e){small.textContent='Web result'}card.appendChild(small);if(item.youtubeId){const play=document.createElement('button');play.type='button';play.className='search-play';play.textContent='▶ Play here';play.addEventListener('click',()=>{const frame=document.createElement('iframe');frame.className='search-player';frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(item.youtubeId);frame.title=item.title||'Video';frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';frame.allowFullscreen=true;play.replaceWith(frame)});card.appendChild(play)}wrap.appendChild(card)});const last=messages.lastElementChild;if(last)last.appendChild(wrap)}
-async function runBuwabaSearch(query){hero.classList.add('hidden');cards.classList.add('hidden');addMessage('🔎 Ndikusaka pa intaneti: '+query,'user');const send=$('sendButton'),mic=$('mic'),search=$('searchButton'),img=$('imageButton');send.disabled=mic.disabled=search.disabled=img.disabled=true;$('connectionStatus').textContent='SEARCHING';const typing=addTyping();try{const results=await searchBuwabaWeb(query);typing.remove();addMessage('Nazi zotsatira zomwe ndapeza. Ma profile a Facebook angatsegulidwe pa Facebook; makanema a YouTube omwe alipo atha kuseweredwa pano.','ai');addSearchResults(results);$('connectionStatus').textContent='READY'}catch(e){typing.remove();addMessage('Pepani bro, sindinathe kusaka pano. Yesaninso patapita pang’ono.','ai');$('connectionStatus').textContent='READY';console.error('Buwaba search error:',e)}finally{send.disabled=mic.disabled=search.disabled=img.disabled=false;promptBox.focus()}}
+function addSearchResults(results,query=''){
+ const wrap=document.createElement('div');wrap.className='search-results';
+ if(!results.length){
+  const p=document.createElement('p');p.textContent='Sindinapeze zotsatira pano. Yesani njira ina.';wrap.appendChild(p);
+  if(query){
+   const fallback=document.createElement('a');fallback.href='https://www.youtube.com/results?search_query='+encodeURIComponent(query);
+   fallback.target='_blank';fallback.rel='noopener noreferrer';fallback.textContent='▶ Sakani pa YouTube';fallback.className='search-fallback';wrap.appendChild(fallback);
+  }
+ }
+ results.forEach(item=>{
+  const card=document.createElement('div');card.className='search-result';
+  const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.title||'Tsegulani zotsatira';card.appendChild(a);
+  const p=document.createElement('p');p.textContent=item.snippet||'';card.appendChild(p);
+  const small=document.createElement('small');try{small.textContent=new URL(item.url).hostname}catch(e){small.textContent='Web result'}card.appendChild(small);
+  if(item.youtubeId){
+   const play=document.createElement('button');play.type='button';play.className='search-play';play.textContent='▶ Play here';
+   play.addEventListener('click',()=>{
+    const frame=document.createElement('iframe');frame.className='search-player';
+    frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(item.youtubeId);
+    frame.title=item.title||'Video';frame.loading='lazy';frame.referrerPolicy='strict-origin-when-cross-origin';
+    frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';frame.allowFullscreen=true;
+    play.replaceWith(frame);
+    const fallback=document.createElement('a');fallback.className='search-fallback';
+    fallback.href='https://www.youtube.com/watch?v='+encodeURIComponent(item.youtubeId);
+    fallback.target='_blank';fallback.rel='noopener noreferrer';fallback.textContent='Ngati player sakusewera, tsegulani pa YouTube ↗';
+    card.appendChild(fallback);
+   });
+   card.appendChild(play);
+   const direct=document.createElement('a');direct.className='search-fallback';
+   direct.href='https://www.youtube.com/watch?v='+encodeURIComponent(item.youtubeId);
+   direct.target='_blank';direct.rel='noopener noreferrer';direct.textContent='Tsegulani pa YouTube ngati player yakana ↗';card.appendChild(direct);
+  }
+  wrap.appendChild(card);
+ });
+ const last=messages.lastElementChild;if(last)last.appendChild(wrap);
+}
+async function runBuwabaSearch(query){hero.classList.add('hidden');cards.classList.add('hidden');addMessage('🔎 Ndikusaka pa intaneti: '+query,'user');const send=$('sendButton'),mic=$('mic'),search=$('searchButton'),img=$('imageButton');send.disabled=mic.disabled=search.disabled=img.disabled=true;$('connectionStatus').textContent='SEARCHING';const typing=addTyping();try{const results=await searchBuwabaWeb(query);typing.remove();addMessage('Nazi zotsatira zomwe ndapeza. Ma profile a Facebook angatsegulidwe pa Facebook; makanema a YouTube omwe alipo atha kuseweredwa pano.','ai');addSearchResults(results,query);$('connectionStatus').textContent='READY'}catch(e){typing.remove();addMessage('Pepani bro, sindinathe kusaka pano. Yesaninso patapita pang’ono.','ai');$('connectionStatus').textContent='READY';console.error('Buwaba search error:',e)}finally{send.disabled=mic.disabled=search.disabled=img.disabled=false;promptBox.focus()}}
 $('searchButton').addEventListener('click',()=>{const q=promptBox.value.trim();if(!q){showToast('Lembani dzina la nyimbo, video kapena munthu kaye.','error');promptBox.focus();return}promptBox.value='';runBuwabaSearch(q)});
 
 $('imageButton').addEventListener('click',generateImageFromPrompt);
