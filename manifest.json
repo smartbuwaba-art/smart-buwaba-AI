@@ -1,13 +1,13 @@
 {
-  "name": "Smart Buwaba AI",
-  "short_name": "Buwaba AI",
-  "description": "Your personal intelligent assistant.",
+  "name": "Chat Buwaba AI",
+  "short_name": "Chat Buwaba",
+  "description": "Chat Buwaba AI — your multilingual AI assistant for chat, voice, learning, and creativity.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#080b16",
-  "theme_color": "#080b16",
+  "orientation": "any",
+  "background_color": "#020704",
+  "theme_color": "#020704",
   "icons": [
     {
       "src": "/icons/smart-buwaba-192.svg",
