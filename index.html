@@ -265,6 +265,85 @@ html,body{height:100%;overflow:hidden}
 .search-player{display:block;width:100%;max-width:100%;aspect-ratio:16/9;height:auto;min-height:180px;border:0;border-radius:10px;margin-top:9px;background:#000}
 @media(max-width:680px){.search-player{min-height:190px}.search-results,.search-result{min-width:0;max-width:100%;overflow-wrap:anywhere}}
 
+
+/* Smart Buwaba — clean conversational interface */
+:root{
+ --bg:#101311;--panel:#171b18;--panel2:#202720;--green:#78e65b;
+ --cyan:#b6ef9d;--muted:#a3ada2;--line:#303a31;
+}
+body{background:#101311;color:#f2f6f0}
+.app{background:#101311}
+.sidebar{background:#171b18;border-color:#303a31}
+.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#9bf47a,#3cae42);color:#071108;border:0;box-shadow:0 4px 18px #65e94b24;font-style:normal;font-size:17px;letter-spacing:-1.5px}
+.brand strong{font-size:15px;letter-spacing:-.4px}
+.brand small{color:#a3ada2}
+.new-chat{background:#202720;color:#f1f7ef;border:1px solid #3a463b;border-radius:14px}
+.new-chat:hover{background:#29342a;border-color:#78e65b}
+.side-label{color:#9aa69a}
+.history-item{color:#d4ddd2}
+.history-item.active,.history-item:hover,.side-link.active{background:#29332a;border-color:#465846;color:#a7f28e}
+.side-link{color:#d1d9cf}
+.profile{border-color:#303a31}
+.avatar{background:#26372a;color:#a7f28e;border:1px solid #405b42;font-size:11px;font-weight:900}
+.main{background:#101311}
+.topbar{background:#101311;border-color:#303a31}
+.topbar>strong{font-size:14px}
+.status{color:#9be77e}
+.voice-toggle,.language-select{background:#202720;border-color:#3a463b;color:#e5eee2}
+.content{width:min(850px,100%);padding-top:26px}
+.hero{padding:24px 0 12px}
+.welcome-robot{height:132px;margin-bottom:12px}
+.robot-glow{width:130px;height:100px;background:#62d94b33;filter:blur(38px)}
+.robot-face{width:92px;height:92px;border-radius:28px;display:grid;place-items:center;font-size:39px;font-weight:950;letter-spacing:-4px;color:#081308;background:linear-gradient(145deg,#a5f58b,#47bd50);border:1px solid #b8ffa3;box-shadow:0 10px 38px #5bd84b24;filter:none;animation:robotFloat 3.8s ease-in-out infinite}
+.robot-spark{right:calc(50% - 70px);top:7%;font-size:22px;color:#b7f69c}
+.hero .eyebrow{color:#a4d994;letter-spacing:2px}
+h1{font-size:clamp(30px,5vw,42px);letter-spacing:-1.6px}
+h1 span{background:linear-gradient(90deg,#a6ed8f,#70d66b);background-clip:text;color:transparent}
+.subtitle{color:#aeb8ad}
+.cards{gap:10px;margin:24px 0}
+.card{min-height:84px;display:flex;align-items:center;gap:13px;padding:16px;border:1px solid #343f35;border-radius:16px;background:#171c18;box-shadow:none}
+.card:hover{background:#202820;border-color:#66885e;transform:translateY(-1px)}
+.card .symbol{margin:0;min-width:27px;color:#9be77e}
+.card strong{font-size:13px;color:#edf4eb}
+.card small{display:block;color:#a3ada2}
+.messages{gap:20px}
+.message{font-size:14px;line-height:1.75;border-radius:18px}
+.message.ai{background:#171c18;border-color:#303a31}
+.message.user{background:#26352a;border-color:#405b42}
+.message-label{color:#a6ec8d}
+.composer-wrap{background:linear-gradient(transparent,#101311 22%)}
+.composer{background:#202520;border:1px solid #414d41;border-radius:25px;box-shadow:0 8px 32px #0003;padding:8px 10px}
+.composer:focus-within{border-color:#83d96b;box-shadow:0 0 0 2px #83d96b18}
+.composer textarea{font-size:14px}
+.composer textarea::placeholder{color:#9aa69a}
+.icon-btn{background:#2a332b;border:1px solid #465247;color:#e4eee1}
+.icon-btn.send,.icon-btn.mic{background:#8de875;color:#0b1609;border:0}
+.footnote{color:#899589}
+.app-action{background:#202820;border-color:#3e5140;color:#c9f5bd}
+.app-action:hover{border-color:#8de875}
+.tiny-btn{background:#202820;border-color:#3e5140}
+.message-tools .tiny-btn:hover{border-color:#8de875}
+.entry-card{background:#171c18;border-color:#39453a}
+.lamp-screen{background:radial-gradient(ellipse at 50% 20%,#26372a 0,transparent 45%),#101311}
+.entry-title span{color:#9be77e}
+.pull-button,.primary{background:linear-gradient(110deg,#9bf47a,#62cf65);color:#091208}
+@media(max-width:680px){
+ .sidebar{background:#171b18f5;border-color:#303a31}
+ .brand .logo{width:42px;height:42px;font-size:16px}
+ .sidebar .new-chat{background:#263128;color:#e8f3e5;border:1px solid #405342}
+ .topbar{background:#101311}
+ .content{padding:14px 16px}
+ .hero{padding:10px 0 6px}
+ .welcome-robot{height:115px}
+ .robot-face{width:78px;height:78px;border-radius:24px;font-size:34px}
+ .cards{margin:16px 0;gap:9px}
+ .card{min-height:68px;padding:12px;border-radius:14px}
+ .card small{display:none}
+ .composer-wrap{background:linear-gradient(180deg,transparent,#101311 12%)}
+ .composer{background:#202520}
+}
+@media(max-width:380px){.card{padding:9px}.card strong{font-size:10px}}
+
 </style>
 </head>
 <body>
@@ -324,16 +403,16 @@ html,body{height:100%;overflow:hidden}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="app" id="app">
   <aside class="sidebar">
-    <div class="brand"><div class="logo">B</div><div><strong>Chat Buwaba</strong><small>Personal Intelligence</small></div></div>
+    <div class="brand"><div class="logo" aria-label="Smart Buwaba logo">SB</div><div><strong>Chat Buwaba</strong><small>Personal Intelligence</small></div></div>
     <button class="new-chat" id="newChat">＋ &nbsp; New conversation</button><div class="side-label">SAVED CHATS</div><div class="chat-history" id="chatHistory" aria-label="Saved conversations"></div>
     <div class="side-label">WORKSPACE</div><div class="side-link active">◈ &nbsp; AI Assistant</div><div class="side-link">◎ &nbsp; Voice Studio</div><div class="side-link">⌘ &nbsp; Smart tools</div>
-    <div class="profile"><div class="avatar">B</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Chat Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
+    <div class="profile"><div class="avatar">SB</div><div style="min-width:0;flex:1;overflow-wrap:anywhere">Chat Buwaba<br><small id="profileLabel">Personal AI · Guest</small></div><button class="voice-toggle hidden" id="signOutButton" type="button" style="padding:7px">Sign out</button></div>
   </aside>
   <main class="main">
     <header class="topbar"><strong>Chat Buwaba AI</strong><div class="top-actions"><span class="status" id="connectionStatus">READY</span><select class="language-select" id="voiceLanguage" aria-label="Voice language"><option value="ny-MW" selected>Chichewa</option><option value="auto">Auto voice</option><option value="en-US">English</option><option value="sw-KE">Kiswahili</option></select><button class="voice-toggle" id="voiceStudioButton" type="button">🎙 Talk</button><button class="voice-toggle" id="bMenuButton" type="button" aria-expanded="false" aria-controls="bMenu">B ▾</button><button class="voice-toggle" id="floatingButton" type="button" aria-pressed="false">⭕ Floating B: Off</button><button class="voice-toggle" id="voiceToggle" type="button" aria-pressed="true">🔊 Voice on</button></div></header>
     <section class="content">
       <div class="hero" id="hero">
-        <div class="welcome-robot"><span class="robot-glow"></span><div class="robot-face">🤖</div><span class="robot-spark">✦</span></div>
+        <div class="welcome-robot"><span class="robot-glow"></span><div class="robot-face" aria-label="Smart Buwaba">SB</div><span class="robot-spark">✦</span></div>
         <div class="eyebrow">✦ YOUR SMART AI ASSISTANT ✦</div>
         <h1>Chat <span>Buwaba AI</span></h1>
         <p class="subtitle">Ask • Chat • Learn • Create<br>I am your Smart AI Assistant. How can I help you today? 😊</p>
