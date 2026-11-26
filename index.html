@@ -542,6 +542,22 @@ function pullLamp(){const screen=$('lampScreen');screen.classList.add('lit');$('
 $('pullCord').addEventListener('click',pullLamp);
 function renderMode(){ $('formTitle').textContent=createMode?'Create your account':'Welcome back';$('formHint').textContent=createMode?'Set up your Chat Buwaba account.':'Sign in to your Chat Buwaba account.';$('accountSubmit').textContent=createMode?'Create account':'Sign in';$('accountPassword').autocomplete=createMode?'new-password':'current-password';$('switchText').textContent=createMode?'Already have an account?':'New here?';$('switchMode').textContent=createMode?'Sign in':'Create account'}
 $('switchMode').addEventListener('click',()=>{createMode=!createMode;renderMode();tone('light')});
+function speakBuwabaWelcome(){
+  const message='Welcome to Chat Buwaba. Your mindset. Dream. Create. Achieve.';
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
+  try{
+    window.speechSynthesis.cancel();
+    const voice=new SpeechSynthesisUtterance(message);
+    voice.lang='en-US';
+    voice.rate=0.88;
+    voice.pitch=1.02;
+    voice.volume=1;
+    const voices=window.speechSynthesis.getVoices();
+    const preferred=voices.find(v=>/^en-US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));
+    if(preferred)voice.voice=preferred;
+    window.speechSynthesis.speak(voice);
+  }catch(error){console.warn('Welcome voice unavailable:',error);}
+}
 $('accountForm').addEventListener('submit', async e => {
   e.preventDefault();
   const email = $('accountEmail').value.trim();
@@ -557,6 +573,7 @@ $('accountForm').addEventListener('submit', async e => {
     await window.smartBuwabaAuthAction(createMode ? 'create' : 'signin', email, password);
     showToast(createMode ? 'Account yanu yapangidwa bwino!' : 'Mwalowa bwino. Takulandirani!');
     tone('lamp');
+    speakBuwabaWelcome();
   } catch (error) {
     const messages = {
       'auth/email-already-in-use': 'Email imeneyi ili kale ndi account. Yesani kulowa.',
@@ -603,7 +620,7 @@ $('signOutButton').addEventListener('click', async () => {
     showToast('Sitinathe kutuluka. Yesaninso.', 'error');
   }
 });
-$('guestButton').addEventListener('click',()=>{$('lampScreen').classList.add('hidden');$('profileLabel').textContent='Personal AI · Guest';tone('lamp')});
+$('guestButton').addEventListener('click',()=>{$('lampScreen').classList.add('hidden');$('profileLabel').textContent='Personal AI · Guest';tone('lamp');speakBuwabaWelcome()});
 function suggest(text){promptBox.value=text;promptBox.focus()}
 document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>suggest(b.dataset.prompt)));
 function newChat(){currentConversationId=null;messages.innerHTML='';hero.classList.remove('hidden');cards.classList.remove('hidden');promptBox.value='';renderSavedChats();promptBox.focus()}
